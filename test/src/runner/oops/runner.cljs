@@ -1,6 +1,6 @@
 (ns oops.runner
   (:require [cljs.test :as test :refer-macros [run-tests] :refer [report]]
-            [oops.tests.core]))
+            [oops.main]))
 
 ; taken from https://github.com/pjlegato/clansi/blob/7c9a525f5a72d928031573586cbce9a5f5699e15/src/clansi/core.clj
 (def ANSI-CODES
@@ -57,7 +57,8 @@
   (println "\nRan" (:test m) "tests containing"
            (+ (:pass m) (:fail m) (:error m)) "assertions.")
   (println (:fail m) "failures," (:error m) "errors.")
-  (aset js/window "test-failures" (+ (:fail m) (:error m))))
+  (let [failures-count (+ (:fail m) (:error m))]
+    (.log js/console (str "TESTS DONE (" failures-count ")"))))
 
 (defmethod report [::test/default :fail] [m]
   (test/inc-report-counter! :fail)
@@ -73,7 +74,7 @@
 (defn run-normal-tests []
   (test/run-tests
     (cljs.test/empty-env ::test/default)
-    'oops.tests.core))
+    'oops.main))
 
 (case (.-selectedTestSuite js/window)
   (run-normal-tests))

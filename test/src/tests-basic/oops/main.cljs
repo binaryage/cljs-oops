@@ -1,5 +1,5 @@
-(ns oops.tests.core
-  (:require [cljs.test :refer-macros [deftest testing is are]]
+(ns oops.main
+  (:require [cljs.test :refer-macros [deftest testing is are run-tests]]
             [oops.core :refer [oget oset ocall oapply]]))
 
 (deftest test-oget

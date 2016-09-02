@@ -31,32 +31,49 @@
                                                    :optimizations :none}}}}}
 
              :testing
-             {:cljsbuild {:builds {:tests
+             {:cljsbuild {:builds {:basic-optimizations-none
                                    {:source-paths ["src/lib"
-                                                   "test/src/tests"]
-                                    :compiler     {:output-to     "test/resources/_compiled/tests/main.js"
-                                                   :output-dir    "test/resources/_compiled/tests"
-                                                   :asset-path    "_compiled/tests"
+                                                   "test/src/env"
+                                                   "test/src/runner"
+                                                   "test/src/tests-basic"]
+                                    :compiler     {:output-to     "test/resources/_compiled/basic_optimizations_none/main.js"
+                                                   :output-dir    "test/resources/_compiled/basic_optimizations_none"
+                                                   :asset-path    "_compiled/basic_optimizations_none"
                                                    :preloads      [oops.testenv oops.runner]
                                                    :main          oops.main
-                                                   :optimizations :none}}}}}
+                                                   :optimizations :none}}
+                                   :basic-optimizations-advanced
+                                   {:source-paths ["src/lib"
+                                                   "test/src/env"
+                                                   "test/src/runner"
+                                                   "test/src/tests-basic"]
+                                    :compiler     {:output-to     "test/resources/_compiled/basic_optimizations_advanced/main.js"
+                                                   :output-dir    "test/resources/_compiled/basic_optimizations_advanced"
+                                                   :asset-path    "_compiled/basic_optimizations_advanced"
+                                                   :preloads      [oops.testenv oops.runner]
+                                                   :main          oops.main
+                                                   :optimizations :advanced}}}}}
              :auto-testing
-             {:cljsbuild {:builds {:tests
-                                   {:notify-command ["phantomjs" "test/resources/phantom.js" "test/resources/run-tests.html"]}}}}}
+             {:cljsbuild {:builds {:basic-optimizations-none     {:notify-command ["scripts/rerun-tests.sh" "basic_optimizations_none"]}
+                                   :basic-optimizations-advanced {:notify-command ["scripts/rerun-tests.sh" "basic_optimizations_advanced"]}}}}}
 
-  :aliases {"test"       ["do"
-                          "clean,"
-                          "test-tests"]
-            "test-tests" ["do"
-                          "with-profile" "+testing" "cljsbuild" "once" "tests,"
-                          "shell" "phantomjs" "test/resources/phantom.js" "test/resources/run-tests.html"]
-            "auto-test"  ["do"
-                          "clean,"
-                          "with-profile" "+testing,+auto-testing" "cljsbuild" "auto" "tests"]
-            "release"    ["do"
-                          "shell" "scripts/check-versions.sh,"
-                          "clean,"
-                          "test,"
-                          "jar,"
-                          "shell" "scripts/check-release.sh,"
-                          "deploy" "clojars"]})
+  :aliases {"test"             ["do"
+                                ["clean"]
+                                ["build-tests"]
+                                ["shell" "scripts/run-tests.sh"]]
+            "build-tests"      ["with-profile" "+testing" "cljsbuild" "once"
+                                "basic-optimizations-none"
+                                "basic-optimizations-advanced"]
+            "auto-build-tests" ["with-profile" "+testing,+auto-testing" "cljsbuild" "auto"
+                                "basic-optimizations-none"
+                                "basic-optimizations-advanced"]
+            "auto-test"        ["do"
+                                ["clean"]
+                                ["auto-build-tests"]]
+            "release"          ["do"
+                                "shell" "scripts/check-versions.sh,"
+                                "clean,"
+                                "test,"
+                                "jar,"
+                                "shell" "scripts/check-release.sh,"
+                                "deploy" "clojars"]})
