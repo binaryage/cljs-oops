@@ -1,0 +1,7 @@
+*.iml
+pom.xml
+target/
+.lein*
+pom.xml.*
+.idea
+test/resources/_compiled
