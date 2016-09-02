@@ -10,7 +10,7 @@
   ([o k1 k2 & ks] `(when-let [o# (goog.object/get ~o ~k1)]
                      (oget o# ~k2 ~@ks))))
 
-(defmacro oset [o ks val]
+(defmacro oset! [o ks val]
   (let [keys (butlast ks)
         obj-sym (gensym)]
     `(let [~obj-sym ~o
@@ -26,3 +26,13 @@
 (defmacro oapply [o name param-coll]
   `(let [o# ~o]
      (.apply (goog.object/get o# ~name) o# (into-array ~param-coll))))
+
+(defmacro ocall!
+  "This macro is identical to ocall, use it if you want to express a side-effecting call."
+  [& args]
+  `(ocall ~@args))
+
+(defmacro oapply!
+  "This macro is identical to ocall, use it if you want to express a side-effecting invocation."
+  [& args]
+  `(oapply ~@args))
