@@ -69,12 +69,13 @@
   (println "expected:" (ansi :green) (pr-str (:expected m)) (ansi :reset))
   (println "  actual:" (ansi :yellow) (pr-str (:actual m)) (ansi :reset)))
 
-; -- entry point ------------------------------------------------------------------------------------------------------------
-
 (defn run-normal-tests []
   (test/run-tests
     (cljs.test/empty-env ::test/default)
     'oops.main))
 
+; -- entry point ------------------------------------------------------------------------------------------------------------
+
+(enable-console-print!)
 (case (.-selectedTestSuite js/window)
   (run-normal-tests))

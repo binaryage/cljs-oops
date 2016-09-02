@@ -33,25 +33,21 @@
              :testing
              {:cljsbuild {:builds {:basic-optimizations-none
                                    {:source-paths ["src/lib"
-                                                   "test/src/env"
                                                    "test/src/runner"
                                                    "test/src/tests-basic"]
                                     :compiler     {:output-to     "test/resources/_compiled/basic_optimizations_none/main.js"
                                                    :output-dir    "test/resources/_compiled/basic_optimizations_none"
                                                    :asset-path    "_compiled/basic_optimizations_none"
-                                                   :preloads      [oops.testenv oops.runner]
-                                                   :main          oops.main
+                                                   :main          oops.runner
                                                    :optimizations :none}}
                                    :basic-optimizations-advanced
                                    {:source-paths ["src/lib"
-                                                   "test/src/env"
                                                    "test/src/runner"
                                                    "test/src/tests-basic"]
                                     :compiler     {:output-to     "test/resources/_compiled/basic_optimizations_advanced/main.js"
                                                    :output-dir    "test/resources/_compiled/basic_optimizations_advanced"
                                                    :asset-path    "_compiled/basic_optimizations_advanced"
-                                                   :preloads      [oops.testenv oops.runner]
-                                                   :main          oops.main
+                                                   :main          oops.runner
                                                    :optimizations :advanced}}}}}
              :auto-testing
              {:cljsbuild {:builds {:basic-optimizations-none     {:notify-command ["scripts/rerun-tests.sh" "basic_optimizations_none"]}
