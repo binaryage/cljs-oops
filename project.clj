@@ -9,6 +9,7 @@
         :url  "https://github.com/binaryage/cljs-oops"}
 
   :dependencies [[org.clojure/clojure "1.8.0" :scope "provided"]
+                 [clojure-future-spec "1.9.0-alpha11" :scope "provided"]
                  [org.clojure/clojurescript "1.9.227" :scope "provided"]]
 
   :clean-targets ^{:protect false} ["target"
@@ -53,23 +54,25 @@
              {:cljsbuild {:builds {:basic-optimizations-none     {:notify-command ["scripts/rerun-tests.sh" "basic_optimizations_none"]}
                                    :basic-optimizations-advanced {:notify-command ["scripts/rerun-tests.sh" "basic_optimizations_advanced"]}}}}}
 
-  :aliases {"test"             ["do"
-                                ["clean"]
-                                ["build-tests"]
-                                ["shell" "scripts/run-tests.sh"]]
-            "build-tests"      ["with-profile" "+testing" "cljsbuild" "once"
-                                "basic-optimizations-none"
-                                "basic-optimizations-advanced"]
-            "auto-build-tests" ["with-profile" "+testing,+auto-testing" "cljsbuild" "auto"
-                                "basic-optimizations-none"
-                                "basic-optimizations-advanced"]
-            "auto-test"        ["do"
-                                ["clean"]
-                                ["auto-build-tests"]]
-            "release"          ["do"
-                                "shell" "scripts/check-versions.sh,"
-                                "clean,"
-                                "test,"
-                                "jar,"
-                                "shell" "scripts/check-release.sh,"
-                                "deploy" "clojars"]})
+  :aliases {"test"                        ["do"
+                                           ["clean"]
+                                           ["build-tests"]
+                                           ["shell" "scripts/run-tests.sh"]]
+            "build-tests"                 ["with-profile" "+testing" "cljsbuild" "once"
+                                           "basic-optimizations-none"
+                                           "basic-optimizations-advanced"]
+            "auto-build-tests"            ["with-profile" "+testing,+auto-testing" "cljsbuild" "auto"
+                                           "basic-optimizations-none"
+                                           "basic-optimizations-advanced"]
+            "auto-build-basic-none-tests" ["with-profile" "+testing,+auto-testing" "cljsbuild" "auto"
+                                           "basic-optimizations-none"]
+            "auto-test"                   ["do"
+                                           ["clean"]
+                                           ["auto-build-tests"]]
+            "release"                     ["do"
+                                           "shell" "scripts/check-versions.sh,"
+                                           "clean,"
+                                           "test,"
+                                           "jar,"
+                                           "shell" "scripts/check-release.sh,"
+                                           "deploy" "clojars"]})

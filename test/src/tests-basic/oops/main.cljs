@@ -3,19 +3,26 @@
             [oops.core :refer [oget oset! ocall! oapply! ocall oapply]]))
 
 (deftest test-oget
-  (testing "simple key retrieval"
-    (let [sample-obj #js {:key               "val"
-                          "@#$%fancy key^&*" "fancy-val"
-                          "nested"           #js {:nested-key1  "nk1"
-                                                  "nested-key2" 2}}]
+  (let [sample-obj #js {:key               "val"
+                        "@#$%fancy key^&*" "fancy-val"
+                        "nested"           #js {:nested-key1  "nk1"
+                                                "nested-key2" 2}}]
+    (testing "simple static key/path fetch"
       (are [key expected] (= (oget sample-obj key) expected)
         "non-existent" nil
         "key" "val"
         "@#$%fancy key^&*" "fancy-val"
-        ["nested" "nested-key2"] 2)))
-  (testing "oget corner cases"
-    ; TODO
-    ))
+        ["nested" "nested-key2"] 2))
+
+    (testing "simple dynamic key/path fetch"
+      (let [dynamic-key-fn (fn [name] name)]
+        (is (= (oget sample-obj (dynamic-key-fn "key")) "val"))
+        (is (= (oget sample-obj (dynamic-key-fn "xxx")) nil))
+        (is (= (oget sample-obj (dynamic-key-fn "nested") "nested-key1") "nk1"))
+        (is (= (oget sample-obj [(dynamic-key-fn "nested") "nested-key1"]) "nk1"))))
+    (testing "oget corner cases"
+      ; TODO
+      )))
 
 (deftest test-oset
   (testing "simple key store"
