@@ -4,7 +4,7 @@
 
 ; -- helper code generators -------------------------------------------------------------------------------------------------
 
-(defn gen-obj-access-validity-check [obj-sym]
+(defn gen-object-validation-check [obj-sym]
   {:pre [(symbol? obj-sym)]}
   `(cond
      (cljs.core/undefined? ~obj-sym) (throw (ex-info "Unexpected object value (undefined)" {:obj ~obj-sym}))
@@ -20,21 +20,27 @@
   `(cljs.core/aset ~obj ~key ~val))
 
 (defn gen-key-get [obj key]
-  (let [obj-sym (gensym "obj")]
-    `(let [~obj-sym ~obj]
-       ~(gen-obj-access-validity-check obj-sym)
-       ~(gen-atomic-key-get obj-sym key))))
+  (gen-atomic-key-get obj key))
 
 (defn gen-key-set [obj key val]
+  (gen-atomic-key-set obj key val))
+
+(defn gen-safe-key-get [obj key]
   (let [obj-sym (gensym "obj")]
     `(let [~obj-sym ~obj]
-       ~(gen-obj-access-validity-check obj-sym)
-       ~(gen-atomic-key-set obj-sym key val))))
+       (validate-object-dynamically ~obj-sym)
+       ~(gen-key-get obj-sym key))))
+
+(defn gen-safe-key-set [obj key val]
+  (let [obj-sym (gensym "obj")]
+    `(let [~obj-sym ~obj]
+       (validate-object-dynamically ~obj-sym)
+       ~(gen-key-set obj-sym key val))))
 
 (defn gen-static-path-get [obj path]
   (if (empty? path)
     obj
-    (gen-key-get (gen-static-path-get obj (butlast path)) (last path))))
+    (gen-safe-key-get (gen-static-path-get obj (butlast path)) (last path))))
 
 (defn gen-dynamic-selector-get [obj selector]
   `(get-selector-dynamically ~obj ~@selector))
@@ -54,7 +60,7 @@
   (let [parent-obj-path (butlast path)
         parent-obj-get-code (gen-static-path-get obj-sym parent-obj-path)
         key (last path)]
-    (gen-key-set parent-obj-get-code key val)))
+    (gen-safe-key-set parent-obj-get-code key val)))
 
 (defn gen-dynamic-selector-set [obj selector val]
   `(set-selector-dynamically ~obj ~selector ~val))
@@ -69,13 +75,17 @@
            ~parent-obj-path-sym (butlast ~path-sym)
            ~key-sym (last ~path-sym)
            ~parent-obj-sym ~(gen-dynamic-path-reduction obj-sym parent-obj-path-sym)]
-       ~(gen-key-set parent-obj-sym key-sym val))))
+       (set-key-dynamically ~parent-obj-sym ~key-sym ~val))))
 
 ; -- helper macros ----------------------------------------------------------------------------------------------------------
 
 (defmacro coerce-key-dynamically-impl [key-sym]
   {:pre [(symbol? key-sym)]}
   `(name ~key-sym))
+
+(defmacro validate-object-dynamically-impl [obj-sym]
+  {:pre [(symbol? obj-sym)]}
+  (gen-object-validation-check obj-sym))
 
 (defmacro build-path-dynamically-impl [selector-sym]
   {:pre [(symbol? selector-sym)]}
@@ -90,7 +100,13 @@
 (defmacro get-key-dynamically-impl [obj-sym key-sym]
   {:pre [(symbol? obj-sym)
          (symbol? key-sym)]}
-  (gen-key-get obj-sym key-sym))
+  (gen-safe-key-get obj-sym key-sym))
+
+(defmacro set-key-dynamically-impl [obj-sym key-sym val-sym]
+  {:pre [(symbol? obj-sym)
+         (symbol? key-sym)
+         (symbol? val-sym)]}
+  (gen-safe-key-set obj-sym key-sym val-sym))
 
 (defmacro get-selector-dynamically-impl [obj-sym selector-sym]
   {:pre [(symbol? obj-sym)
