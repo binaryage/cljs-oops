@@ -16,14 +16,14 @@
 (defn build-path-dynamically [selector]
   (build-path-dynamically-impl selector))
 
-(defn get-key-dynamically [o key]
-  (get-key-dynamically-impl o key))
+(defn get-key-dynamically [obj key]
+  (get-key-dynamically-impl obj key))
 
-(defn get-selector-dynamically [o & selector]
-  (get-selector-dynamically-impl o selector))
+(defn get-selector-dynamically [obj & selector]
+  (get-selector-dynamically-impl obj selector))
 
-(defn set-selector-dynamically [o selector val]
-  (set-selector-dynamically-impl o selector val))
+(defn set-selector-dynamically [obj selector val]
+  (set-selector-dynamically-impl obj selector val))
 
 (defn coerce-key-dynamically [key]
   (coerce-key-dynamically-impl key))
