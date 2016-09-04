@@ -35,6 +35,7 @@
              {:cljsbuild {:builds {:basic-optimizations-none
                                    {:source-paths ["src/lib"
                                                    "test/src/runner"
+                                                   "test/src/tools"
                                                    "test/src/tests-basic"]
                                     :compiler     {:output-to     "test/resources/_compiled/basic_optimizations_none/main.js"
                                                    :output-dir    "test/resources/_compiled/basic_optimizations_none"
@@ -44,6 +45,7 @@
                                    :basic-optimizations-advanced
                                    {:source-paths ["src/lib"
                                                    "test/src/runner"
+                                                   "test/src/tools"
                                                    "test/src/tests-basic"]
                                     :compiler     {:output-to     "test/resources/_compiled/basic_optimizations_advanced/main.js"
                                                    :output-dir    "test/resources/_compiled/basic_optimizations_advanced"
