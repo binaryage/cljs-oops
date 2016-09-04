@@ -4,21 +4,21 @@
 
 ; -- helper code generators -------------------------------------------------------------------------------------------------
 
-(defn gen-atomic-key-fetch [o key]
+(defn gen-atomic-key-get [o key]
   ; TODO: here implement optional safety-checking logic
   `(aget ~o ~key))
 
-(defn gen-atomic-key-store [o key val]
+(defn gen-atomic-key-set [o key val]
   ; TODO: here implement optional safety-checking logic
   `(aset ~o ~key ~val))
 
-(defn gen-static-path-fetch [o path]
+(defn gen-static-path-get [o path]
   (if (empty? path)
     o
-    (gen-atomic-key-fetch (gen-static-path-fetch o (butlast path)) (last path))))
+    (gen-atomic-key-get (gen-static-path-get o (butlast path)) (last path))))
 
-(defn gen-dynamic-selector-fetch [o selector]
-  `(fetch-selector-dynamically ~o ~@selector))
+(defn gen-dynamic-selector-get [o selector]
+  `(get-selector-dynamically ~o ~@selector))
 
 (defn gen-dynamic-selector-validation [selector]
   `(if-not (clojure.spec/valid? ::oops.sdefs/obj-selector ~selector)
@@ -27,20 +27,20 @@
 
 (defn gen-dynamic-path-reduction [o path]
   {:pre [(symbol? o)]}
-  `(reduce fetch-key-dynamically ~o ~path))
+  `(reduce get-key-dynamically ~o ~path))
 
-(defn gen-static-path-store [obj path val]
+(defn gen-static-path-set [obj path val]
   {:pre [(not (empty? path))
          (symbol? obj)]}
   (let [parent-obj-path (butlast path)
-        parent-obj-fetch-code (gen-static-path-fetch obj parent-obj-path)
+        parent-obj-get-code (gen-static-path-get obj parent-obj-path)
         key (last path)]
-    (gen-atomic-key-store parent-obj-fetch-code key val)))
+    (gen-atomic-key-set parent-obj-get-code key val)))
 
-(defn gen-dynamic-selector-store [o selector val]
-  `(store-selector-dynamically ~o ~selector ~val))
+(defn gen-dynamic-selector-set [o selector val]
+  `(set-selector-dynamically ~o ~selector ~val))
 
-(defn gen-dynamic-path-store [o path val]
+(defn gen-dynamic-path-set [o path val]
   {:pre [(symbol? o)
          (symbol? val)]}
   (let [path-sym (gensym "path")
@@ -51,7 +51,7 @@
            ~parent-obj-path-sym (butlast ~path-sym)
            ~key-sym (last ~path-sym)
            ~parent-obj-sym ~(gen-dynamic-path-reduction o parent-obj-path-sym)]
-       ~(gen-atomic-key-store parent-obj-sym key-sym val))))
+       ~(gen-atomic-key-set parent-obj-sym key-sym val))))
 
 ; -- helper macros ----------------------------------------------------------------------------------------------------------
 
@@ -69,42 +69,42 @@
                         (concat path# [(coerce-key-dynamically key#)])))]
        (reduce reducer# (list) ~selector))))
 
-(defmacro fetch-key-dynamically-impl [o key]
+(defmacro get-key-dynamically-impl [o key]
   {:pre [(symbol? o)
          (symbol? key)]}
-  (gen-atomic-key-fetch o key))
+  (gen-atomic-key-get o key))
 
-(defmacro fetch-selector-dynamically-impl [o selector]
+(defmacro get-selector-dynamically-impl [o selector]
   {:pre [(symbol? o)
          (symbol? selector)]}
   `(do
      ~(gen-dynamic-selector-validation selector)
      ~(gen-dynamic-path-reduction o `(build-path-dynamically ~selector))))
 
-(defmacro store-selector-dynamically-impl [o selector val]
+(defmacro set-selector-dynamically-impl [o selector val]
   {:pre [(symbol? o)
          (symbol? selector)
          (symbol? val)]}
   `(do
      ~(gen-dynamic-selector-validation selector)
-     ~(gen-dynamic-path-store o `(build-path-dynamically ~selector) val)))
+     ~(gen-dynamic-path-set o `(build-path-dynamically ~selector) val)))
 
 ; -- public macros ----------------------------------------------------------------------------------------------------------
 
 (defmacro oget [o & selector]
   (let [path (schema/selector->path selector)]
     (if-not (= :invalid-path path)
-      (gen-static-path-fetch o path)
-      (gen-dynamic-selector-fetch o selector))))
+      (gen-static-path-get o path)
+      (gen-dynamic-selector-get o selector))))
 
 (defmacro oset! [o selector val]
   (let [o-sym (gensym "o")
         path (schema/selector->path selector)
-        store-code (if-not (= :invalid-path path)
-                     (gen-static-path-store o-sym path val)
-                     (gen-dynamic-selector-store o-sym selector val))]
+        set-code (if-not (= :invalid-path path)
+                   (gen-static-path-set o-sym path val)
+                   (gen-dynamic-selector-set o-sym selector val))]
     `(let [~o-sym ~o]
-       ~store-code
+       ~set-code
        ~o-sym)))
 
 (defmacro ocall [o name & params]
