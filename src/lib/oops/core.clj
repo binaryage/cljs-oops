@@ -11,7 +11,9 @@
 
 (defn gen-warn-validation-error [obj-sym flavor]
   {:pre [(symbol? obj-sym)]}
-  `(report-warning (str "Unexpected object value (" ~flavor ")") obj-sym))
+  `(do
+     (report-warning (str "Unexpected object value (" ~flavor ")") ~obj-sym)
+     ::validation-error))
 
 (defn gen-report-validation-error [obj-sym flavor]
   {:pre [(symbol? obj-sym)]}
@@ -45,10 +47,11 @@
 
 (defn gen-instrumented-key-get [obj-sym key]
   {:pre [(symbol? obj-sym)]}
-  `(do
-     ~(if (config/validate-object-access?)
-        `(validate-object-dynamically ~obj-sym))
-     ~(gen-key-get obj-sym key)))
+  (let [key-get-code (gen-key-get obj-sym key)]
+    (if (config/validate-object-access?)
+      `(if-not (= ::validation-error (validate-object-dynamically ~obj-sym))
+         ~key-get-code)
+      key-get-code)))
 
 (defn gen-instrumented-key-set [obj-sym key val]
   {:pre [(symbol? obj-sym)]}

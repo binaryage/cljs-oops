@@ -12,7 +12,8 @@
             [oops.config]))
 
 (defn ^:dynamic report-warning [& args]
-  (.apply (.-warn js/console) js/console (into-array args)))
+  (.apply (.-warn js/console) js/console (into-array args))
+  nil)
 
 (defn coerce-key-dynamically [key]
   (coerce-key-dynamically-impl key))

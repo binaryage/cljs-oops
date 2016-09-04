@@ -32,16 +32,7 @@
     (testing "object access validation"
       (if-not (under-advanced-mode?)
         (do                                                                                                                   ; dev mode
-          ; root level
           (are [o msg] (thrown-with-msg? js/Error msg (oget o "key"))
-            nil #"Unexpected object value \(nil\)"
-            js/undefined #"Unexpected object value \(undefined\)"
-            "s" #"Unexpected object value \(string\)"
-            42 #"Unexpected object value \(number\)"
-            true #"Unexpected object value \(boolean\)"
-            false #"Unexpected object value \(boolean\)")
-          ; second level
-          (are [o msg] (thrown-with-msg? js/Error msg (oget o "nested" "key"))
             nil #"Unexpected object value \(nil\)"
             js/undefined #"Unexpected object value \(undefined\)"
             "s" #"Unexpected object value \(string\)"

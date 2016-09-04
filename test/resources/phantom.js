@@ -27,7 +27,8 @@ var exitCode = 0;
 
 const allScripts = [
     "basic_optimizations_none",
-    "basic_optimizations_advanced"];
+    "basic_optimizations_advanced",
+    "prefer_warnings"];
 
 const scripts = scriptsToRun || allScripts;
 

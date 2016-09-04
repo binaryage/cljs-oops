@@ -1,12 +1,14 @@
 (ns oops.tools)
 
-(defmacro with-captured-console [recorder & body]
+;(println (interpose "\n" (seq (.getURLs (ClassLoader/getSystemClassLoader)))))
+
+(defmacro with-console-recording [recorder & body]
   `(try
      (let [recorder# ~recorder]
        (add-console-recorder! recorder#)
-       ~@body
-       (finally
-         (remove-console-recorder! recorder#)))))
+       ~@body)
+     (finally
+       (remove-console-recorder! recorder#))))
 
 (defn advanced-mode? []
   (if cljs.env/*compiler*

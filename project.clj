@@ -20,7 +20,7 @@
 
   :source-paths ["src/lib"]
 
-  :test-paths ["test"]
+  :test-paths []
 
   :cljsbuild {:builds {}}                                                                                                     ; prevent https://github.com/emezeske/lein-cljsbuild/issues/413
 
@@ -31,7 +31,7 @@
                                                    :output-dir    "target/devel"
                                                    :optimizations :none}}}}}
 
-             :testing
+             :testing-basic-optimizations-none
              {:cljsbuild {:builds {:basic-optimizations-none
                                    {:source-paths ["src/lib"
                                                    "test/src/runner"
@@ -41,8 +41,9 @@
                                                    :output-dir    "test/resources/_compiled/basic_optimizations_none"
                                                    :asset-path    "_compiled/basic_optimizations_none"
                                                    :main          oops.runner
-                                                   :optimizations :none}}
-                                   :basic-optimizations-advanced
+                                                   :optimizations :none}}}}}
+             :testing-basic-optimizations-advanced
+             {:cljsbuild {:builds {:basic-optimizations-advanced
                                    {:source-paths ["src/lib"
                                                    "test/src/runner"
                                                    "test/src/tools"
@@ -52,6 +53,18 @@
                                                    :asset-path    "_compiled/basic_optimizations_advanced"
                                                    :main          oops.runner
                                                    :optimizations :advanced}}}}}
+             :testing-prefer-warnings
+             {:cljsbuild {:builds {:prefer-warnings
+                                   {:source-paths ["src/lib"
+                                                   "test/src/runner"
+                                                   "test/src/tools"
+                                                   "test/src/tests-prefer-warnings"]
+                                    :compiler     {:output-to       "test/resources/_compiled/prefer_warnings/main.js"
+                                                   :output-dir      "test/resources/_compiled/prefer_warnings"
+                                                   :asset-path      "_compiled/prefer_warnings"
+                                                   :main            oops.runner
+                                                   :optimizations   :none
+                                                   :external-config {:oops/config {:object-access-validation :warn}}}}}}}
              :auto-testing
              {:cljsbuild {:builds {:basic-optimizations-none     {:notify-command ["scripts/rerun-tests.sh" "basic_optimizations_none"]}
                                    :basic-optimizations-advanced {:notify-command ["scripts/rerun-tests.sh" "basic_optimizations_advanced"]}}}}}
@@ -60,12 +73,14 @@
                                            ["clean"]
                                            ["build-tests"]
                                            ["shell" "scripts/run-tests.sh"]]
-            "build-tests"                 ["with-profile" "+testing" "cljsbuild" "once"
-                                           "basic-optimizations-none"
-                                           "basic-optimizations-advanced"]
-            "auto-build-tests"            ["with-profile" "+testing,+auto-testing" "cljsbuild" "auto"
-                                           "basic-optimizations-none"
-                                           "basic-optimizations-advanced"]
+            "build-tests"                 ["do"
+                                           ["with-profile" "+testing-basic-optimizations-none" "cljsbuild" "once" "basic-optimizations-none"]
+                                           ["with-profile" "+testing-basic-optimizations-advanced" "cljsbuild" "once" "basic-optimizations-advanced"]
+                                           ["with-profile" "+testing-prefer-warnings" "cljsbuild" "once" "prefer-warnings"]]
+            "auto-build-tests"            ["do"
+                                           ["with-profile" "+testing-basic-optimizations-none,+auto-testing" "cljsbuild" "once" "basic-optimizations-none"]
+                                           ["with-profile" "+testing-basic-optimizations-advanced,+auto-testing" "cljsbuild" "once" "basic-optimizations-advanced"]
+                                           ["with-profile" "+testing-prefer-warnings" "cljsbuild,+auto-testing" "once" "prefer-warnings"]]
             "auto-build-basic-none-tests" ["with-profile" "+testing,+auto-testing" "cljsbuild" "auto"
                                            "basic-optimizations-none"]
             "auto-test"                   ["do"
