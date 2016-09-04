@@ -29,26 +29,29 @@
 (defn read-env-config []
   {})                                                                                                                         ; TODO: write a library for this
 
-(defn ^:dynamic get-initial-compiler-config []
+(defn ^:dynamic get-compiler-config []
   {:post [(map? %)]}                                                                                                          ; TODO: validate config using spec or bhauman's tooling
   (merge (prepare-default-config) (read-project-config) (read-env-config)))
 
 ; -- public api--------------------------------------------------------------------------------------------------------------
 
-(defn set-current-compiler-config! [new-config]
-  {:pre [(map? new-config)]}
-  (alter-var-root #'state/*compiler-config* (constantly new-config))
-  new-config)
+;(defn set-current-compiler-config! [new-config]
+;  {:pre [(map? new-config)]}
+;  (log "COMPILER CONFIG:" new-config)
+;  (alter-var-root #'state/*compiler-config* (constantly new-config))
+;  new-config)
 
 (defn get-current-compiler-config []
-  (if-not (bound? #'state/*compiler-config*)
-    (set-current-compiler-config! (get-initial-compiler-config))
-    state/*compiler-config*))
+  ; {:post [(or (log "COMPILER CONFIG:" %) true)]}
+  #_(if-not (bound? #'state/*compiler-config*)
+      (set-current-compiler-config! (get-compiler-config))
+      state/*compiler-config*)
+  (get-compiler-config))
 
-(defn update-current-compiler-config! [f-or-map & args]
-  (if (map? f-or-map)
-    (update-current-compiler-config! merge f-or-map)
-    (set-current-compiler-config! (apply f-or-map (get-current-compiler-config) args))))
+;(defn update-current-compiler-config! [f-or-map & args]
+;  (if (map? f-or-map)
+;    (update-current-compiler-config! merge f-or-map)
+;    (set-current-compiler-config! (apply f-or-map (get-current-compiler-config) args))))
 
 ; -- runtime macros ---------------------------------------------------------------------------------------------------------
 
