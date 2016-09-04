@@ -2,14 +2,14 @@
   (:require [oops.schema :as schema]
             [oops.debug :refer [log]]))
 
-(defn gen-key-fetch [o key]
+(defn gen-atomic-key-fetch [o key]
   ; TODO: here implement optional safety-checking logic
   `(aget ~o ~key))
 
 (defn gen-static-path-fetch [o path]
   (if (empty? path)
     o
-    (gen-key-fetch (gen-static-path-fetch o (butlast path)) (last path))))
+    (gen-atomic-key-fetch (gen-static-path-fetch o (butlast path)) (last path))))
 
 (defn gen-dynamic-selector-fetch [o selector]
   `(dynamic-selector-fetch ~o ~@selector))
@@ -19,7 +19,7 @@
          (symbol? key)]}
   `(if (sequential? ~key)
      (apply dynamic-selector-fetch ~o ~key)
-     ~(gen-key-fetch o `(name ~key))))
+     ~(gen-atomic-key-fetch o `(dynamic-key-coerce ~key))))
 
 (defn gen-dynamic-selector-validation [selector]
   `(if-not (clojure.spec/valid? ::oops.sdefs/obj-selector ~selector)
@@ -35,6 +35,10 @@
   {:pre [(symbol? o)
          (symbol? selector-segment)]}
   `(dynamic-key-fetch ~o ~selector-segment))
+
+(defmacro dynamic-key-coerce-impl [key]
+  {:pre [(symbol? key)]}
+  `(name ~key))
 
 (defmacro dynamic-selector-fetch-impl [o selector]
   {:pre [(symbol? o)
