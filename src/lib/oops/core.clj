@@ -27,9 +27,7 @@
 
 (defn gen-dynamic-path-reduction [o path]
   {:pre [(symbol? o)]}
-  `(let [reducer# (fn [o# key#]
-                    (fetch-key-dynamically o# key#))]
-     (reduce reducer# ~o ~path)))
+  `(reduce fetch-key-dynamically ~o ~path))
 
 (defn gen-static-path-store [obj path val]
   {:pre [(not (empty? path))
