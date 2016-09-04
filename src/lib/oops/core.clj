@@ -28,16 +28,22 @@
      (throw (ex-info "Invalid dynamic selector"
                      {:explain (clojure.spec/explain-data ::oops.sdefs/obj-selector ~selector)}))))
 
+(defn gen-dynamic-selector-reduction [o selector]
+  {:pre [(symbol? o)
+         (symbol? selector)]}
+  `(reduce dynamic-selector-reducer ~o ~selector))
+
+(defmacro dynamic-selector-reducer-impl [o selector-segment]
+  {:pre [(symbol? o)
+         (symbol? selector-segment)]}
+  `(dynamic-key-fetch ~o ~selector-segment))
+
 (defmacro dynamic-selector-fetch-impl [o selector]
   {:pre [(symbol? o)
          (symbol? selector)]}
   `(do
      ~(gen-dynamic-selector-validation selector)
-     (if (empty? ~selector)
-       ~o
-       (let [next-o# (dynamic-key-fetch ~o (first ~selector))
-             remaining-selector# (rest ~selector)]
-         (recur next-o# remaining-selector#)))))
+     ~(gen-dynamic-selector-reduction o selector)))
 
 (defmacro oget
   ([o & selector]
