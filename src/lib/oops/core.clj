@@ -19,9 +19,7 @@
          (symbol? key)]}
   `(if (sequential? ~key)
      (apply dynamic-selector-fetch ~o ~key)
-     (do
-       (assert (or (string? ~key)) (keyword? ~key))                                                                           ; TODO: this should be validated by specs on cljs side
-       ~(gen-key-fetch o `(name ~key)))))
+     ~(gen-key-fetch o `(name ~key))))
 
 (defn gen-dynamic-selector-validation [selector]
   `(if-not (clojure.spec/valid? ::oops.sdefs/obj-selector ~selector)
