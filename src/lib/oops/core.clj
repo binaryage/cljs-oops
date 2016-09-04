@@ -1,6 +1,5 @@
 (ns oops.core
-  (:require [clojure.spec :as s]
-            [oops.schema :as schema]
+  (:require [oops.schema :as schema]
             [oops.debug :refer [log]]))
 
 (defn gen-key-fetch [o key]
@@ -26,14 +25,23 @@
            (assert (or (string? ~key-sym)) (keyword? ~key-sym))                                                               ; TODO: this should be validated by specs on cljs side
            ~(gen-key-fetch o-sym `(name ~key-sym)))))))
 
+(defn gen-dynamic-selector-validation [selector]
+  `(if-not (clojure.spec/valid? ::oops.sdefs/obj-selector ~selector)
+     (throw (ex-info "Invalid dynamic selector"
+                     {:explain (clojure.spec/explain-data ::oops.sdefs/obj-selector ~selector)}))))
+
 (defmacro dynamic-selector-fetch-impl [o selector]
-  `(let [selector# ~selector
-         o# ~o]
-     (if (empty? selector#)
-       o#
-       (let [next-o# (dynamic-key-fetch o# (first selector#))
-             remaining-selector# (rest selector#)]
-         (recur next-o# remaining-selector#)))))
+  {:pre [(symbol? selector)
+         (symbol? o)]}
+  `(do
+     ~(gen-dynamic-selector-validation selector)
+     (let [selector# ~selector
+           o# ~o]
+       (if (empty? selector#)
+         o#
+         (let [next-o# (dynamic-key-fetch o# (first selector#))
+               remaining-selector# (rest selector#)]
+           (recur next-o# remaining-selector#))))))
 
 (defmacro oget
   ([o & selector]

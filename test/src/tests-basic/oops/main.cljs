@@ -19,7 +19,9 @@
         (is (= (oget sample-obj (dynamic-key-fn "key")) "val"))
         (is (= (oget sample-obj (dynamic-key-fn "xxx")) nil))
         (is (= (oget sample-obj (dynamic-key-fn "nested") "nested-key1") "nk1"))
-        (is (= (oget sample-obj [(dynamic-key-fn "nested") "nested-key1"]) "nk1"))))
+        (is (= (oget sample-obj [(dynamic-key-fn "nested") "nested-key1"]) "nk1"))
+        (are [input] (thrown-with-msg? js/Error #"Invalid dynamic selector" (oget sample-obj (dynamic-key-fn input)))
+          'sym identity 0 #js {} #js [])))
     (testing "oget corner cases"
       ; TODO
       )))
