@@ -2,6 +2,8 @@
   (:require [oops.schema :as schema]
             [oops.debug :refer [log]]))
 
+; -- helper code generators -------------------------------------------------------------------------------------------------
+
 (defn gen-atomic-key-fetch [o key]
   ; TODO: here implement optional safety-checking logic
   `(aget ~o ~key))
@@ -31,6 +33,8 @@
          (symbol? selector)]}
   `(reduce dynamic-selector-reducer ~o ~selector))
 
+; -- helper macros ----------------------------------------------------------------------------------------------------------
+
 (defmacro dynamic-selector-reducer-impl [o selector-segment]
   {:pre [(symbol? o)
          (symbol? selector-segment)]}
@@ -46,6 +50,8 @@
   `(do
      ~(gen-dynamic-selector-validation selector)
      ~(gen-dynamic-selector-reduction o selector)))
+
+; -- public macros ----------------------------------------------------------------------------------------------------------
 
 (defmacro oget
   ([o & selector]
@@ -70,6 +76,8 @@
 (defmacro oapply [o name param-coll]
   `(let [o# ~o]
      (.apply (goog.object/get o# ~name) o# (into-array ~param-coll))))
+
+; -- convenience macros -----------------------------------------------------------------------------------------------------
 
 (defmacro ocall!
   "This macro is identical to ocall, use it if you want to express a side-effecting call."
