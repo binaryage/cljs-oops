@@ -9,14 +9,6 @@
   (:require [clojure.spec]
             [oops.sdefs]))
 
-(declare coerce-key-dynamically)
-(declare validate-object-dynamically)
-(declare build-path-dynamically)
-(declare get-key-dynamically)
-(declare set-key-dynamically)
-(declare get-selector-dynamically)
-(declare set-selector-dynamically)
-
 (defn coerce-key-dynamically [key]
   (coerce-key-dynamically-impl key))
 
