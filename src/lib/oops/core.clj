@@ -40,6 +40,19 @@
 (defn gen-dynamic-selector-store [o selector val]
   `(store-selector-dynamically ~o ~selector ~val))
 
+(defn gen-dynamic-path-store [o path val]
+  {:pre [(symbol? o)
+         (symbol? val)]}
+  (let [path-sym (gensym "path")
+        key-sym (gensym "key")
+        parent-obj-path-sym (gensym "parent-obj-path")
+        parent-obj-sym (gensym "parent-obj")]
+    `(let [~path-sym ~path
+           ~parent-obj-path-sym (butlast ~path-sym)
+           ~key-sym (last ~path-sym)
+           ~parent-obj-sym ~(gen-dynamic-path-reduction o parent-obj-path-sym)]
+       ~(gen-atomic-key-store parent-obj-sym key-sym val))))
+
 ; -- helper macros ----------------------------------------------------------------------------------------------------------
 
 (defmacro coerce-key-dynamically-impl [key]
@@ -72,17 +85,9 @@
   {:pre [(symbol? o)
          (symbol? selector)
          (symbol? val)]}
-  (let [path-sym (gensym "path")
-        key-sym (gensym "key")
-        parent-obj-path-sym (gensym "parent-obj-path")
-        parent-obj-sym (gensym "parent-obj")]
-    `(do
-       ~(gen-dynamic-selector-validation selector)
-       (let [~path-sym (build-path-dynamically ~selector)
-             ~parent-obj-path-sym (butlast ~path-sym)
-             ~key-sym (last ~path-sym)
-             ~parent-obj-sym ~(gen-dynamic-path-reduction o parent-obj-path-sym)]
-         ~(gen-atomic-key-store parent-obj-sym key-sym val)))))
+  `(do
+     ~(gen-dynamic-selector-validation selector)
+     ~(gen-dynamic-path-store o `(build-path-dynamically ~selector) val)))
 
 ; -- public macros ----------------------------------------------------------------------------------------------------------
 
