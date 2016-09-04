@@ -29,11 +29,18 @@
 (deftest test-oset
   (testing "simple key store"
     (let [sample-obj #js {"nested" #js {}}]
-      (are [ks] (= (oget (oset! sample-obj ks "val") ks) "val")
+      (are [selector] (= (oget (oset! sample-obj selector "val") selector) "val")
         ["xxx"]
         ["yyy"]
         ["nested" "y"])
       (is (= (js/JSON.stringify sample-obj) "{\"nested\":{\"y\":\"val\"},\"xxx\":\"val\",\"yyy\":\"val\"}"))))
+  (testing "simple dynamic selector set"
+    (let [sample-obj #js {"nested" #js {}}
+          dynamic-key-fn (fn [name] name)]
+      (are [selector] (= (oget (oset! sample-obj selector "val") selector) "val")
+        (dynamic-key-fn "key")
+        [(dynamic-key-fn "nested") (dynamic-key-fn "key2")])
+      (is (= (js/JSON.stringify sample-obj) "{\"nested\":{\"key2\":\"val\"},\"key\":\"val\"}"))))
   (testing "oset corner cases"
     ; TODO
     ))
