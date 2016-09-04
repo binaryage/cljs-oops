@@ -2,7 +2,7 @@
   (:require [cljs.test :refer-macros [deftest testing is are run-tests use-fixtures]]
             [oops.core :refer [oget oset! ocall! oapply! ocall oapply]]
             [oops.config :refer [with-runtime-config]]
-            [oops.tools :refer [with-captured-console]]))
+            [oops.tools :refer [with-captured-console under-advanced-mode?]]))
 
 (use-fixtures :once with-captured-console)
 
@@ -30,31 +30,42 @@
           #js {}
           #js [])))
     (testing "object access validation"
-      ; root level
-      (are [o msg] (thrown-with-msg? js/Error msg (oget o "key"))
-        nil #"Unexpected object value \(nil\)"
-        js/undefined #"Unexpected object value \(undefined\)"
-        "s" #"Unexpected object value \(string\)"
-        42 #"Unexpected object value \(number\)"
-        true #"Unexpected object value \(boolean\)"
-        false #"Unexpected object value \(boolean\)")
-      ; second level
-      (are [o msg] (thrown-with-msg? js/Error msg (oget o "nested" "key"))
-        nil #"Unexpected object value \(nil\)"
-        js/undefined #"Unexpected object value \(undefined\)"
-        "s" #"Unexpected object value \(string\)"
-        42 #"Unexpected object value \(number\)"
-        true #"Unexpected object value \(boolean\)"
-        false #"Unexpected object value \(boolean\)")
-      (with-runtime-config {:object-access-validation false}
-        (are [o msg] (thrown-with-msg? js/TypeError msg (oget o "key"))
-          nil #"null is not an object"
-          js/undefined #"undefined is not an object")
-        (are [o] (= (oget o "key") nil)
-          "s"
-          42
-          true
-          false)))
+      (if-not (under-advanced-mode?)
+        (do                                                                                                                   ; dev mode
+          ; root level
+          (are [o msg] (thrown-with-msg? js/Error msg (oget o "key"))
+            nil #"Unexpected object value \(nil\)"
+            js/undefined #"Unexpected object value \(undefined\)"
+            "s" #"Unexpected object value \(string\)"
+            42 #"Unexpected object value \(number\)"
+            true #"Unexpected object value \(boolean\)"
+            false #"Unexpected object value \(boolean\)")
+          ; second level
+          (are [o msg] (thrown-with-msg? js/Error msg (oget o "nested" "key"))
+            nil #"Unexpected object value \(nil\)"
+            js/undefined #"Unexpected object value \(undefined\)"
+            "s" #"Unexpected object value \(string\)"
+            42 #"Unexpected object value \(number\)"
+            true #"Unexpected object value \(boolean\)"
+            false #"Unexpected object value \(boolean\)")
+          (with-runtime-config {:object-access-validation false}
+            (are [o msg] (thrown-with-msg? js/TypeError msg (oget o "key"))
+              nil #"null is not an object"
+              js/undefined #"undefined is not an object")
+            (are [o] (= (oget o "key") nil)
+              "s"
+              42
+              true
+              false)))
+        (do                                                                                                                   ; advanced optimizations
+          (are [o msg] (thrown-with-msg? js/TypeError msg (oget o "key"))
+            nil #"null is not an object"
+            js/undefined #"undefined is not an object")
+          (are [o] (= (oget o "key") nil)
+            "s"
+            42
+            true
+            false))))
     (testing "oget corner cases"
       ; TODO
       )))

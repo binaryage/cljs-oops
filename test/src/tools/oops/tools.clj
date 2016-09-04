@@ -7,3 +7,10 @@
        ~@body
        (finally
          (remove-console-recorder! recorder#)))))
+
+(defn advanced-mode? []
+  (if cljs.env/*compiler*
+    (= (get-in @cljs.env/*compiler* [:options :optimizations]) :advanced)))
+
+(defmacro under-advanced-mode? []
+  (boolean (advanced-mode?)))
