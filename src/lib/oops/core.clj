@@ -92,18 +92,17 @@
 
 (defmacro oget [obj & selector]
   (let [path (schema/selector->path selector)]
-    (if-not (= :invalid-path path)
+    (if-not (= path :invalid-path)
       (gen-static-path-get obj path)
       (gen-dynamic-selector-get obj selector))))
 
 (defmacro oset! [obj selector val]
   (let [obj-sym (gensym "obj")
-        path (schema/selector->path selector)
-        set-code (if-not (= :invalid-path path)
-                   (gen-static-path-set obj-sym path val)
-                   (gen-dynamic-selector-set obj-sym selector val))]
+        path (schema/selector->path selector)]
     `(let [~obj-sym ~obj]
-       ~set-code
+       ~(if-not (= path :invalid-path)
+          (gen-static-path-set obj-sym path val)
+          (gen-dynamic-selector-set obj-sym selector val))
        ~obj-sym)))
 
 (defmacro ocall [obj selector & args]
