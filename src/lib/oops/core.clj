@@ -106,15 +106,15 @@
        ~set-code
        ~obj-sym)))
 
-(defmacro ocall [obj name & params]
+(defmacro ocall [obj selector & args]
   (let [obj-sym (gensym "obj")]
     `(let [~obj-sym ~obj]
-       (.call (goog.object/get ~obj-sym ~name) ~obj-sym ~@params))))
+       (.call (oget ~obj-sym ~selector) ~obj-sym ~@args))))
 
-(defmacro oapply [o name param-coll]
+(defmacro oapply [o selector args]
   (let [obj-sym (gensym "obj")]
     `(let [~obj-sym ~o]
-       (.apply (goog.object/get ~obj-sym ~name) ~obj-sym (into-array ~param-coll)))))
+       (.apply (oget ~obj-sym ~selector) ~obj-sym (into-array ~args)))))
 
 ; -- convenience macros -----------------------------------------------------------------------------------------------------
 
@@ -124,6 +124,6 @@
   `(ocall ~@args))
 
 (defmacro oapply!
-  "This macro is identical to ocall, use it if you want to express a side-effecting invocation."
+  "This macro is identical to oapply, use it if you want to express a side-effecting call."
   [& args]
   `(oapply ~@args))
