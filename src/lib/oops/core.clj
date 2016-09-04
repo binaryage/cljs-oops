@@ -25,22 +25,24 @@
 (defn gen-key-set [obj key val]
   (gen-atomic-key-set obj key val))
 
-(defn gen-safe-key-get [obj key]
-  (let [obj-sym (gensym "obj")]
-    `(let [~obj-sym ~obj]
-       (validate-object-dynamically ~obj-sym)
-       ~(gen-key-get obj-sym key))))
+(defn gen-instrumented-key-get [obj-sym key]
+  {:pre [(symbol? obj-sym)]}
+  `(do
+     (validate-object-dynamically ~obj-sym)
+     ~(gen-key-get obj-sym key)))
 
-(defn gen-safe-key-set [obj key val]
-  (let [obj-sym (gensym "obj")]
-    `(let [~obj-sym ~obj]
-       (validate-object-dynamically ~obj-sym)
-       ~(gen-key-set obj-sym key val))))
+(defn gen-instrumented-key-set [obj-sym key val]
+  {:pre [(symbol? obj-sym)]}
+  `(do
+     (validate-object-dynamically ~obj-sym)
+     ~(gen-key-set obj-sym key val)))
 
 (defn gen-static-path-get [obj path]
   (if (empty? path)
     obj
-    (gen-safe-key-get (gen-static-path-get obj (butlast path)) (last path))))
+    (let [obj-sym (gensym "obj")]
+      `(let [~obj-sym ~(gen-static-path-get obj (butlast path))]
+         ~(gen-instrumented-key-get obj-sym (last path))))))
 
 (defn gen-dynamic-selector-get [obj selector]
   `(get-selector-dynamically ~obj ~@selector))
@@ -58,9 +60,10 @@
   {:pre [(not (empty? path))
          (symbol? obj-sym)]}
   (let [parent-obj-path (butlast path)
-        parent-obj-get-code (gen-static-path-get obj-sym parent-obj-path)
-        key (last path)]
-    (gen-safe-key-set parent-obj-get-code key val)))
+        key (last path)
+        parent-obj-sym (gensym "parent-obj")]
+    `(let [~parent-obj-sym ~(gen-static-path-get obj-sym parent-obj-path)]
+       ~(gen-instrumented-key-set parent-obj-sym key val))))
 
 (defn gen-dynamic-selector-set [obj selector val]
   `(set-selector-dynamically ~obj ~selector ~val))
@@ -100,13 +103,13 @@
 (defmacro get-key-dynamically-impl [obj-sym key-sym]
   {:pre [(symbol? obj-sym)
          (symbol? key-sym)]}
-  (gen-safe-key-get obj-sym key-sym))
+  (gen-instrumented-key-get obj-sym key-sym))
 
 (defmacro set-key-dynamically-impl [obj-sym key-sym val-sym]
   {:pre [(symbol? obj-sym)
          (symbol? key-sym)
          (symbol? val-sym)]}
-  (gen-safe-key-set obj-sym key-sym val-sym))
+  (gen-instrumented-key-set obj-sym key-sym val-sym))
 
 (defmacro get-selector-dynamically-impl [obj-sym selector-sym]
   {:pre [(symbol? obj-sym)
