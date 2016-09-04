@@ -1,13 +1,7 @@
 (ns oops.schema
   (:require [clojure.spec :as s]
-            [clojure.walk :as walk]))
-
-; --- specs -----------------------------------------------------------------------------------------------------------------
-
-(s/def ::obj-key (s/or :string string? :keyword keyword?))
-(s/def ::obj-selector (s/or :key ::obj-key :selector (s/* ::obj-selector)))
-(s/def ::obj-path-segment string?)
-(s/def ::obj-path (s/or :invalid #{::invalid-path} :path (s/* ::obj-path-segment)))
+            [clojure.walk :as walk]
+            [oops.sdefs :as sdefs]))
 
 ; --- path utils ------------------------------------------------------------------------------------------------------------
 
@@ -36,9 +30,9 @@
   (walk/postwalk coerce-selector-node destured-selector))
 
 (defn build-selector-path [destructured-selector]
-  {:post [(s/valid? ::obj-path %)]}
+  {:post [(s/valid? ::sdefs/obj-path %)]}
   (if (= destructured-selector ::s/invalid)
-    ::invalid-path
+    :invalid-path
     (-> destructured-selector
         (coerce-selector-keys)
         (coerce-nested-selectors)
@@ -46,5 +40,5 @@
 
 (defn selector->path [selector]
   (->> selector
-       (s/conform ::obj-selector)
+       (s/conform ::sdefs/obj-selector)
        (build-selector-path)))

@@ -38,7 +38,7 @@
 (defmacro oget
   ([o & selector]
    (let [path (schema/selector->path selector)]
-     (if-not (= ::schema/invalid-path path)
+     (if-not (= :invalid-path path)
        (gen-static-path-fetch o path)
        (gen-dynamic-selector-fetch o selector)))))
 
