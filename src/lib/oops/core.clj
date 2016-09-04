@@ -24,7 +24,9 @@
 (defn gen-dynamic-selector-reduction [o selector]
   {:pre [(symbol? o)
          (symbol? selector)]}
-  `(reduce dynamic-selector-reducer ~o ~selector))
+  `(let [reducer# (fn [o# key#]
+                    (fetch-key-dynamically o# key#))]
+     (reduce reducer# ~o ~selector)))
 
 ; -- helper macros ----------------------------------------------------------------------------------------------------------
 
@@ -41,11 +43,6 @@
   `(do
      ~(gen-dynamic-selector-validation selector)
      ~(gen-dynamic-selector-reduction o selector)))
-
-(defmacro dynamic-selector-reducer-impl [o key]
-  {:pre [(symbol? o)
-         (symbol? key)]}
-  `(fetch-key-dynamically ~o ~key))
 
 (defmacro coerce-key-dynamically-impl [key]
   {:pre [(symbol? key)]}
