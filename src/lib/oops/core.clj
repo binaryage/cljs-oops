@@ -14,14 +14,7 @@
     (gen-atomic-key-fetch (gen-static-path-fetch o (butlast path)) (last path))))
 
 (defn gen-dynamic-selector-fetch [o selector]
-  `(dynamic-selector-fetch ~o ~@selector))
-
-(defmacro dynamic-key-fetch-impl [o key]
-  {:pre [(symbol? o)
-         (symbol? key)]}
-  `(if (sequential? ~key)
-     (apply dynamic-selector-fetch ~o ~key)
-     ~(gen-atomic-key-fetch o `(dynamic-key-coerce ~key))))
+  `(fetch-selector-dynamically ~o ~@selector))
 
 (defn gen-dynamic-selector-validation [selector]
   `(if-not (clojure.spec/valid? ::oops.sdefs/obj-selector ~selector)
@@ -35,21 +28,28 @@
 
 ; -- helper macros ----------------------------------------------------------------------------------------------------------
 
-(defmacro dynamic-selector-reducer-impl [o selector-segment]
+(defmacro fetch-key-dynamically-impl [o key]
   {:pre [(symbol? o)
-         (symbol? selector-segment)]}
-  `(dynamic-key-fetch ~o ~selector-segment))
+         (symbol? key)]}
+  `(if (sequential? ~key)
+     (apply fetch-selector-dynamically ~o ~key)
+     ~(gen-atomic-key-fetch o `(coerce-key-dynamically ~key))))
 
-(defmacro dynamic-key-coerce-impl [key]
-  {:pre [(symbol? key)]}
-  `(name ~key))
-
-(defmacro dynamic-selector-fetch-impl [o selector]
+(defmacro fetch-selector-dynamically-impl [o selector]
   {:pre [(symbol? o)
          (symbol? selector)]}
   `(do
      ~(gen-dynamic-selector-validation selector)
      ~(gen-dynamic-selector-reduction o selector)))
+
+(defmacro dynamic-selector-reducer-impl [o key]
+  {:pre [(symbol? o)
+         (symbol? key)]}
+  `(fetch-key-dynamically ~o ~key))
+
+(defmacro coerce-key-dynamically-impl [key]
+  {:pre [(symbol? key)]}
+  `(name ~key))
 
 ; -- public macros ----------------------------------------------------------------------------------------------------------
 
