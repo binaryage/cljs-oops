@@ -4,18 +4,37 @@
 
 ; -- helper code generators -------------------------------------------------------------------------------------------------
 
+(defn gen-obj-access-validity-check [obj-sym]
+  {:pre [(symbol? obj-sym)]}
+  `(cond
+     (cljs.core/undefined? ~obj-sym) (throw (ex-info "Unexpected object value (undefined)" {:obj ~obj-sym}))
+     (cljs.core/nil? ~obj-sym) (throw (ex-info "Unexpected object value (nil)" {:obj ~obj-sym}))
+     (cljs.core/boolean? ~obj-sym) (throw (ex-info "Unexpected object value (boolean)" {:obj ~obj-sym}))
+     (cljs.core/number? ~obj-sym) (throw (ex-info "Unexpected object value (number)" {:obj ~obj-sym}))
+     (cljs.core/string? ~obj-sym) (throw (ex-info "Unexpected object value (string)" {:obj ~obj-sym}))))
+
 (defn gen-atomic-key-get [obj key]
-  ; TODO: here implement optional safety-checking logic
-  `(aget ~obj ~key))
+  `(cljs.core/aget ~obj ~key))
 
 (defn gen-atomic-key-set [obj key val]
-  ; TODO: here implement optional safety-checking logic
-  `(aset ~obj ~key ~val))
+  `(cljs.core/aset ~obj ~key ~val))
+
+(defn gen-key-get [obj key]
+  (let [obj-sym (gensym "obj")]
+    `(let [~obj-sym ~obj]
+       ~(gen-obj-access-validity-check obj-sym)
+       ~(gen-atomic-key-get obj-sym key))))
+
+(defn gen-key-set [obj key val]
+  (let [obj-sym (gensym "obj")]
+    `(let [~obj-sym ~obj]
+       ~(gen-obj-access-validity-check obj-sym)
+       ~(gen-atomic-key-set obj-sym key val))))
 
 (defn gen-static-path-get [obj path]
   (if (empty? path)
     obj
-    (gen-atomic-key-get (gen-static-path-get obj (butlast path)) (last path))))
+    (gen-key-get (gen-static-path-get obj (butlast path)) (last path))))
 
 (defn gen-dynamic-selector-get [obj selector]
   `(get-selector-dynamically ~obj ~@selector))
@@ -35,7 +54,7 @@
   (let [parent-obj-path (butlast path)
         parent-obj-get-code (gen-static-path-get obj-sym parent-obj-path)
         key (last path)]
-    (gen-atomic-key-set parent-obj-get-code key val)))
+    (gen-key-set parent-obj-get-code key val)))
 
 (defn gen-dynamic-selector-set [obj selector val]
   `(set-selector-dynamically ~obj ~selector ~val))
@@ -50,7 +69,7 @@
            ~parent-obj-path-sym (butlast ~path-sym)
            ~key-sym (last ~path-sym)
            ~parent-obj-sym ~(gen-dynamic-path-reduction obj-sym parent-obj-path-sym)]
-       ~(gen-atomic-key-set parent-obj-sym key-sym val))))
+       ~(gen-key-set parent-obj-sym key-sym val))))
 
 ; -- helper macros ----------------------------------------------------------------------------------------------------------
 
@@ -71,7 +90,7 @@
 (defmacro get-key-dynamically-impl [obj-sym key-sym]
   {:pre [(symbol? obj-sym)
          (symbol? key-sym)]}
-  (gen-atomic-key-get obj-sym key-sym))
+  (gen-key-get obj-sym key-sym))
 
 (defmacro get-selector-dynamically-impl [obj-sym selector-sym]
   {:pre [(symbol? obj-sym)
@@ -91,12 +110,14 @@
 ; -- public macros ----------------------------------------------------------------------------------------------------------
 
 (defmacro oget [obj & selector]
+  ;{:post [(or (log "oget:" obj selector "\n" %) true)]}
   (let [path (schema/selector->path selector)]
     (if-not (= path :invalid-path)
       (gen-static-path-get obj path)
       (gen-dynamic-selector-get obj selector))))
 
 (defmacro oset! [obj selector val]
+  ;{:post [(or (log "oset!:" obj selector val "\n" %) true)]}
   (let [obj-sym (gensym "obj")
         path (schema/selector->path selector)]
     `(let [~obj-sym ~obj]
@@ -106,13 +127,15 @@
        ~obj-sym)))
 
 (defmacro ocall [obj selector & args]
+  ;{:post [(or (log "ocall:" obj selector args "\n" %) true)]}
   (let [obj-sym (gensym "obj")]
     `(let [~obj-sym ~obj]
        (.call (oget ~obj-sym ~selector) ~obj-sym ~@args))))
 
-(defmacro oapply [o selector args]
+(defmacro oapply [obj selector args]
+  ;{:post [(or (log "apply:" obj selector args "\n" %) true)]}
   (let [obj-sym (gensym "obj")]
-    `(let [~obj-sym ~o]
+    `(let [~obj-sym ~obj]
        (.apply (oget ~obj-sym ~selector) ~obj-sym (into-array ~args)))))
 
 ; -- convenience macros -----------------------------------------------------------------------------------------------------
