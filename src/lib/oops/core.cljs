@@ -7,7 +7,12 @@
                                       get-selector-dynamically-impl
                                       set-selector-dynamically-impl]])
   (:require [clojure.spec]
-            [oops.sdefs]))
+            [oops.sdefs]
+            [oops.state]
+            [oops.config]))
+
+(defn ^:dynamic report-warning [& args]
+  (.apply (.-warn js/console) js/console (into-array args)))
 
 (defn coerce-key-dynamically [key]
   (coerce-key-dynamically-impl key))

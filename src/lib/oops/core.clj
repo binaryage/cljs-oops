@@ -1,17 +1,35 @@
 (ns oops.core
   (:require [oops.schema :as schema]
+            [oops.config :as config]
             [oops.debug :refer [log]]))
 
 ; -- helper code generators -------------------------------------------------------------------------------------------------
 
-(defn gen-object-validation-check [obj-sym]
+(defn gen-throw-validation-error [obj-sym flavor]
   {:pre [(symbol? obj-sym)]}
-  `(cond
-     (cljs.core/undefined? ~obj-sym) (throw (ex-info "Unexpected object value (undefined)" {:obj ~obj-sym}))
-     (cljs.core/nil? ~obj-sym) (throw (ex-info "Unexpected object value (nil)" {:obj ~obj-sym}))
-     (cljs.core/boolean? ~obj-sym) (throw (ex-info "Unexpected object value (boolean)" {:obj ~obj-sym}))
-     (cljs.core/number? ~obj-sym) (throw (ex-info "Unexpected object value (number)" {:obj ~obj-sym}))
-     (cljs.core/string? ~obj-sym) (throw (ex-info "Unexpected object value (string)" {:obj ~obj-sym}))))
+  `(throw (ex-info (str "Unexpected object value (" ~flavor ")") {:obj ~obj-sym})))
+
+(defn gen-warn-validation-error [obj-sym flavor]
+  {:pre [(symbol? obj-sym)]}
+  `(report-warning (str "Unexpected object value (" ~flavor ")") obj-sym))
+
+(defn gen-report-validation-error [obj-sym flavor]
+  {:pre [(symbol? obj-sym)]}
+  (case (config/object-access-validation-mode)
+    :throw (gen-throw-validation-error obj-sym flavor)
+    :warn (gen-warn-validation-error obj-sym flavor)
+    nil))
+
+(defn gen-object-access-validation-check [obj-sym]
+  {:pre [(symbol? obj-sym)]}
+  (if (config/object-access-validation-mode)
+    `(if (oops.config/object-access-validation-enabled?)
+       (cond
+         (cljs.core/undefined? ~obj-sym) ~(gen-report-validation-error obj-sym "undefined")
+         (cljs.core/nil? ~obj-sym) ~(gen-report-validation-error obj-sym "nil")
+         (cljs.core/boolean? ~obj-sym) ~(gen-report-validation-error obj-sym "boolean")
+         (cljs.core/number? ~obj-sym) ~(gen-report-validation-error obj-sym "number")
+         (cljs.core/string? ~obj-sym) ~(gen-report-validation-error obj-sym "string")))))
 
 (defn gen-atomic-key-get [obj key]
   `(cljs.core/aget ~obj ~key))
@@ -28,13 +46,15 @@
 (defn gen-instrumented-key-get [obj-sym key]
   {:pre [(symbol? obj-sym)]}
   `(do
-     (validate-object-dynamically ~obj-sym)
+     ~(if (config/validate-object-access?)
+        `(validate-object-dynamically ~obj-sym))
      ~(gen-key-get obj-sym key)))
 
 (defn gen-instrumented-key-set [obj-sym key val]
   {:pre [(symbol? obj-sym)]}
   `(do
-     (validate-object-dynamically ~obj-sym)
+     ~(if (config/validate-object-access?)
+        `(validate-object-dynamically ~obj-sym))
      ~(gen-key-set obj-sym key val)))
 
 (defn gen-static-path-get [obj path]
@@ -88,7 +108,7 @@
 
 (defmacro validate-object-dynamically-impl [obj-sym]
   {:pre [(symbol? obj-sym)]}
-  (gen-object-validation-check obj-sym))
+  (gen-object-access-validation-check obj-sym))
 
 (defmacro build-path-dynamically-impl [selector-sym]
   {:pre [(symbol? selector-sym)]}

@@ -13,7 +13,6 @@
         "key" "val"
         "@#$%fancy key^&*" "fancy-val"
         ["nested" "nested-key2"] 2))
-
     (testing "simple dynamic key/path fetch"
       (let [dynamic-key-fn (fn [name] name)]
         (is (= (oget sample-obj (dynamic-key-fn "key")) "val"))
@@ -22,6 +21,23 @@
         (is (= (oget sample-obj [(dynamic-key-fn "nested") "nested-key1"]) "nk1"))
         (are [input] (thrown-with-msg? js/Error #"Invalid dynamic selector" (oget sample-obj (dynamic-key-fn input)))
           'sym identity 0 #js {} #js [])))
+    (testing "object access validation"
+      ; root level
+      (are [o msg] (thrown-with-msg? js/Error msg (oget o "key"))
+        nil #"Unexpected object value \(nil\)"
+        js/undefined #"Unexpected object value \(undefined\)"
+        "s" #"Unexpected object value \(string\)"
+        42 #"Unexpected object value \(number\)"
+        true #"Unexpected object value \(boolean\)"
+        false #"Unexpected object value \(boolean\)")
+      ; second level
+      (are [o msg] (thrown-with-msg? js/Error msg (oget o "nested" "key"))
+        nil #"Unexpected object value \(nil\)"
+        js/undefined #"Unexpected object value \(undefined\)"
+        "s" #"Unexpected object value \(string\)"
+        42 #"Unexpected object value \(number\)"
+        true #"Unexpected object value \(boolean\)"
+        false #"Unexpected object value \(boolean\)"))
     (testing "oget corner cases"
       ; TODO
       )))
