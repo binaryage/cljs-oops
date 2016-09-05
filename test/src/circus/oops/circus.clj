@@ -28,6 +28,7 @@
   {:optimizations :advanced})
 
 (defn build-options [main variant config]
+  (assert main (str "main must be specified!"))
   (let [out (str (last (string/split main #"\.")) "-" variant)]
     (merge common-options {:pseudo-names    true
                            :elide-asserts   true
@@ -36,19 +37,30 @@
                            :output-dir      (str "test/resources/_compiled/" out "/_workdir")
                            :output-to       (str "test/resources/_compiled/" out "/main.js")})))
 
-(defn make-build [source variant main & [config]]
+(defn get-main-from-source [source]
+  (if-let [m (re-matches #"test\/src\/arena\/(.*?)\.cljs" source)]
+    (-> (second m)
+        (string/replace #"\/" ".")
+        (string/replace #"_" "-"))))
+
+(defn make-build [source variant & [config]]
   {:source  source
    :variant variant
-   :options (build-options main variant config)})
+   :options (build-options (get-main-from-source source) variant config)})
 
 (defn get-atomic-options [mode]
   {:atomic-set-mode mode
    :atomic-get-mode mode})
 
+(defn get-build-variants [source main]
+  [(make-build source "default")
+   (make-build source "goog" (get-atomic-options :goog))
+   (make-build source "raw" (get-atomic-options :raw))])
+
 (def builds
-  [(make-build "test/src/arena/oops/arena/basic_oget.cljs" "default" "oops.arena.basic-oget")
-   (make-build "test/src/arena/oops/arena/basic_oget.cljs" "goog" "oops.arena.basic-oget" (get-atomic-options :goog))
-   (make-build "test/src/arena/oops/arena/basic_oget.cljs" "raw" "oops.arena.basic-oget" (get-atomic-options :raw))])
+  (concat
+    (get-build-variants "test/src/arena/oops/arena/basic_oget.cljs" "oops.arena.basic-oget")
+    (get-build-variants "test/src/arena/oops/arena/dynamic_oget.cljs" "oops.arena.dynamic-oget")))
 
 (defn get-build-name [build]
   (let [{:keys [source variant]} build]
