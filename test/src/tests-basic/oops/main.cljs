@@ -31,12 +31,13 @@
         (is (= (oget sample-obj (dynamic-key-fn "xxx")) nil))
         (is (= (oget sample-obj (dynamic-key-fn "nested") "nested-key1") "nk1"))
         (is (= (oget sample-obj [(dynamic-key-fn "nested") "nested-key1"]) "nk1"))
-        (are [input] (thrown-with-msg? js/Error #"Invalid dynamic selector" (oget sample-obj (dynamic-key-fn input)))
-          'sym
-          identity
-          0
-          #js {}
-          #js [])))
+        (when-none-mode
+          (are [input] (thrown-with-msg? js/Error #"Invalid dynamic selector" (oget sample-obj (dynamic-key-fn input)))
+            'sym
+            identity
+            0
+            #js {}
+            #js []))))
     (when-none-mode
       (testing "object access validation should throw by default"
         (are [o msg] (thrown-with-msg? js/Error msg (oget o "key"))

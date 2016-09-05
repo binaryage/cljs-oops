@@ -58,11 +58,11 @@
 (defn gen-key-set [obj key val]
   (gen-atomic-key-set obj key val))
 
-(defn gen-validate-object-wrapper [obj-sym body & [error-result]]
+(defn gen-validate-object-wrapper [obj-sym body & [error-body]]
   {:pre [(symbol? obj-sym)]}
   (if (config/diagnostics?)
     `(if (= ::validation-error (validate-object-dynamically ~obj-sym))
-       ~error-result
+       ~error-body
        ~body)
     body))
 
@@ -87,6 +87,15 @@
     ; TODO: implement optimized case for 1-arity call?
     (let [selector-as-code (cons 'cljs.core/list selector-as-data)]
       `(get-selector-dynamically ~obj ~selector-as-code))))
+
+(defn gen-validate-selector-wrapper [selector-sym body]
+  {:pre [(symbol? selector-sym)]}
+  (if (config/diagnostics?)
+    `(if (clojure.spec/valid? ::oops.sdefs/obj-selector ~selector-sym)
+       (do ~body)
+       (throw (ex-info "Invalid dynamic selector"                                                                             ; TODO: allow error reporting here
+                       {:explain (clojure.spec/explain-data ::oops.sdefs/obj-selector ~selector-sym)})))
+    body))
 
 (defn gen-dynamic-selector-validation [selector]
   `(if-not (clojure.spec/valid? ::oops.sdefs/obj-selector ~selector)
@@ -156,17 +165,15 @@
 (defmacro get-selector-dynamically-impl [obj-sym selector-sym]
   {:pre [(symbol? obj-sym)
          (symbol? selector-sym)]}
-  `(do
-     ~(gen-dynamic-selector-validation selector-sym)
-     ~(gen-dynamic-path-reduction obj-sym `(build-path-dynamically ~selector-sym))))
+  (let [path `(build-path-dynamically ~selector-sym)]
+    (gen-validate-selector-wrapper selector-sym (gen-dynamic-path-reduction obj-sym path))))
 
 (defmacro set-selector-dynamically-impl [obj-sym selector-sym val-sym]
   {:pre [(symbol? obj-sym)
          (symbol? selector-sym)
          (symbol? val-sym)]}
-  `(do
-     ~(gen-dynamic-selector-validation selector-sym)
-     ~(gen-dynamic-path-set obj-sym `(build-path-dynamically ~selector-sym) val-sym)))
+  (let [path `(build-path-dynamically ~selector-sym)]
+    (gen-validate-selector-wrapper selector-sym (gen-dynamic-path-set obj-sym path val-sym))))
 
 ; -- public macros ----------------------------------------------------------------------------------------------------------
 
