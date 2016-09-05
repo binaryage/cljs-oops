@@ -11,7 +11,12 @@
   :dependencies [[org.clojure/clojure "1.8.0" :scope "provided"]
                  [clojure-future-spec "1.9.0-alpha11" :scope "provided"]
                  [org.clojure/clojurescript "1.9.227" :scope "provided"]
-                 [binaryage/devtools "0.8.1" :scope "test"]]
+                 [binaryage/devtools "0.8.1" :scope "test"]
+                 [org.clojure/tools.logging "0.3.1" :scope "test"]
+                 [clj-logging-config "1.9.12" :scope "test"]
+                 [environ "1.1.0" :scope "test"]
+                 [clansi "1.0.0" :scope "test"]
+                 [funcool/cuerdas "1.0.1" :scope "test"]]
 
   :clean-targets ^{:protect false} ["target"
                                     "test/resources/_compiled"]
@@ -25,7 +30,11 @@
 
   :cljsbuild {:builds {}}                                                                                                     ; prevent https://github.com/emezeske/lein-cljsbuild/issues/413
 
-  :profiles {:devel
+  :profiles {:circus
+             {:source-paths ["test/src/circus"
+                             "test/src/arena"
+                             "test/src/tools"]}
+             :devel
              {:cljsbuild {:builds {:devel
                                    {:source-paths ["src/lib"]
                                     :compiler     {:output-to     "target/devel/cljs_oops.js"
@@ -91,8 +100,10 @@
 
   :aliases {"test"                   ["do"
                                       ["clean"]
-                                      ["build-tests"]
                                       ["shell" "scripts/run-tests.sh"]]
+            "run-functional-tests"   ["do"
+                                      ["clean"]
+                                      ["shell" "scripts/run-functional-tests.sh"]]
             "build-tests"            ["do"
                                       ["with-profile" "+testing-basic-onone" "cljsbuild" "once" "basic-onone"]
                                       ["with-profile" "+testing-basic-oadvanced" "cljsbuild" "once" "basic-oadvanced"]
@@ -107,6 +118,7 @@
             "auto-test"              ["do"
                                       ["clean"]
                                       ["auto-build-tests"]]
+            "run-circus"             ["with-profile" "+circus" "run" "-m" "oops.circus-runner"]
             "release"                ["do"
                                       "shell" "scripts/check-versions.sh,"
                                       "clean,"

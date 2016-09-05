@@ -8,9 +8,9 @@ popd () {
     command popd "$@" > /dev/null
 }
 
-pushd .
+pushd `dirname "${BASH_SOURCE[0]}"`
 
-cd "$(dirname "${BASH_SOURCE[0]}")"; cd ..
+cd ..
 
 ROOT=`pwd`
 PROJECT_VERSION_FILE="src/lib/oops/version.clj"

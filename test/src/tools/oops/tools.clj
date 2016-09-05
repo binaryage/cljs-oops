@@ -34,3 +34,10 @@
 
 (defmacro when-not-compiler-config [config-template & body]
   (gen-when-compiler-config not= config-template body))
+
+(defn get-arena-separator []
+  "###---> compiled main namespace starts here <---###")
+
+(defmacro emit-arena-separator! []
+  (let [comment (str " @preserve " (get-arena-separator) "")]
+    `(~'js-inline-comment ~comment)))

@@ -68,10 +68,11 @@
 
 (defn gen-instrumented-key-set [obj-sym key val]
   {:pre [(symbol? obj-sym)]}
-  `(do
-     ~(if (config/diagnostics?)
-        `(validate-object-dynamically ~obj-sym))
-     ~(gen-key-set obj-sym key val)))
+  (let [key-set-code (gen-key-set obj-sym key val)]
+    (if (config/diagnostics?)
+      `(if-not (= ::validation-error (validate-object-dynamically ~obj-sym))
+         ~key-set-code)
+      key-set-code)))
 
 (defn gen-static-path-get [obj path]
   (if (empty? path)
@@ -124,7 +125,8 @@
 
 (defmacro validate-object-dynamically-impl [obj-sym]
   {:pre [(symbol? obj-sym)]}
-  (gen-object-access-validation-check obj-sym))
+  (if (config/diagnostics?)
+    (gen-object-access-validation-check obj-sym)))
 
 (defmacro build-path-dynamically-impl [selector-sym]
   {:pre [(symbol? selector-sym)]}

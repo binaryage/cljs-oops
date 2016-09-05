@@ -4,10 +4,12 @@
 
 set -e
 
-. "$(dirname "${BASH_SOURCE[0]}")/config.sh"
+pushd `dirname "${BASH_SOURCE[0]}"` > /dev/null
+source "./config.sh"
 
 pushd "$ROOT/test/resources"
 
-phantomjs phantom.js "$@"
+lein run-functional-tests
+lein run-circus
 
 popd
