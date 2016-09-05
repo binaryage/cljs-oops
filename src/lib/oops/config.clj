@@ -7,7 +7,9 @@
 
 (def default-compiler-config
   {:diagnostics              true
-   :object-access-validation :throw                                                                                           ; :warn false
+   :object-access-validation :throw                                                                                           ; #{:throw :warn false}
+   :atomic-get-mode          :aget                                                                                            ; #{:aget :js* :goog}
+   :atomic-set-mode          :aset                                                                                            ; #{:aget :js* :goog}
    :runtime-config           default-runtime-config})
 
 (def advanced-mode-compiler-config-overrides
@@ -64,15 +66,21 @@
 
 ; -- icing ------------------------------------------------------------------------------------------------------------------
 
-(defn diagnostics? []
+(defn diagnostics? [& [config]]
   (true? (:diagnostics (get-current-compiler-config))))
 
-(defn validate-object-access? []
-  (let [config (get-current-compiler-config)]
+(defn validate-object-access? [& [config]]
+  (let [config (or config (get-current-compiler-config))]
     (and (:diagnostics config)
          (some? (:object-access-validation config)))))
 
-(defn object-access-validation-mode []
-  (let [config (get-current-compiler-config)]
+(defn object-access-validation-mode [& [config]]
+  (let [config (or config (get-current-compiler-config))]
     (if (:diagnostics config)
       (:object-access-validation config))))
+
+(defn atomic-get-mode [& [config]]
+  (:atomic-get-mode (or config (get-current-compiler-config))))
+
+(defn atomic-set-mode [& [config]]
+  (:atomic-set-mode (or config (get-current-compiler-config))))

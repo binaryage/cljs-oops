@@ -34,10 +34,16 @@
          (cljs.core/string? ~obj-sym) ~(gen-report-validation-error obj-sym "string")))))
 
 (defn gen-atomic-key-get [obj key]
-  `(cljs.core/aget ~obj ~key))
+  (case (config/atomic-get-mode)
+    :aget `(cljs.core/aget ~obj ~key)
+    :js* `(~'js* "(~{}[~{}])" ~obj ~key)
+    :goog `(goog.object/get ~obj ~key)))
 
 (defn gen-atomic-key-set [obj key val]
-  `(cljs.core/aset ~obj ~key ~val))
+  (case (config/atomic-set-mode)
+    :aset `(cljs.core/aset ~obj ~key ~val)
+    :js* `(~'js* "(~{}[~{}] = ~{})" ~obj ~key ~val)
+    :goog `(goog.object/set ~obj ~key ~val)))
 
 (defn gen-key-get [obj key]
   (gen-atomic-key-get obj key))

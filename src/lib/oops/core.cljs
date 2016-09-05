@@ -7,6 +7,7 @@
                                       get-selector-dynamically-impl
                                       set-selector-dynamically-impl]])
   (:require [clojure.spec]
+            [goog.object]
             [oops.sdefs]
             [oops.state]
             [oops.config]))
