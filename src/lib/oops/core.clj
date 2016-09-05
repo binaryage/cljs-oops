@@ -102,7 +102,7 @@
      (throw (ex-info "Invalid dynamic selector"
                      {:explain (clojure.spec/explain-data ::oops.sdefs/obj-selector ~selector)}))))
 
-(defn gen-dynamic-path-reduction [obj-sym path]
+(defn gen-dynamic-path-get [obj-sym path]
   {:pre [(symbol? obj-sym)]}
   `(reduce get-key-dynamically ~obj-sym ~path))
 
@@ -127,7 +127,7 @@
     `(let [~path-sym ~path
            ~parent-obj-path-sym (butlast ~path-sym)
            ~key-sym (last ~path-sym)
-           ~parent-obj-sym ~(gen-dynamic-path-reduction obj-sym parent-obj-path-sym)]
+           ~parent-obj-sym ~(gen-dynamic-path-get obj-sym parent-obj-path-sym)]
        (set-key-dynamically ~parent-obj-sym ~key-sym ~val))))
 
 ; -- helper macros ----------------------------------------------------------------------------------------------------------
@@ -166,7 +166,7 @@
   {:pre [(symbol? obj-sym)
          (symbol? selector-sym)]}
   (let [path `(build-path-dynamically ~selector-sym)]
-    (gen-validate-selector-wrapper selector-sym (gen-dynamic-path-reduction obj-sym path))))
+    (gen-validate-selector-wrapper selector-sym (gen-dynamic-path-get obj-sym path))))
 
 (defmacro set-selector-dynamically-impl [obj-sym selector-sym val-sym]
   {:pre [(symbol? obj-sym)
