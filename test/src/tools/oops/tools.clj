@@ -1,4 +1,5 @@
-(ns oops.tools)
+(ns oops.tools
+  (:require [oops.config :as config]))
 
 ;(println (interpose "\n" (seq (.getURLs (ClassLoader/getSystemClassLoader)))))
 
@@ -14,5 +15,22 @@
   (if cljs.env/*compiler*
     (= (get-in @cljs.env/*compiler* [:options :optimizations]) :advanced)))
 
-(defmacro under-advanced-mode? []
-  (boolean (advanced-mode?)))
+(defmacro when-advanced-mode [& body]
+  (if (advanced-mode?)
+    `(do ~@body)))
+
+(defmacro when-none-mode [& body]
+  (if-not (advanced-mode?)
+    `(do ~@body)))
+
+(defn gen-when-compiler-config [pred config-template body]
+  (let [config (config/get-current-compiler-config)
+        template-keys (keys config-template)]
+    (if (pred config-template (select-keys config template-keys))
+      `(do ~@body))))
+
+(defmacro when-compiler-config [config-template & body]
+  (gen-when-compiler-config = config-template body))
+
+(defmacro when-not-compiler-config [config-template & body]
+  (gen-when-compiler-config not= config-template body))

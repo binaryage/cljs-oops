@@ -2,7 +2,7 @@
   (:require [cljs.test :refer-macros [deftest testing is are run-tests use-fixtures]]
             [oops.core :refer [oget oset! ocall! oapply! ocall oapply]]
             [oops.config :refer [with-runtime-config]]
-            [oops.tools :refer [with-captured-console with-console-recording under-advanced-mode?]]
+            [oops.tools :refer [with-captured-console with-console-recording]]
             [clojure.string :as string]))
 
 (use-fixtures :once with-captured-console)
