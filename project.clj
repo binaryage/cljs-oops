@@ -32,85 +32,85 @@
                                                    :output-dir    "target/devel"
                                                    :optimizations :none}}}}}
 
-             :testing-basic-optimizations-none
-             {:cljsbuild {:builds {:basic-optimizations-none
+             :testing-basic-onone
+             {:cljsbuild {:builds {:basic-onone
                                    {:source-paths ["src/lib"
                                                    "test/src/runner"
                                                    "test/src/tools"
                                                    "test/src/tests-basic"]
-                                    :compiler     {:output-to       "test/resources/_compiled/basic_optimizations_none/main.js"
-                                                   :output-dir      "test/resources/_compiled/basic_optimizations_none"
-                                                   :asset-path      "_compiled/basic_optimizations_none"
+                                    :compiler     {:output-to       "test/resources/_compiled/basic_onone/main.js"
+                                                   :output-dir      "test/resources/_compiled/basic_onone"
+                                                   :asset-path      "_compiled/basic_onone"
                                                    :preloads        [devtools.preload]
                                                    :external-config {:devtools/config {:dont-detect-custom-formatters true}}
                                                    :main            oops.runner
                                                    :optimizations   :none}}}}}
-             :testing-basic-optimizations-advanced
-             {:cljsbuild {:builds {:basic-optimizations-advanced
+             :testing-basic-oadvanced
+             {:cljsbuild {:builds {:basic-oadvanced
                                    {:source-paths ["src/lib"
                                                    "test/src/runner"
                                                    "test/src/tools"
                                                    "test/src/tests-basic"]
-                                    :compiler     {:output-to     "test/resources/_compiled/basic_optimizations_advanced/main.js"
-                                                   :output-dir    "test/resources/_compiled/basic_optimizations_advanced"
-                                                   :asset-path    "_compiled/basic_optimizations_advanced"
+                                    :compiler     {:output-to     "test/resources/_compiled/basic_oadvanced/main.js"
+                                                   :output-dir    "test/resources/_compiled/basic_oadvanced"
+                                                   :asset-path    "_compiled/basic_oadvanced"
                                                    :main          oops.runner
                                                    :optimizations :advanced}}}}}
-             :testing-basic-optimizations-advanced-goog
-             {:cljsbuild {:builds {:basic-optimizations-advanced-goog
+             :testing-basic-oadvanced-goog
+             {:cljsbuild {:builds {:basic-oadvanced-goog
                                    {:source-paths ["src/lib"
                                                    "test/src/runner"
                                                    "test/src/tools"
                                                    "test/src/tests-basic"]
-                                    :compiler     {:output-to       "test/resources/_compiled/basic_optimizations_advanced_goog/main.js"
-                                                   :output-dir      "test/resources/_compiled/basic_optimizations_advanced_goog"
-                                                   :asset-path      "_compiled/basic_optimizations_advanced_goog"
+                                    :compiler     {:output-to       "test/resources/_compiled/basic_oadvanced_goog/main.js"
+                                                   :output-dir      "test/resources/_compiled/basic_oadvanced_goog"
+                                                   :asset-path      "_compiled/basic_oadvanced_goog"
                                                    :main            oops.runner
                                                    :optimizations   :advanced
                                                    :external-config {:oops/config {:atomic-get-mode :goog
                                                                                    :atomic-set-mode :goog}}}}}}}
-             :testing-basic-optimizations-advanced-jsstar
-             {:cljsbuild {:builds {:basic-optimizations-advanced-jsstar
+             :testing-basic-oadvanced-jsstar
+             {:cljsbuild {:builds {:basic-oadvanced-jsstar
                                    {:source-paths ["src/lib"
                                                    "test/src/runner"
                                                    "test/src/tools"
                                                    "test/src/tests-basic"]
-                                    :compiler     {:output-to       "test/resources/_compiled/basic_optimizations_advanced_jsstar/main.js"
-                                                   :output-dir      "test/resources/_compiled/basic_optimizations_advanced_jsstar"
-                                                   :asset-path      "_compiled/basic_optimizations_advanced_jsstar"
+                                    :compiler     {:output-to       "test/resources/_compiled/basic_oadvanced_jsstar/main.js"
+                                                   :output-dir      "test/resources/_compiled/basic_oadvanced_jsstar"
+                                                   :asset-path      "_compiled/basic_oadvanced_jsstar"
                                                    :main            oops.runner
                                                    :optimizations   :advanced
                                                    :external-config {:oops/config {:atomic-get-mode :js*
                                                                                    :atomic-set-mode :js*}}}}}}}
 
              :auto-testing
-             {:cljsbuild {:builds {:basic-optimizations-none            {:notify-command ["scripts/rerun-tests.sh" "basic_optimizations_none"]}
-                                   :basic-optimizations-advanced        {:notify-command ["scripts/rerun-tests.sh" "basic_optimizations_advanced"]}
-                                   :basic-optimizations-advanced-goog   {:notify-command ["scripts/rerun-tests.sh" "basic_optimizations_advanced_goog"]}
-                                   :basic-optimizations-advanced-jsstar {:notify-command ["scripts/rerun-tests.sh" "basic_optimizations_advanced_jsstar"]}}}}}
+             {:cljsbuild {:builds {:basic-onone            {:notify-command ["scripts/rerun-tests.sh" "basic_onone"]}
+                                   :basic-oadvanced        {:notify-command ["scripts/rerun-tests.sh" "basic_oadvanced"]}
+                                   :basic-oadvanced-goog   {:notify-command ["scripts/rerun-tests.sh" "basic_oadvanced_goog"]}
+                                   :basic-oadvanced-jsstar {:notify-command ["scripts/rerun-tests.sh" "basic_oadvanced_jsstar"]}}}}}
 
-  :aliases {"test"                        ["do"
-                                           ["clean"]
-                                           ["build-tests"]
-                                           ["shell" "scripts/run-tests.sh"]]
-            "build-tests"                 ["do"
-                                           ["with-profile" "+testing-basic-optimizations-none" "cljsbuild" "once" "basic-optimizations-none"]
-                                           ["with-profile" "+testing-basic-optimizations-advanced" "cljsbuild" "once" "basic-optimizations-advanced"]
-                                           ["with-profile" "+testing-basic-optimizations-advanced-goog" "cljsbuild" "once" "basic-optimizations-advanced-goog"]
-                                           ["with-profile" "+testing-basic-optimizations-advanced-jsstar" "cljsbuild" "once" "basic-optimizations-advanced-jsstar"]]
-            "auto-build-tests"            ["do"
-                                           ["with-profile" "+testing-basic-optimizations-none,+auto-testing" "cljsbuild" "once" "basic-optimizations-none"]
-                                           ["with-profile" "+testing-basic-optimizations-advanced,+auto-testing" "cljsbuild" "once" "basic-optimizations-advanced"]
-                                           ["with-profile" "+testing-basic-optimizations-advanced-goog,+auto-testing" "cljsbuild" "once" "basic-optimizations-advanced-goog"]
-                                           ["with-profile" "+testing-basic-optimizations-advanced-jsstar,+auto-testing" "cljsbuild" "once" "basic-optimizations-advanced-jsstar"]]
-            "auto-build-basic-none-tests" ["with-profile" "+testing-basic-optimizations-none,+auto-testing" "cljsbuild" "auto" "basic-optimizations-none"]
-            "auto-test"                   ["do"
-                                           ["clean"]
-                                           ["auto-build-tests"]]
-            "release"                     ["do"
-                                           "shell" "scripts/check-versions.sh,"
-                                           "clean,"
-                                           "test,"
-                                           "jar,"
-                                           "shell" "scripts/check-release.sh,"
-                                           "deploy" "clojars"]})
+  :aliases {"test"                   ["do"
+                                      ["clean"]
+                                      ["build-tests"]
+                                      ["shell" "scripts/run-tests.sh"]]
+            "build-tests"            ["do"
+                                      ["with-profile" "+testing-basic-onone" "cljsbuild" "once" "basic-onone"]
+                                      ["with-profile" "+testing-basic-oadvanced" "cljsbuild" "once" "basic-oadvanced"]
+                                      ["with-profile" "+testing-basic-oadvanced-goog" "cljsbuild" "once" "basic-oadvanced-goog"]
+                                      ["with-profile" "+testing-basic-oadvanced-jsstar" "cljsbuild" "once" "basic-oadvanced-jsstar"]]
+            "auto-build-tests"       ["do"
+                                      ["with-profile" "+testing-basic-onone,+auto-testing" "cljsbuild" "once" "basic-onone"]
+                                      ["with-profile" "+testing-basic-oadvanced,+auto-testing" "cljsbuild" "once" "basic-oadvanced"]
+                                      ["with-profile" "+testing-basic-oadvanced-goog,+auto-testing" "cljsbuild" "once" "basic-oadvanced-goog"]
+                                      ["with-profile" "+testing-basic-oadvanced-jsstar,+auto-testing" "cljsbuild" "once" "basic-oadvanced-jsstar"]]
+            "auto-build-basic-onone" ["with-profile" "+testing-basic-onone,+auto-testing" "cljsbuild" "auto" "basic-onone"]
+            "auto-test"              ["do"
+                                      ["clean"]
+                                      ["auto-build-tests"]]
+            "release"                ["do"
+                                      "shell" "scripts/check-versions.sh,"
+                                      "clean,"
+                                      "test,"
+                                      "jar,"
+                                      "shell" "scripts/check-release.sh,"
+                                      "deploy" "clojars"]})

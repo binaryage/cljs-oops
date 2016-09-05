@@ -26,10 +26,10 @@ page.onConsoleMessage = function(message) {
 var exitCode = 0;
 
 const allScripts = [
-    "basic_optimizations_none",
-    "basic_optimizations_advanced",
-    "basic_optimizations_advanced_goog",
-    "basic_optimizations_advanced_jsstar"];
+    "basic_onone",
+    "basic_oadvanced",
+    "basic_oadvanced_goog",
+    "basic_oadvanced_jsstar"];
 
 const scripts = scriptsToRun || allScripts;
 
