@@ -9,12 +9,14 @@ Your boss: "Ship it!"
 You: "Let me compile it with :advanced optimizations..."
 Your boss: "Sounds good!"
 ...some time later
-You: "Oops! It just broke! 
-Your boss: "Don't tell me that a random person on the Internet was wrong 
-            and they provided slightly outdated externs again."
-You: (sad face)
+You: "Oops! It just broke! And I don't know why." 
+Your boss: "Don't tell me that a random person on the Internet was wrong again."
+You: (sad face) "Yep, they provided slightly outdated externs again."
 ```
 
-'oops' is a ClojureScript micro-library providing macros for convenient Javascript object access. It stands for "object ops" and it is your externs killer.
+'oops' is a ClojureScript micro-library providing macros for convenient Javascript object access. 
+It stands for "object ops" and it is your externs killer.
+
+To put it simple: oops is `aget` on steroids.
 
 TBD
