@@ -117,6 +117,16 @@
         relevant-content)
       content)))
 
+(defn normalize-identifiers [content]
+  "The goal here is to rename all generated $<number>$ identifiers with stable numbering."
+  (let [* (fn [state match]
+            (let [needle (first match)
+                  stable-replacement (str "$" (:counter state) "$")]
+              (-> state
+                  (update-in [:counter] inc)
+                  (update-in [:content] string/replace needle stable-replacement))))]
+    (:content (reduce * {:counter 1 :content content} (re-seq #"\$(\d+)\$" content)))))
+
 (defn safe-spit [path content]
   (io/make-parents path)
   (spit path content))
@@ -149,6 +159,7 @@
   (let [actual-transcript-path (get-actual-transcript-path build)
         relevant-output (-> (read-build-output build)
                             (extract-relevant-output)
+                            (normalize-identifiers)
                             (get-canonical-transcript))]
     (log/debug (str "Writing build transcript to '" actual-transcript-path "' (" (count relevant-output) " chars)"))
     (safe-spit actual-transcript-path relevant-output)
