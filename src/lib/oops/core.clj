@@ -9,29 +9,36 @@
   {:pre [(symbol? obj-sym)]}
   `(throw (ex-info (str "Unexpected object value (" ~flavor ")") {:obj ~obj-sym})))
 
-(defn gen-warn-validation-error [obj-sym flavor]
-  {:pre [(symbol? obj-sym)]}
-  `(do
-     (report-warning (str "Unexpected object value (" ~flavor ")") ~obj-sym)
-     ::validation-error))
-
 (defn gen-report-validation-error [obj-sym flavor]
   {:pre [(symbol? obj-sym)]}
-  (case (config/object-access-validation-mode)
+  `(do
+     (report-runtime-error (str "Unexpected object value (" ~flavor ")") ~obj-sym)
+     ::validation-error))
+
+(defn gen-validation-error [mode obj-sym flavor]
+  {:pre [(symbol? obj-sym)]}
+  (case mode
     :throw (gen-throw-validation-error obj-sym flavor)
-    :warn (gen-warn-validation-error obj-sym flavor)
-    nil))
+    :report (gen-report-validation-error obj-sym flavor)
+    :sanitize ::validation-error
+    false nil))
+
+(defn gen-object-access-validation-check-mode [mode obj-sym]
+  {:pre [(symbol? obj-sym)]}
+  `(cond
+     (cljs.core/undefined? ~obj-sym) ~(gen-validation-error mode obj-sym "undefined")
+     (cljs.core/nil? ~obj-sym) ~(gen-validation-error mode obj-sym "nil")
+     (cljs.core/boolean? ~obj-sym) ~(gen-validation-error mode obj-sym "boolean")
+     (cljs.core/number? ~obj-sym) ~(gen-validation-error mode obj-sym "number")
+     (cljs.core/string? ~obj-sym) ~(gen-validation-error mode obj-sym "string")))
 
 (defn gen-object-access-validation-check [obj-sym]
   {:pre [(symbol? obj-sym)]}
-  (if (config/object-access-validation-mode)
-    `(if (oops.config/object-access-validation-enabled?)
-       (cond
-         (cljs.core/undefined? ~obj-sym) ~(gen-report-validation-error obj-sym "undefined")
-         (cljs.core/nil? ~obj-sym) ~(gen-report-validation-error obj-sym "nil")
-         (cljs.core/boolean? ~obj-sym) ~(gen-report-validation-error obj-sym "boolean")
-         (cljs.core/number? ~obj-sym) ~(gen-report-validation-error obj-sym "number")
-         (cljs.core/string? ~obj-sym) ~(gen-report-validation-error obj-sym "string")))))
+  `(case (config/object-access-validation-mode)
+     :throw ~(gen-object-access-validation-check-mode :throw obj-sym)
+     :report ~(gen-object-access-validation-check-mode :report obj-sym)
+     :sanitize ~(gen-object-access-validation-check-mode :sanitize obj-sym)
+     false nil))
 
 (defn gen-atomic-key-get [obj key]
   (case (config/atomic-get-mode)
@@ -54,7 +61,7 @@
 (defn gen-instrumented-key-get [obj-sym key]
   {:pre [(symbol? obj-sym)]}
   (let [key-get-code (gen-key-get obj-sym key)]
-    (if (config/validate-object-access?)
+    (if (config/diagnostics?)
       `(if-not (= ::validation-error (validate-object-dynamically ~obj-sym))
          ~key-get-code)
       key-get-code)))
@@ -62,7 +69,7 @@
 (defn gen-instrumented-key-set [obj-sym key val]
   {:pre [(symbol? obj-sym)]}
   `(do
-     ~(if (config/validate-object-access?)
+     ~(if (config/diagnostics?)
         `(validate-object-dynamically ~obj-sym))
      ~(gen-key-set obj-sym key val)))
 

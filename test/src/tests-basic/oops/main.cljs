@@ -1,10 +1,12 @@
 (ns oops.main
   (:require [cljs.test :refer-macros [deftest testing is are run-tests use-fixtures]]
+            [clojure.string :as string]
             [oops.core :refer [oget oset! ocall! oapply! ocall oapply]]
             [oops.config :as config :refer [with-runtime-config]]
             [oops.tools
              :refer [with-captured-console]
              :refer-macros [when-advanced-mode when-none-mode
+                            with-console-recording
                             when-compiler-config when-not-compiler-config]]))
 
 (use-fixtures :once with-captured-console)
@@ -32,8 +34,8 @@
           0
           #js {}
           #js [])))
-    (testing "object access validation"
-      (when-none-mode
+    (when-none-mode
+      (testing "object access validation should throw by default"
         (are [o msg] (thrown-with-msg? js/Error msg (oget o "key"))
           nil #"Unexpected object value \(nil\)"
           js/undefined #"Unexpected object value \(undefined\)"
@@ -41,7 +43,49 @@
           42 #"Unexpected object value \(number\)"
           true #"Unexpected object value \(boolean\)"
           false #"Unexpected object value \(boolean\)")
-        (with-runtime-config {:object-access-validation false}
+        (with-runtime-config {:object-access-validation-mode false}
+          (are [o msg] (thrown-with-msg? js/TypeError msg (oget o "key"))
+            nil #"null is not an object"
+            js/undefined #"undefined is not an object")
+          (are [o] (= (oget o "key") nil)
+            "s"
+            42
+            true
+            false)))
+      (testing "with {:object-access-validation-mode :report} object access validation should report errors to console"
+        (with-runtime-config {:object-access-validation-mode :report}
+          (let [recorder (atom [""])
+                expected-warnings "
+ERROR: (\"Unexpected object value (nil)\" nil)
+ERROR: (\"Unexpected object value (undefined)\" nil)
+ERROR: (\"Unexpected object value (string)\" \"s\")
+ERROR: (\"Unexpected object value (number)\" 42)
+ERROR: (\"Unexpected object value (boolean)\" true)
+ERROR: (\"Unexpected object value (boolean)\" false)"]
+            (with-console-recording recorder
+              (are [o] (= (oget o "key") nil)
+                nil
+                js/undefined
+                "s"
+                42
+                true
+                false))
+            (is (= (string/join "\n" @recorder) expected-warnings)))))
+      (testing (str "with {:object-access-validation-mode :sanitize} object access validation should not report errors"
+                    "but still should sanitize results as nil")
+        (with-runtime-config {:object-access-validation-mode :sanitize}
+          (let [recorder (atom [""])]
+            (with-console-recording recorder
+              (are [o] (= (oget o "key") nil)
+                nil
+                js/undefined
+                "s"
+                42
+                true
+                false))
+            (is (= (string/join "\n" @recorder) "")))))
+      (testing "with {:object-access-validation-mode false} object access validation should be elided"
+        (with-runtime-config {:object-access-validation-mode false}
           (are [o msg] (thrown-with-msg? js/TypeError msg (oget o "key"))
             nil #"null is not an object"
             js/undefined #"undefined is not an object")
@@ -51,15 +95,16 @@
             true
             false)))
       (when-advanced-mode                                                                                                     ; advanced optimizations
-        (when-not-compiler-config {:atomic-get-mode :goog}
-                                  (are [o msg] (thrown-with-msg? js/TypeError msg (oget o "key"))
-                                    nil #"null is not an object"
-                                    js/undefined #"undefined is not an object")
-                                  (are [o] (= (oget o "key") nil)
-                                    "s"
-                                    42
-                                    true
-                                    false))))
+        (testing "object access validation should crash or silently fail in advanced mode (no diagnostics)"
+          (when-not-compiler-config {:atomic-get-mode :goog}
+                                    (are [o msg] (thrown-with-msg? js/TypeError msg (oget o "key"))
+                                      nil #"null is not an object"
+                                      js/undefined #"undefined is not an object")
+                                    (are [o] (= (oget o "key") nil)
+                                      "s"
+                                      42
+                                      true
+                                      false)))))
     (testing "oget corner cases"
       ; TODO
       )))

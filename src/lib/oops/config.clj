@@ -3,14 +3,15 @@
             [oops.debug :refer [log]]))
 
 (def default-runtime-config
-  {:object-access-validation true})
+  {; diagnostics...
+   :object-access-validation-mode :throw                                                                                      ; #{:throw :report :sanitize false}
+   })
 
 (def default-compiler-config
-  {:diagnostics              true
-   :object-access-validation :throw                                                                                           ; #{:throw :warn false}
-   :atomic-get-mode          :aget                                                                                            ; #{:aget :js* :goog}
-   :atomic-set-mode          :aset                                                                                            ; #{:aget :js* :goog}
-   :runtime-config           default-runtime-config})
+  {:diagnostics     true
+   :atomic-get-mode :aget                                                                                                     ; #{:aget :js* :goog}
+   :atomic-set-mode :aset                                                                                                     ; #{:aget :js* :goog}
+   :runtime-config  default-runtime-config})
 
 (def advanced-mode-compiler-config-overrides
   {:diagnostics false})
@@ -68,16 +69,6 @@
 
 (defn diagnostics? [& [config]]
   (true? (:diagnostics (get-current-compiler-config))))
-
-(defn validate-object-access? [& [config]]
-  (let [config (or config (get-current-compiler-config))]
-    (and (:diagnostics config)
-         (some? (:object-access-validation config)))))
-
-(defn object-access-validation-mode [& [config]]
-  (let [config (or config (get-current-compiler-config))]
-    (if (:diagnostics config)
-      (:object-access-validation config))))
 
 (defn atomic-get-mode [& [config]]
   (:atomic-get-mode (or config (get-current-compiler-config))))

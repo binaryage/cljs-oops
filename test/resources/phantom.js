@@ -29,8 +29,7 @@ const allScripts = [
     "basic_optimizations_none",
     "basic_optimizations_advanced",
     "basic_optimizations_advanced_goog",
-    "basic_optimizations_advanced_jsstar",
-    "prefer_warnings"];
+    "basic_optimizations_advanced_jsstar"];
 
 const scripts = scriptsToRun || allScripts;
 

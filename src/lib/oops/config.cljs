@@ -24,5 +24,5 @@
 
 ; -- icing ------------------------------------------------------------------------------------------------------------------
 
-(defn object-access-validation-enabled? []
-  (true? (:object-access-validation (get-current-runtime-config))))
+(defn object-access-validation-mode [& [config]]
+  (:object-access-validation-mode (or config (get-current-runtime-config))))

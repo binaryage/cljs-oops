@@ -10,7 +10,8 @@
 
   :dependencies [[org.clojure/clojure "1.8.0" :scope "provided"]
                  [clojure-future-spec "1.9.0-alpha11" :scope "provided"]
-                 [org.clojure/clojurescript "1.9.227" :scope "provided"]]
+                 [org.clojure/clojurescript "1.9.227" :scope "provided"]
+                 [binaryage/devtools "0.8.1" :scope "test"]]
 
   :clean-targets ^{:protect false} ["target"
                                     "test/resources/_compiled"]
@@ -37,11 +38,13 @@
                                                    "test/src/runner"
                                                    "test/src/tools"
                                                    "test/src/tests-basic"]
-                                    :compiler     {:output-to     "test/resources/_compiled/basic_optimizations_none/main.js"
-                                                   :output-dir    "test/resources/_compiled/basic_optimizations_none"
-                                                   :asset-path    "_compiled/basic_optimizations_none"
-                                                   :main          oops.runner
-                                                   :optimizations :none}}}}}
+                                    :compiler     {:output-to       "test/resources/_compiled/basic_optimizations_none/main.js"
+                                                   :output-dir      "test/resources/_compiled/basic_optimizations_none"
+                                                   :asset-path      "_compiled/basic_optimizations_none"
+                                                   :preloads        [devtools.preload]
+                                                   :external-config {:devtools/config {:dont-detect-custom-formatters true}}
+                                                   :main            oops.runner
+                                                   :optimizations   :none}}}}}
              :testing-basic-optimizations-advanced
              {:cljsbuild {:builds {:basic-optimizations-advanced
                                    {:source-paths ["src/lib"
@@ -79,24 +82,12 @@
                                                    :optimizations   :advanced
                                                    :external-config {:oops/config {:atomic-get-mode :js*
                                                                                    :atomic-set-mode :js*}}}}}}}
-             :testing-prefer-warnings
-             {:cljsbuild {:builds {:prefer-warnings
-                                   {:source-paths ["src/lib"
-                                                   "test/src/runner"
-                                                   "test/src/tools"
-                                                   "test/src/tests-prefer-warnings"]
-                                    :compiler     {:output-to       "test/resources/_compiled/prefer_warnings/main.js"
-                                                   :output-dir      "test/resources/_compiled/prefer_warnings"
-                                                   :asset-path      "_compiled/prefer_warnings"
-                                                   :main            oops.runner
-                                                   :optimizations   :none
-                                                   :external-config {:oops/config {:object-access-validation :warn}}}}}}}
+
              :auto-testing
              {:cljsbuild {:builds {:basic-optimizations-none            {:notify-command ["scripts/rerun-tests.sh" "basic_optimizations_none"]}
                                    :basic-optimizations-advanced        {:notify-command ["scripts/rerun-tests.sh" "basic_optimizations_advanced"]}
                                    :basic-optimizations-advanced-goog   {:notify-command ["scripts/rerun-tests.sh" "basic_optimizations_advanced_goog"]}
-                                   :basic-optimizations-advanced-jsstar {:notify-command ["scripts/rerun-tests.sh" "basic_optimizations_advanced_jsstar"]}
-                                   :prefer-warnings                     {:notify-command ["scripts/rerun-tests.sh" "prefer_warnings"]}}}}}
+                                   :basic-optimizations-advanced-jsstar {:notify-command ["scripts/rerun-tests.sh" "basic_optimizations_advanced_jsstar"]}}}}}
 
   :aliases {"test"                        ["do"
                                            ["clean"]
@@ -106,14 +97,12 @@
                                            ["with-profile" "+testing-basic-optimizations-none" "cljsbuild" "once" "basic-optimizations-none"]
                                            ["with-profile" "+testing-basic-optimizations-advanced" "cljsbuild" "once" "basic-optimizations-advanced"]
                                            ["with-profile" "+testing-basic-optimizations-advanced-goog" "cljsbuild" "once" "basic-optimizations-advanced-goog"]
-                                           ["with-profile" "+testing-basic-optimizations-advanced-jsstar" "cljsbuild" "once" "basic-optimizations-advanced-jsstar"]
-                                           ["with-profile" "+testing-prefer-warnings" "cljsbuild" "once" "prefer-warnings"]]
+                                           ["with-profile" "+testing-basic-optimizations-advanced-jsstar" "cljsbuild" "once" "basic-optimizations-advanced-jsstar"]]
             "auto-build-tests"            ["do"
                                            ["with-profile" "+testing-basic-optimizations-none,+auto-testing" "cljsbuild" "once" "basic-optimizations-none"]
                                            ["with-profile" "+testing-basic-optimizations-advanced,+auto-testing" "cljsbuild" "once" "basic-optimizations-advanced"]
                                            ["with-profile" "+testing-basic-optimizations-advanced-goog,+auto-testing" "cljsbuild" "once" "basic-optimizations-advanced-goog"]
-                                           ["with-profile" "+testing-basic-optimizations-advanced-jsstar,+auto-testing" "cljsbuild" "once" "basic-optimizations-advanced-jsstar"]
-                                           ["with-profile" "+testing-prefer-warnings" "cljsbuild,+auto-testing" "once" "prefer-warnings"]]
+                                           ["with-profile" "+testing-basic-optimizations-advanced-jsstar,+auto-testing" "cljsbuild" "once" "basic-optimizations-advanced-jsstar"]]
             "auto-build-basic-none-tests" ["with-profile" "+testing-basic-optimizations-none,+auto-testing" "cljsbuild" "auto" "basic-optimizations-none"]
             "auto-test"                   ["do"
                                            ["clean"]
