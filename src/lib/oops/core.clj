@@ -97,11 +97,6 @@
                        {:explain (clojure.spec/explain-data ::oops.sdefs/obj-selector ~selector-sym)})))
     body))
 
-(defn gen-dynamic-selector-validation [selector]
-  `(if-not (clojure.spec/valid? ::oops.sdefs/obj-selector ~selector)
-     (throw (ex-info "Invalid dynamic selector"
-                     {:explain (clojure.spec/explain-data ::oops.sdefs/obj-selector ~selector)}))))
-
 (defn gen-dynamic-path-get [obj-sym path]
   {:pre [(symbol? obj-sym)]}
   `(reduce get-key-dynamically ~obj-sym ~path))
