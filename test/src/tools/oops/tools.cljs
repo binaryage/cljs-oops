@@ -13,10 +13,12 @@
 ; -- capturing console output -----------------------------------------------------------------------------------------------
 
 (defn console-handler [orig-fn kind & args]
-  (let [msg (str kind args)]
-    (doseq [recorder @console-recorders]
-      (swap! recorder conj msg))
-    (.apply orig-fn js/console (to-array args))))
+  (let [msg (str kind args)
+        recorders @console-recorders]
+    (if-not (empty? recorders)
+      (doseq [recorder recorders]
+        (swap! recorder conj msg))
+      (.apply orig-fn js/console (to-array args)))))
 
 (defn store-console-api []
   {"log"   (aget js/window "console" "log")
