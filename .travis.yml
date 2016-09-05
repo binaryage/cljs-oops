@@ -4,11 +4,14 @@ cache:
   directories:
     - $HOME/.m2
 
-before_install:
+before_script:
   # update lein to latest, https://github.com/technomancy/leiningen/issues/2014#issuecomment-153829977
   - yes y | sudo lein upgrade
-
-before_script:
+  # install nodejs for npm, which is needed for js-beautify
+  - curl -sL https://deb.nodesource.com/setup_6.x | sudo -E bash -
+  - sudo apt-get install -y nodejs
+  - sudo npm install -g js-beautify
+  # install phantomjs
   - mkdir travis-phantomjs
   - wget https://s3.amazonaws.com/travis-phantomjs/phantomjs-2.0.0-ubuntu-12.04.tar.bz2 -O $PWD/travis-phantomjs/phantomjs-2.0.0-ubuntu-12.04.tar.bz2
   - tar -xvf $PWD/travis-phantomjs/phantomjs-2.0.0-ubuntu-12.04.tar.bz2 -C $PWD/travis-phantomjs
