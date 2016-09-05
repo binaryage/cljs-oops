@@ -105,6 +105,17 @@
                 "ClojureScript v" (cljs-util/clojurescript-version)))
   (println "===================================================================================================="))
 
+(defn beautify-js! [path]
+  (log/debug (str "Beautify JS at '" path "'"))
+  (let [options-args ["-n" "-s" "2"]
+        paths-args ["-f" path "-o" path]]
+    (try
+      (let [result (apply shell/sh "js-beautify" (concat options-args paths-args))]
+        (if-not (empty? (:err result))
+          (log/error (str "! " (:err result)))))
+      (catch Throwable e
+        (log/error (str "! " (.getMessage e)))))))
+
 ; -- building ---------------------------------------------------------------------------------------------------------------
 
 (defn build! [build]
@@ -117,7 +128,8 @@
                             (extract-relevant-output)
                             (get-canonical-transcript))]
     (log/debug (str "Writing build transcript to '" actual-transcript-path "' (" (count relevant-output) " chars)"))
-    (safe-spit actual-transcript-path relevant-output)))
+    (safe-spit actual-transcript-path relevant-output)
+    (beautify-js! actual-transcript-path)))
 
 (defn compare-transcripts! [build]
   (log/debug (str "Comparing build transcript with expected output..."))
