@@ -29,7 +29,7 @@ const allScripts = [
     "basic_onone",
     "basic_oadvanced",
     "basic_oadvanced_goog",
-    "basic_oadvanced_jsstar"];
+    "basic_oadvanced_raw"];
 
 const scripts = scriptsToRun || allScripts;
 

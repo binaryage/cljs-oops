@@ -27,29 +27,40 @@
 (def common-options
   {:optimizations :advanced})
 
-(defn build-options [main]
-  (let [out (last (string/split main #"\."))]
-    (merge common-options {:pseudo-names  true
-                           :elide-asserts true
-                           :main          (symbol main)
-                           :output-dir    (str "test/resources/_compiled/" out "/_workdir")
-                           :output-to     (str "test/resources/_compiled/" out "/main.js")})))
+(defn build-options [main variant config]
+  (let [out (str (last (string/split main #"\.")) "-" variant)]
+    (merge common-options {:pseudo-names    true
+                           :elide-asserts   true
+                           :main            (symbol main)
+                           :external-config {:oops/config (or config {})}
+                           :output-dir      (str "test/resources/_compiled/" out "/_workdir")
+                           :output-to       (str "test/resources/_compiled/" out "/main.js")})))
+
+(defn make-build [source variant main & [config]]
+  {:source  source
+   :variant variant
+   :options (build-options main variant config)})
+
+(defn get-atomic-options [mode]
+  {:atomic-set-mode mode
+   :atomic-get-mode mode})
 
 (def builds
-  [{:source  "test/src/arena/oops/arena/test1.cljs"
-    :options (build-options "oops.arena.test1")}])
+  [(make-build "test/src/arena/oops/arena/basic_oget.cljs" "default" "oops.arena.basic-oget")
+   (make-build "test/src/arena/oops/arena/basic_oget.cljs" "goog" "oops.arena.basic-oget" (get-atomic-options :goog))
+   (make-build "test/src/arena/oops/arena/basic_oget.cljs" "raw" "oops.arena.basic-oget" (get-atomic-options :raw))])
 
 (defn get-build-name [build]
-  (let [{:keys [source]} build]
-    (string/replace source #"test\/src\/arena\/oops\/" "")))
+  (let [{:keys [source variant]} build]
+    (str (string/replace source #"test\/src\/arena\/oops\/" "") " [" variant "]")))
 
 (defn get-actual-transcript-path [build]
-  (let [{:keys [source]} build]
-    (string/replace source #"\/([^/]*)\.cljs$" "/.actual/$1.txt")))
+  (let [{:keys [source variant]} build]
+    (string/replace source #"\/([^/]*)\.cljs$" (str "/.actual/$1_" variant ".txt"))))
 
 (defn get-expected-transcript-path [build]
-  (let [{:keys [source]} build]
-    (string/replace source #"\.cljs$" ".txt")))
+  (let [{:keys [source variant]} build]
+    (string/replace source #"\.cljs$" (str "_" variant ".txt"))))
 
 (defn produce-diff [path1 path2]
   (let [options-args ["-U" "5"]
@@ -131,13 +142,19 @@
     (safe-spit actual-transcript-path relevant-output)
     (beautify-js! actual-transcript-path)))
 
+(defn silent-slurp [path]
+  (try
+    (slurp path)
+    (catch Throwable _
+      "")))
+
 (defn compare-transcripts! [build]
   (log/debug (str "Comparing build transcript with expected output..."))
   (try
     (let [expected-path (get-expected-transcript-path build)
+          expected-transcript (silent-slurp expected-path)
           actual-path (get-actual-transcript-path build)
-          expected-transcript (slurp expected-path)
-          actual-transcript (slurp actual-path)]
+          actual-transcript (silent-slurp actual-path)]
       (when-not (= actual-transcript expected-transcript)
         (println)
         (println "-----------------------------------------------------------------------------------------------------")

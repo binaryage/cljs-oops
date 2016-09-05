@@ -1,7 +1,0 @@
-var $oops$arena$test1$o$$ = {
-  key: "val",
-  nested: {
-    k: "v"
-  }
-};
-console.log($oops$arena$test1$o$$.key, $oops$arena$test1$o$$.nested.k, $oops$arena$test1$o$$.nested.k);
