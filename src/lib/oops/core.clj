@@ -173,14 +173,12 @@
 ; -- public macros ----------------------------------------------------------------------------------------------------------
 
 (defmacro oget [obj & selector]
-  ;{:post [(or (log "oget:" obj selector "\n" %) true)]}
   (let [path (schema/selector->path selector)]
     (if-not (= path :invalid-path)
       (gen-static-path-get obj path)
       (gen-dynamic-selector-get obj selector))))
 
 (defmacro oset! [obj selector val]
-  ;{:post [(or (log "oset!:" obj selector val "\n" %) true)]}
   (let [obj-sym (gensym "obj")
         path (schema/selector->path selector)]
     `(let [~obj-sym ~obj]
@@ -190,13 +188,11 @@
        ~obj-sym)))
 
 (defmacro ocall [obj selector & args]
-  ;{:post [(or (log "ocall:" obj selector args "\n" %) true)]}
   (let [obj-sym (gensym "obj")]
     `(let [~obj-sym ~obj]
        (.call (oget ~obj-sym ~selector) ~obj-sym ~@args))))
 
 (defmacro oapply [obj selector args]
-  ;{:post [(or (log "apply:" obj selector args "\n" %) true)]}
   (let [obj-sym (gensym "obj")]
     `(let [~obj-sym ~obj]
        (.apply (oget ~obj-sym ~selector) ~obj-sym (into-array ~args)))))

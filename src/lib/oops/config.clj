@@ -1,5 +1,5 @@
 (ns oops.config
-  (:require [oops.state :as state]
+  (:require [oops.state]
             [oops.debug :refer [log]]))
 
 (def default-runtime-config
@@ -38,23 +38,8 @@
 
 ; -- public api--------------------------------------------------------------------------------------------------------------
 
-;(defn set-current-compiler-config! [new-config]
-;  {:pre [(map? new-config)]}
-;  (log "COMPILER CONFIG:" new-config)
-;  (alter-var-root #'state/*compiler-config* (constantly new-config))
-;  new-config)
-
 (defn get-current-compiler-config []
-  ; {:post [(or (log "COMPILER CONFIG:" %) true)]}
-  #_(if-not (bound? #'state/*compiler-config*)
-      (set-current-compiler-config! (get-compiler-config))
-      state/*compiler-config*)
   (get-compiler-config))
-
-;(defn update-current-compiler-config! [f-or-map & args]
-;  (if (map? f-or-map)
-;    (update-current-compiler-config! merge f-or-map)
-;    (set-current-compiler-config! (apply f-or-map (get-current-compiler-config) args))))
 
 ; -- runtime macros ---------------------------------------------------------------------------------------------------------
 
@@ -68,7 +53,7 @@
 ; -- icing ------------------------------------------------------------------------------------------------------------------
 
 (defn diagnostics? [& [config]]
-  (true? (:diagnostics (get-current-compiler-config))))
+  (true? (:diagnostics (or config (get-current-compiler-config)))))
 
 (defn atomic-get-mode [& [config]]
   (:atomic-get-mode (or config (get-current-compiler-config))))
