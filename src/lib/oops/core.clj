@@ -58,21 +58,21 @@
 (defn gen-key-set [obj key val]
   (gen-atomic-key-set obj key val))
 
+(defn gen-validate-object-wrapper [obj-sym body & [error-result]]
+  {:pre [(symbol? obj-sym)]}
+  (if (config/diagnostics?)
+    `(if (= ::validation-error (validate-object-dynamically ~obj-sym))
+       ~error-result
+       ~body)
+    body))
+
 (defn gen-instrumented-key-get [obj-sym key]
   {:pre [(symbol? obj-sym)]}
-  (let [key-get-code (gen-key-get obj-sym key)]
-    (if (config/diagnostics?)
-      `(if-not (= ::validation-error (validate-object-dynamically ~obj-sym))
-         ~key-get-code)
-      key-get-code)))
+  (gen-validate-object-wrapper obj-sym (gen-key-get obj-sym key)))
 
 (defn gen-instrumented-key-set [obj-sym key val]
   {:pre [(symbol? obj-sym)]}
-  (let [key-set-code (gen-key-set obj-sym key val)]
-    (if (config/diagnostics?)
-      `(if-not (= ::validation-error (validate-object-dynamically ~obj-sym))
-         ~key-set-code)
-      key-set-code)))
+  (gen-validate-object-wrapper obj-sym (gen-key-set obj-sym key val)))
 
 (defn gen-static-path-get [obj path]
   (if (empty? path)
