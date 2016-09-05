@@ -4,12 +4,12 @@
 ;(println (interpose "\n" (seq (.getURLs (ClassLoader/getSystemClassLoader)))))
 
 (defmacro with-console-recording [recorder & body]
-  `(try
-     (let [recorder# ~recorder]
+  `(let [recorder# ~recorder]
+     (try
        (add-console-recorder! recorder#)
-       ~@body)
-     (finally
-       (remove-console-recorder! recorder#))))
+       ~@body
+       (finally
+         (remove-console-recorder! recorder#)))))
 
 (defn advanced-mode? []
   (if cljs.env/*compiler*
