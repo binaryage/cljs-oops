@@ -31,7 +31,7 @@
 (defn set-key-dynamically [obj key val]
   (set-key-dynamically-impl obj key val))
 
-(defn get-selector-dynamically [obj & selector]
+(defn get-selector-dynamically [obj selector]
   (get-selector-dynamically-impl obj selector))
 
 (defn set-selector-dynamically [obj selector val]
