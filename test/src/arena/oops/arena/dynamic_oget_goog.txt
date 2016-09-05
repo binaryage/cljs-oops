@@ -1,7 +1,7 @@
 $oops$core$get_selector_dynamically$$($cljs$core$_conj$$($cljs$core$List$EMPTY$$, "key"));
 $oops$core$get_selector_dynamically$$($cljs$core$_conj$$($cljs$core$List$EMPTY$$, "key"));
-var $JSCompiler_inline_result$$143$$;
+var $JSCompiler_inline_result$$1$$;
 window.x = "dirty";
-$JSCompiler_inline_result$$143$$ = $cljs$core$_conj$$($cljs$core$List$EMPTY$$, "key");
-$oops$core$get_selector_dynamically$$($JSCompiler_inline_result$$143$$);
+$JSCompiler_inline_result$$1$$ = $cljs$core$_conj$$($cljs$core$List$EMPTY$$, "key");
+$oops$core$get_selector_dynamically$$($JSCompiler_inline_result$$1$$);
 $oops$core$get_selector_dynamically$$($cljs$core$_conj$$($cljs$core$List$EMPTY$$, "xxx"));
