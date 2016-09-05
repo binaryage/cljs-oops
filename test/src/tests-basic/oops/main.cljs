@@ -2,12 +2,15 @@
   (:require [cljs.test :refer-macros [deftest testing is are run-tests use-fixtures]]
             [clojure.string :as string]
             [oops.core :refer [oget oset! ocall! oapply! ocall oapply]]
-            [oops.config :as config :refer [with-runtime-config]]
+            [oops.config :refer [with-runtime-config]]
             [oops.tools
              :refer [with-captured-console]
-             :refer-macros [when-advanced-mode when-none-mode
+             :refer-macros [init-test!
+                            when-advanced-mode when-none-mode
                             with-console-recording
                             when-compiler-config when-not-compiler-config]]))
+
+(init-test!)
 
 (use-fixtures :once with-captured-console)
 

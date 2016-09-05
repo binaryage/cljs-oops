@@ -7,8 +7,8 @@ set -e
 pushd `dirname "${BASH_SOURCE[0]}"` > /dev/null
 source "./config.sh"
 
-pushd "$ROOT"
+pushd "$ROOT/test/resources"
 
-./scripts/run-tests.sh "$@" || tput bel
+phantomjs phantom.js "$@"
 
 popd

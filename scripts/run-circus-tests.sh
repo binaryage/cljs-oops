@@ -9,7 +9,8 @@ source "./config.sh"
 
 pushd "$ROOT"
 
-./scripts/run-functional-tests.sh
-./scripts/run-circus-tests.sh
+export OOPS_ELIDE_DEVTOOLS=1
+
+lein with-profile +circus run -m "oops.circus"
 
 popd

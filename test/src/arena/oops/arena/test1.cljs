@@ -1,8 +1,8 @@
 (ns oops.arena.test1
   (:require [oops.core :refer [oget]]
-            [oops.tools :refer [emit-arena-separator!]]))
+            [oops.tools :refer [init-test!]]))
 
-(emit-arena-separator!)
+(init-test!)
 
 (def o #js {"key"    "val"
             "nested" #js {"k" "v"}})

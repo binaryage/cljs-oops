@@ -50,7 +50,6 @@
                                     :compiler     {:output-to       "test/resources/_compiled/basic_onone/main.js"
                                                    :output-dir      "test/resources/_compiled/basic_onone"
                                                    :asset-path      "_compiled/basic_onone"
-                                                   :preloads        [devtools.preload]
                                                    :external-config {:devtools/config {:dont-detect-custom-formatters true}}
                                                    :main            oops.runner
                                                    :optimizations   :none}}}}}
@@ -104,6 +103,9 @@
             "run-functional-tests"   ["do"
                                       ["clean"]
                                       ["shell" "scripts/run-functional-tests.sh"]]
+            "run-circus-tests"       ["do"
+                                      ["clean"]
+                                      ["shell" "scripts/run-circus-tests.sh"]]
             "build-tests"            ["do"
                                       ["with-profile" "+testing-basic-onone" "cljsbuild" "once" "basic-onone"]
                                       ["with-profile" "+testing-basic-oadvanced" "cljsbuild" "once" "basic-oadvanced"]
@@ -118,7 +120,6 @@
             "auto-test"              ["do"
                                       ["clean"]
                                       ["auto-build-tests"]]
-            "run-circus"             ["with-profile" "+circus" "run" "-m" "oops.circus-runner"]
             "release"                ["do"
                                       "shell" "scripts/check-versions.sh,"
                                       "clean,"

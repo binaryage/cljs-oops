@@ -1,5 +1,6 @@
 (ns oops.tools
-  (:require-macros [oops.tools]))
+  (:require-macros [oops.tools])
+  (:require [devtools.core]))
 
 (defonce console-recorders (atom []))
 (defonce original-console-api (atom nil))

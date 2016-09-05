@@ -1,5 +1,6 @@
 (ns oops.tools
-  (:require [oops.config :as config]))
+  (:require [environ.core :refer [env]]
+            [oops.config :as config]))
 
 ;(println (interpose "\n" (seq (.getURLs (ClassLoader/getSystemClassLoader)))))
 
@@ -41,3 +42,14 @@
 (defmacro emit-arena-separator! []
   (let [comment (str " @preserve " (get-arena-separator) "")]
     `(~'js-inline-comment ~comment)))
+
+(defn gen-devtools-if-needed []
+  (if-not (= (env :oops-elide-devtools) "1")
+    `(if-not (re-find #"PhantomJS" js/window.navigator.userAgent)
+       (devtools.core/install!))))
+
+(defmacro init-test! []
+  `(do
+     ~(gen-devtools-if-needed)
+     (emit-arena-separator!)))
+

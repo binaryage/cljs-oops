@@ -1,4 +1,4 @@
-(ns oops.circus-runner
+(ns oops.circus
   (:require [clojure.test :refer :all]
             [cljs.build.api :as api]
             [cljs.util :as cljs-util]
@@ -100,9 +100,9 @@
 
 (defn print-banner! []
   (println)
-  (println (str "Running compiler output tests against "
-                "Clojure " (clojure-version) " and "
-                "ClojureScript " (cljs-util/clojurescript-version)))
+  (println (str "Running compiler output tests under "
+                "Clojure v" (clojure-version) " and "
+                "ClojureScript v" (cljs-util/clojurescript-version)))
   (println "===================================================================================================="))
 
 ; -- building ---------------------------------------------------------------------------------------------------------------
@@ -169,7 +169,7 @@
   (setup-logging!)
   (print-banner!)
 
-  (let [summary (run-tests 'oops.circus-runner)]
+  (let [summary (run-tests 'oops.circus)]
     (if-not (successful? summary)
       (System/exit 1)
       (System/exit 0))))
