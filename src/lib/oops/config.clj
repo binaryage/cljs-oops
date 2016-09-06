@@ -10,8 +10,8 @@
 
 (def default-compiler-config
   {:diagnostics     true
-   :atomic-get-mode :aget                                                                                                     ; #{:aget :raw :goog}
-   :atomic-set-mode :aset                                                                                                     ; #{:aget :raw :goog}
+   :atomic-get-mode :aget                                                                                                     ; #{:aget :goog}
+   :atomic-set-mode :aset                                                                                                     ; #{:aget :goog}
    :runtime-config  default-runtime-config})
 
 (def advanced-mode-compiler-config-overrides

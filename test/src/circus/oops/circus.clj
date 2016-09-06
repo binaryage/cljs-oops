@@ -54,8 +54,7 @@
 
 (defn get-build-variants [source main]
   [(make-build source "default")
-   (make-build source "goog" (get-atomic-options :goog))
-   (make-build source "raw" (get-atomic-options :raw))])
+   (make-build source "goog" (get-atomic-options :goog))])
 
 (def builds
   (concat

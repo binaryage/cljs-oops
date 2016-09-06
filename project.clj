@@ -77,25 +77,11 @@
                                                    :optimizations   :advanced
                                                    :external-config {:oops/config {:atomic-get-mode :goog
                                                                                    :atomic-set-mode :goog}}}}}}}
-             :testing-basic-oadvanced-raw
-             {:cljsbuild {:builds {:basic-oadvanced-raw
-                                   {:source-paths ["src/lib"
-                                                   "test/src/runner"
-                                                   "test/src/tools"
-                                                   "test/src/tests-basic"]
-                                    :compiler     {:output-to       "test/resources/_compiled/basic_oadvanced_raw/main.js"
-                                                   :output-dir      "test/resources/_compiled/basic_oadvanced_raw"
-                                                   :asset-path      "_compiled/basic_oadvanced_raw"
-                                                   :main            oops.runner
-                                                   :optimizations   :advanced
-                                                   :external-config {:oops/config {:atomic-get-mode :raw
-                                                                                   :atomic-set-mode :raw}}}}}}}
 
              :auto-testing
              {:cljsbuild {:builds {:basic-onone          {:notify-command ["scripts/rerun-tests.sh" "basic_onone"]}
                                    :basic-oadvanced      {:notify-command ["scripts/rerun-tests.sh" "basic_oadvanced"]}
-                                   :basic-oadvanced-goog {:notify-command ["scripts/rerun-tests.sh" "basic_oadvanced_goog"]}
-                                   :basic-oadvanced-raw  {:notify-command ["scripts/rerun-tests.sh" "basic_oadvanced_raw"]}}}}}
+                                   :basic-oadvanced-goog {:notify-command ["scripts/rerun-tests.sh" "basic_oadvanced_goog"]}}}}}
 
   :aliases {"test"                   ["do"
                                       ["clean"]
@@ -109,13 +95,11 @@
             "build-tests"            ["do"
                                       ["with-profile" "+testing-basic-onone" "cljsbuild" "once" "basic-onone"]
                                       ["with-profile" "+testing-basic-oadvanced" "cljsbuild" "once" "basic-oadvanced"]
-                                      ["with-profile" "+testing-basic-oadvanced-goog" "cljsbuild" "once" "basic-oadvanced-goog"]
-                                      ["with-profile" "+testing-basic-oadvanced-raw" "cljsbuild" "once" "basic-oadvanced-raw"]]
+                                      ["with-profile" "+testing-basic-oadvanced-goog" "cljsbuild" "once" "basic-oadvanced-goog"]]
             "auto-build-tests"       ["do"
                                       ["with-profile" "+testing-basic-onone,+auto-testing" "cljsbuild" "once" "basic-onone"]
                                       ["with-profile" "+testing-basic-oadvanced,+auto-testing" "cljsbuild" "once" "basic-oadvanced"]
-                                      ["with-profile" "+testing-basic-oadvanced-goog,+auto-testing" "cljsbuild" "once" "basic-oadvanced-goog"]
-                                      ["with-profile" "+testing-basic-oadvanced-raw,+auto-testing" "cljsbuild" "once" "basic-oadvanced-raw"]]
+                                      ["with-profile" "+testing-basic-oadvanced-goog,+auto-testing" "cljsbuild" "once" "basic-oadvanced-goog"]]
             "auto-build-basic-onone" ["with-profile" "+testing-basic-onone,+auto-testing" "cljsbuild" "auto" "basic-onone"]
             "auto-test"              ["do"
                                       ["clean"]

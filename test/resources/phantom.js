@@ -28,8 +28,7 @@ var exitCode = 0;
 const allScripts = [
     "basic_onone",
     "basic_oadvanced",
-    "basic_oadvanced_goog",
-    "basic_oadvanced_raw"];
+    "basic_oadvanced_goog"];
 
 const scripts = scriptsToRun || allScripts;
 

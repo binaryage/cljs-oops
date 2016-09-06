@@ -1,8 +1,0 @@
-"val";
-({
-  key: "val"
-}).xxx;
-"val";
-"nested-val";
-"nested-val";
-null.a.b.c;

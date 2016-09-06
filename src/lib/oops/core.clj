@@ -38,14 +38,12 @@
 
 (defn gen-key-get [obj key]
   (case (config/atomic-get-mode)
-    :aget `(cljs.core/aget ~obj ~key)
-    :raw `(~'js* "(~{}[~{}])" ~obj ~key)
+    :aget `(cljs.core/aget ~obj ~key)                                                                                         ; => `(~'js* "(~{}[~{}])" ~obj ~key)
     :goog `(goog.object/get ~obj ~key)))
 
 (defn gen-key-set [obj key val]
   (case (config/atomic-set-mode)
-    :aset `(cljs.core/aset ~obj ~key ~val)
-    :raw `(~'js* "(~{}[~{}] = ~{})" ~obj ~key ~val)
+    :aset `(cljs.core/aset ~obj ~key ~val)                                                                                    ; => `(~'js* "(~{}[~{}] = ~{})" ~obj ~key ~val)
     :goog `(goog.object/set ~obj ~key ~val)))
 
 (defn gen-dynamic-object-access-validation-wrapper [obj-sym body]
