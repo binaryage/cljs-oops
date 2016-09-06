@@ -2,17 +2,15 @@
   (:require [oops.state]
             [oops.debug :refer [log]]))
 
-(def default-runtime-config
-  {; diagnostics...
-   :error-reporting-mode   :throw                                                                                             ; #{:throw :console false}
-   :warning-reporting-mode :console                                                                                           ; #{:throw :console false}
-   })
+(def default-config
+  {:diagnostics                    true
+   :key-get-mode                   :core                                                                                      ; #{:core :goog}
+   :key-set-mode                   :core                                                                                      ; #{:core :goog}
 
-(def default-compiler-config
-  {:diagnostics    true
-   :key-get-mode   :core                                                                                                      ; #{:core :goog}
-   :key-set-mode   :core                                                                                                      ; #{:core :goog}
-   :runtime-config default-runtime-config})
+   ; runtime config
+   :runtime-error-reporting-mode   :throw                                                                                     ; #{:throw :console false}
+   :runtime-warning-reporting-mode :console                                                                                   ; #{:throw :console false}
+   })
 
 (def advanced-mode-compiler-config-overrides
   {:diagnostics false})
@@ -24,7 +22,7 @@
     (= (get-in @cljs.env/*compiler* [:options :optimizations]) :advanced)))
 
 (defn prepare-default-config []
-  (merge default-compiler-config (if (advanced-mode?) advanced-mode-compiler-config-overrides)))
+  (merge default-config (if (advanced-mode?) advanced-mode-compiler-config-overrides)))
 
 (defn read-project-config []
   (if cljs.env/*compiler*
@@ -42,14 +40,20 @@
 (defn get-current-compiler-config []
   (get-compiler-config))
 
+(defn get-runtime-config [& [config]]
+  (let [* (fn [[key val]]
+            (if-let [m (re-matches #"^runtime-(.*)$" (name key))]
+              [(keyword (second m)) val]))]                                                                                   ; drop :runtime- prefix
+    (into {} (keep * (or config (get-current-compiler-config))))))
+
 ; -- runtime macros ---------------------------------------------------------------------------------------------------------
 
 (defmacro with-runtime-config [config & body]
   `(binding [oops.state/*runtime-config* (merge (get-current-runtime-config) ~config)]
      ~@body))
 
-(defmacro gen-runtime-config []
-  (:runtime-config (get-current-compiler-config)))
+(defmacro gen-runtime-config [& [config]]
+  (get-runtime-config config))
 
 ; -- icing ------------------------------------------------------------------------------------------------------------------
 
