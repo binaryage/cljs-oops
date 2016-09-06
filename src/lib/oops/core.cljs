@@ -20,10 +20,13 @@
   (coerce-key-dynamically-impl key))
 
 (defn collect-coerced-items-into-array! [coll arr]
-  (doseq [item coll]
-    (if (sequential? item)
-      (collect-coerced-items-into-array! item arr)
-      (.push arr (coerce-key-dynamically item)))))
+  (loop [items (seq coll)]                                                                                                    ; note: items is either a seq or nil
+    (if-not (nil? items)
+      (let [item (-first items)]
+        (if (sequential? item)
+          (collect-coerced-items-into-array! item arr)
+          (.push arr (coerce-key-dynamically item)))
+        (recur (next items))))))
 
 (defn validate-object-dynamically [obj]
   (validate-object-dynamically-impl obj))
