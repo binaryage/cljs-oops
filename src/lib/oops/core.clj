@@ -105,7 +105,7 @@
 
 (defn gen-dynamic-path-get [obj-sym path]
   {:pre [(symbol? obj-sym)]}
-  `(reduce get-key-dynamically ~obj-sym ~path))
+  `(reduce get-key-dynamically ~obj-sym ~path))                                                                               ; TODO: this could be rewritten into a raw loop (optimization)
 
 (defn gen-static-path-set [obj-sym path val]
   {:pre [(not (empty? path))
@@ -138,6 +138,14 @@
      (case (config/error-reporting-mode)
        :throw (throw (ex-info ~msg ~data))
        :console (print-error-to-console ~msg ~data)
+       false nil)
+     nil))
+
+(defmacro report-runtime-warning-impl [msg data]
+  `(do
+     (case (config/warning-reporting-mode)
+       :throw (throw (ex-info ~msg ~data))
+       :console (print-warning-to-console ~msg ~data)
        false nil)
      nil))
 

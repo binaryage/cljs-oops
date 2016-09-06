@@ -1,5 +1,6 @@
 (ns oops.core
   (:require-macros [oops.core :refer [report-runtime-error-impl
+                                      report-runtime-warning-impl
                                       coerce-key-dynamically-impl
                                       build-path-dynamically-impl
                                       get-key-dynamically-impl
@@ -12,12 +13,23 @@
             [oops.state]
             [oops.config]))
 
+; -- diagnostics reporting --------------------------------------------------------------------------------------------------
+
 (defn ^:dynamic print-error-to-console [& args]
   (.apply (.-error js/console) js/console (into-array args))
   nil)
 
+(defn ^:dynamic print-warning-to-console [& args]
+  (.apply (.-warn js/console) js/console (into-array args))
+  nil)
+
 (defn ^:dynamic report-runtime-error [msg data]
   (report-runtime-error-impl msg data))
+
+(defn ^:dynamic report-runtime-warning [msg data]
+  (report-runtime-warning-impl msg data))
+
+; -- runtime support for macros ---------------------------------------------------------------------------------------------
 
 (defn coerce-key-dynamically [key]
   (coerce-key-dynamically-impl key))
