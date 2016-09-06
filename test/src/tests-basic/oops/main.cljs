@@ -18,26 +18,29 @@
   (let [sample-obj #js {:key               "val"
                         "@#$%fancy key^&*" "fancy-val"
                         "nested"           #js {:nested-key1  "nk1"
-                                                "nested-key2" 2}}]
-    (testing "simple static key/path fetch"
+                                                "nested-key2" 2}}
+        make-selector-dynamically (fn [path] path)]
+    (testing "simple static get"
       (are [key expected] (= (oget sample-obj key) expected)
         "non-existent" nil
         "key" "val"
         "@#$%fancy key^&*" "fancy-val"
         ["nested" "nested-key2"] 2))
-    (testing "simple dynamic key/path fetch"
-      (let [dynamic-key-fn (fn [name] name)]
-        (is (= (oget sample-obj (dynamic-key-fn "key")) "val"))
-        (is (= (oget sample-obj (dynamic-key-fn "xxx")) nil))
-        (is (= (oget sample-obj (dynamic-key-fn "nested") "nested-key1") "nk1"))
-        (is (= (oget sample-obj [(dynamic-key-fn "nested") "nested-key1"]) "nk1"))
-        (when-none-mode
-          (are [input] (thrown-with-msg? js/Error #"Invalid dynamic selector" (oget sample-obj (dynamic-key-fn input)))
-            'sym
-            identity
-            0
-            #js {}
-            #js []))))
+    (testing "simple dynamic get"
+      (is (= (oget sample-obj (make-selector-dynamically "key")) "val"))
+      (is (= (oget sample-obj (make-selector-dynamically "xxx")) nil))
+      (is (= (oget sample-obj (make-selector-dynamically "nested") "nested-key1") "nk1"))
+      (is (= (oget sample-obj (make-selector-dynamically ["nested" "nested-key1"])) "nk1"))
+      (is (= (oget sample-obj [(make-selector-dynamically "nested") "nested-key1"]) "nk1"))
+      (when-none-mode
+        (are [input] (thrown-with-msg? js/Error #"Invalid dynamic selector" (oget sample-obj (make-selector-dynamically input)))
+          'sym
+          identity
+          0
+          #js {})))
+    (testing "dynamic get via js array (path)"
+      (is (= (oget sample-obj (make-selector-dynamically #js ["nested" "nested-key1"])) "nk1"))
+      (is (thrown-with-msg? js/Error #"Invalid dynamic path" (oget sample-obj (make-selector-dynamically #js ["nested" :nested-key1])))))
     (when-none-mode
       (testing "object access validation should throw by default"
         (are [o msg] (thrown-with-msg? js/Error msg (oget o "key"))

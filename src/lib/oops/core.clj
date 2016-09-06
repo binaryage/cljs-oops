@@ -103,10 +103,15 @@
 (defn gen-validate-selector-wrapper [selector-sym body]
   {:pre [(symbol? selector-sym)]}
   (if (config/diagnostics?)
-    `(if (clojure.spec/valid? ::oops.sdefs/obj-selector ~selector-sym)
-       (do ~body)
-       (throw (ex-info "Invalid dynamic selector"                                                                             ; TODO: allow error reporting here
-                       {:explain (clojure.spec/explain-data ::oops.sdefs/obj-selector ~selector-sym)})))
+    `(if (cljs.core/array? ~selector-sym)
+       (if (clojure.spec/valid? ::oops.sdefs/obj-path ~selector-sym)
+         ~body
+         (throw (ex-info "Invalid dynamic path"                                                                               ; TODO: allow error reporting here
+                         {:explain (clojure.spec/explain-data ::oops.sdefs/obj-path ~selector-sym)})))
+       (if (clojure.spec/valid? ::oops.sdefs/obj-selector ~selector-sym)
+         ~body
+         (throw (ex-info "Invalid dynamic selector"                                                                           ; TODO: allow error reporting here
+                         {:explain (clojure.spec/explain-data ::oops.sdefs/obj-selector ~selector-sym)}))))
     body))
 
 (defn gen-dynamic-path-get [obj-sym path]
@@ -151,7 +156,7 @@
 (defmacro build-path-dynamically-impl [selector-sym]
   {:pre [(symbol? selector-sym)]}
   (let [atomic-case `(cljs.core/array (coerce-key-dynamically ~selector-sym))
-        array-case selector-sym                                                                                               ; we assume native arrays are already paths, TODO: implement diagnostics checks
+        array-case selector-sym                                                                                               ; we assume native arrays are already paths
         collection-case (let [path-sym (gensym "selector-path")]
                           `(let [~path-sym (cljs.core/array)]
                              (collect-coerced-keys-into-array! ~selector-sym ~path-sym)
