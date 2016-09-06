@@ -24,5 +24,8 @@
 
 ; -- icing ------------------------------------------------------------------------------------------------------------------
 
-(defn object-access-validation-mode [& [config]]
-  (:object-access-validation-mode (or config (get-current-runtime-config))))
+(defn error-reporting-mode [& [config]]
+  (:error-reporting-mode (or config (get-current-runtime-config))))
+
+(defn warning-reporting-mode [& [config]]
+  (:warning-reporting-mode (or config (get-current-runtime-config))))

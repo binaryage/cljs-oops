@@ -18,64 +18,40 @@
     `(cljs.core/list ~@items)                                                                                                 ; this is the slow path under diagnostics we want selector list be a valid selector
     (gen-tagged-array items)))                                                                                                ; this is the fast path for advanced optimizations without diagnostics
 
-(defn gen-throw-validation-error [obj-sym flavor]
+(defn gen-object-access-validation-error [obj-sym flavor]
   {:pre [(symbol? obj-sym)]}
-  `(throw (ex-info (str "Unexpected object value (" ~flavor ")") {:obj ~obj-sym})))
-
-(defn gen-report-validation-error [obj-sym flavor]
-  {:pre [(symbol? obj-sym)]}
-  `(do
-     (report-runtime-error (str "Unexpected object value (" ~flavor ")") ~obj-sym)
-     ::validation-error))
-
-(defn gen-validation-error [mode obj-sym flavor]
-  {:pre [(symbol? obj-sym)]}
-  (case mode
-    :throw (gen-throw-validation-error obj-sym flavor)
-    :report (gen-report-validation-error obj-sym flavor)
-    :sanitize ::validation-error
-    false nil))
-
-(defn gen-object-access-validation-check-mode [mode obj-sym]
-  {:pre [(symbol? obj-sym)]}
-  `(cond
-     (cljs.core/undefined? ~obj-sym) ~(gen-validation-error mode obj-sym "undefined")
-     (cljs.core/nil? ~obj-sym) ~(gen-validation-error mode obj-sym "nil")
-     (cljs.core/boolean? ~obj-sym) ~(gen-validation-error mode obj-sym "boolean")
-     (cljs.core/number? ~obj-sym) ~(gen-validation-error mode obj-sym "number")
-     (cljs.core/string? ~obj-sym) ~(gen-validation-error mode obj-sym "string")))
+  `(let [msg# (str "Unexpected object value (" ~flavor ")")
+         data# {:obj ~obj-sym}]
+     (report-runtime-error msg# data#)))
 
 (defn gen-object-access-validation-check [obj-sym]
   {:pre [(symbol? obj-sym)]}
-  `(case (config/object-access-validation-mode)
-     :throw ~(gen-object-access-validation-check-mode :throw obj-sym)
-     :report ~(gen-object-access-validation-check-mode :report obj-sym)
-     :sanitize ~(gen-object-access-validation-check-mode :sanitize obj-sym)
-     false nil))
+  `(if (config/error-reporting-mode)
+     (cond
+       (cljs.core/undefined? ~obj-sym) ~(gen-object-access-validation-error obj-sym "undefined")
+       (cljs.core/nil? ~obj-sym) ~(gen-object-access-validation-error obj-sym "nil")
+       (cljs.core/boolean? ~obj-sym) ~(gen-object-access-validation-error obj-sym "boolean")
+       (cljs.core/number? ~obj-sym) ~(gen-object-access-validation-error obj-sym "number")
+       (cljs.core/string? ~obj-sym) ~(gen-object-access-validation-error obj-sym "string")
+       :else true)
+     true))
 
-(defn gen-atomic-key-get [obj key]
+(defn gen-key-get [obj key]
   (case (config/atomic-get-mode)
     :aget `(cljs.core/aget ~obj ~key)
     :raw `(~'js* "(~{}[~{}])" ~obj ~key)
     :goog `(goog.object/get ~obj ~key)))
 
-(defn gen-atomic-key-set [obj key val]
+(defn gen-key-set [obj key val]
   (case (config/atomic-set-mode)
     :aset `(cljs.core/aset ~obj ~key ~val)
     :raw `(~'js* "(~{}[~{}] = ~{})" ~obj ~key ~val)
     :goog `(goog.object/set ~obj ~key ~val)))
 
-(defn gen-key-get [obj key]
-  (gen-atomic-key-get obj key))
-
-(defn gen-key-set [obj key val]
-  (gen-atomic-key-set obj key val))
-
-(defn gen-validate-object-wrapper [obj-sym body & [error-body]]
+(defn gen-validate-object-wrapper [obj-sym body]
   {:pre [(symbol? obj-sym)]}
   (if (config/diagnostics?)
-    `(if (= ::validation-error (validate-object-dynamically ~obj-sym))
-       ~error-body
+    `(if (validate-object-dynamically ~obj-sym)
        ~body)
     body))
 
@@ -100,18 +76,33 @@
     1 `(get-selector-dynamically ~obj ~(first selector-list))                                                                 ; we want to unwrap selector wrapped in oget (in this case)
     `(get-selector-dynamically ~obj ~(gen-selector-list selector-list))))
 
-(defn gen-validate-selector-wrapper [selector-sym body]
+(defn gen-dynamic-path-validation [path-sym]
+  {:pre [(symbol? path-sym)]}
+  `(if-not (clojure.spec/valid? ::oops.sdefs/obj-path ~path-sym)
+     (let [explanation# (clojure.spec/explain-data ::oops.sdefs/obj-path ~path-sym)]
+       (report-runtime-error "Invalid dynamic path" {:path        ~path-sym
+                                                     :explanation explanation#}))
+     true))
+
+(defn gen-dynamic-selector-validation [selector-sym]
+  {:pre [(symbol? selector-sym)]}
+  `(if-not (clojure.spec/valid? ::oops.sdefs/obj-selector ~selector-sym)
+     (let [explanation# (clojure.spec/explain-data ::oops.sdefs/obj-selector ~selector-sym)]
+       (report-runtime-error "Invalid dynamic selector" {:selector    ~selector-sym
+                                                         :explanation explanation#}))
+     true))
+
+(defn gen-dynamic-selector-or-path-validation [selector-or-path-sym]
+  {:pre [(symbol? selector-or-path-sym)]}
+  `(if (cljs.core/array? ~selector-or-path-sym)
+     ~(gen-dynamic-path-validation selector-or-path-sym)
+     ~(gen-dynamic-selector-validation selector-or-path-sym)))
+
+(defn gen-dynamic-selector-validation-wrapper [selector-sym body]
   {:pre [(symbol? selector-sym)]}
   (if (config/diagnostics?)
-    `(if (cljs.core/array? ~selector-sym)
-       (if (clojure.spec/valid? ::oops.sdefs/obj-path ~selector-sym)
-         ~body
-         (throw (ex-info "Invalid dynamic path"                                                                               ; TODO: allow error reporting here
-                         {:explain (clojure.spec/explain-data ::oops.sdefs/obj-path ~selector-sym)})))
-       (if (clojure.spec/valid? ::oops.sdefs/obj-selector ~selector-sym)
-         ~body
-         (throw (ex-info "Invalid dynamic selector"                                                                           ; TODO: allow error reporting here
-                         {:explain (clojure.spec/explain-data ::oops.sdefs/obj-selector ~selector-sym)}))))
+    `(if ~(gen-dynamic-selector-or-path-validation selector-sym)
+       ~body)
     body))
 
 (defn gen-dynamic-path-get [obj-sym path]
@@ -143,6 +134,14 @@
        (set-key-dynamically ~parent-obj-sym ~key-sym ~val))))
 
 ; -- helper macros ----------------------------------------------------------------------------------------------------------
+
+(defmacro report-runtime-error-impl [msg data]
+  `(do
+     (case (config/error-reporting-mode)
+       :throw (throw (ex-info ~msg ~data))
+       :console (print-error-to-console ~msg ~data)
+       false nil)
+     nil))
 
 (defmacro coerce-key-dynamically-impl [key-sym]
   {:pre [(symbol? key-sym)]}
@@ -182,14 +181,14 @@
   {:pre [(symbol? obj-sym)
          (symbol? selector-sym)]}
   (let [path `(build-path-dynamically ~selector-sym)]
-    (gen-validate-selector-wrapper selector-sym (gen-dynamic-path-get obj-sym path))))
+    (gen-dynamic-selector-validation-wrapper selector-sym (gen-dynamic-path-get obj-sym path))))
 
 (defmacro set-selector-dynamically-impl [obj-sym selector-sym val-sym]
   {:pre [(symbol? obj-sym)
          (symbol? selector-sym)
          (symbol? val-sym)]}
   (let [path `(build-path-dynamically ~selector-sym)]
-    (gen-validate-selector-wrapper selector-sym (gen-dynamic-path-set obj-sym path val-sym))))
+    (gen-dynamic-selector-validation-wrapper selector-sym (gen-dynamic-path-set obj-sym path val-sym))))
 
 ; -- public macros ----------------------------------------------------------------------------------------------------------
 

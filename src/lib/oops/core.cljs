@@ -1,5 +1,6 @@
 (ns oops.core
-  (:require-macros [oops.core :refer [coerce-key-dynamically-impl
+  (:require-macros [oops.core :refer [report-runtime-error-impl
+                                      coerce-key-dynamically-impl
                                       validate-object-dynamically-impl
                                       build-path-dynamically-impl
                                       get-key-dynamically-impl
@@ -12,9 +13,12 @@
             [oops.state]
             [oops.config]))
 
-(defn ^:dynamic report-runtime-error [& args]
+(defn ^:dynamic print-error-to-console [& args]
   (.apply (.-error js/console) js/console (into-array args))
   nil)
+
+(defn ^:dynamic report-runtime-error [msg data]
+  (report-runtime-error-impl msg data))
 
 (defn coerce-key-dynamically [key]
   (coerce-key-dynamically-impl key))

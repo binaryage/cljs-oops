@@ -31,17 +31,17 @@
       (is (= (oget sample-obj (make-selector-dynamically "xxx")) nil))
       (is (= (oget sample-obj (make-selector-dynamically "nested") "nested-key1") "nk1"))
       (is (= (oget sample-obj (make-selector-dynamically ["nested" "nested-key1"])) "nk1"))
-      (is (= (oget sample-obj [(make-selector-dynamically "nested") "nested-key1"]) "nk1"))
-      (when-none-mode
+      (is (= (oget sample-obj [(make-selector-dynamically "nested") "nested-key1"]) "nk1")))
+    (when-none-mode
+      (testing "invalid dynamic selectors"
         (are [input] (thrown-with-msg? js/Error #"Invalid dynamic selector" (oget sample-obj (make-selector-dynamically input)))
           'sym
           identity
           0
-          #js {})))
-    (testing "dynamic get via js array (path)"
-      (is (= (oget sample-obj (make-selector-dynamically #js ["nested" "nested-key1"])) "nk1"))
-      (is (thrown-with-msg? js/Error #"Invalid dynamic path" (oget sample-obj (make-selector-dynamically #js ["nested" :nested-key1])))))
-    (when-none-mode
+          #js {}))
+      (testing "dynamic get via js array (path)"
+        (is (= (oget sample-obj (make-selector-dynamically #js ["nested" "nested-key1"])) "nk1"))
+        (is (thrown-with-msg? js/Error #"Invalid dynamic path" (oget sample-obj (make-selector-dynamically #js ["nested" :nested-key1])))))
       (testing "object access validation should throw by default"
         (are [o msg] (thrown-with-msg? js/Error msg (oget o "key"))
           nil #"Unexpected object value \(nil\)"
@@ -50,7 +50,7 @@
           42 #"Unexpected object value \(number\)"
           true #"Unexpected object value \(boolean\)"
           false #"Unexpected object value \(boolean\)")
-        (with-runtime-config {:object-access-validation-mode false}
+        (with-runtime-config {:error-reporting-mode false}
           (are [o msg] (thrown-with-msg? js/TypeError msg (oget o "key"))
             nil #"null is not an object"
             js/undefined #"undefined is not an object")
@@ -59,16 +59,16 @@
             42
             true
             false)))
-      (testing "with {:object-access-validation-mode :report} object access validation should report errors to console"
-        (with-runtime-config {:object-access-validation-mode :report}
+      (testing "with {:error-reporting-mode :console} object access validation should report errors to console"
+        (with-runtime-config {:error-reporting-mode :console}
           (let [recorder (atom [""])
                 expected-warnings "
-ERROR: (\"Unexpected object value (nil)\" nil)
-ERROR: (\"Unexpected object value (undefined)\" nil)
-ERROR: (\"Unexpected object value (string)\" \"s\")
-ERROR: (\"Unexpected object value (number)\" 42)
-ERROR: (\"Unexpected object value (boolean)\" true)
-ERROR: (\"Unexpected object value (boolean)\" false)"]
+ERROR: (\"Unexpected object value (nil)\" {:obj nil})
+ERROR: (\"Unexpected object value (undefined)\" {:obj nil})
+ERROR: (\"Unexpected object value (string)\" {:obj \"s\"})
+ERROR: (\"Unexpected object value (number)\" {:obj 42})
+ERROR: (\"Unexpected object value (boolean)\" {:obj true})
+ERROR: (\"Unexpected object value (boolean)\" {:obj false})"]
             (with-console-recording recorder
               (are [o] (= (oget o "key") nil)
                 nil
@@ -78,21 +78,8 @@ ERROR: (\"Unexpected object value (boolean)\" false)"]
                 true
                 false))
             (is (= (string/join "\n" @recorder) expected-warnings)))))
-      (testing (str "with {:object-access-validation-mode :sanitize} object access validation should not report errors"
-                    "but still should sanitize results as nil")
-        (with-runtime-config {:object-access-validation-mode :sanitize}
-          (let [recorder (atom [""])]
-            (with-console-recording recorder
-              (are [o] (= (oget o "key") nil)
-                nil
-                js/undefined
-                "s"
-                42
-                true
-                false))
-            (is (= (string/join "\n" @recorder) "")))))
-      (testing "with {:object-access-validation-mode false} object access validation should be elided"
-        (with-runtime-config {:object-access-validation-mode false}
+      (testing "with {:error-reporting-mode false} object access validation should be elided"
+        (with-runtime-config {:error-reporting-mode false}
           (are [o msg] (thrown-with-msg? js/TypeError msg (oget o "key"))
             nil #"null is not an object"
             js/undefined #"undefined is not an object")

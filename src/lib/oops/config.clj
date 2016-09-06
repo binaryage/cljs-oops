@@ -4,7 +4,8 @@
 
 (def default-runtime-config
   {; diagnostics...
-   :object-access-validation-mode :throw                                                                                      ; #{:throw :report :sanitize false}
+   :error-reporting-mode   :throw                                                                                             ; #{:throw :console false}
+   :warning-reporting-mode :console                                                                                           ; #{:throw :console false}
    })
 
 (def default-compiler-config
