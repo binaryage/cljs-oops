@@ -19,12 +19,12 @@
 (defn coerce-key-dynamically [key]
   (coerce-key-dynamically-impl key))
 
-(defn collect-coerced-items-into-array! [coll arr]
+(defn collect-coerced-keys-into-array! [coll arr]
   (loop [items (seq coll)]                                                                                                    ; note: items is either a seq or nil
     (if-not (nil? items)
       (let [item (-first items)]
         (if (sequential? item)
-          (collect-coerced-items-into-array! item arr)
+          (collect-coerced-keys-into-array! item arr)
           (.push arr (coerce-key-dynamically item)))
         (recur (next items))))))
 

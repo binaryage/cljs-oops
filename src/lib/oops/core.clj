@@ -150,15 +150,16 @@
 
 (defmacro build-path-dynamically-impl [selector-sym]
   {:pre [(symbol? selector-sym)]}
-  (let [array-sym (gensym "array")
-        atomic-case `(cljs.core/array (coerce-key-dynamically ~selector-sym))
-        collection-case `(let [~array-sym (cljs.core/array)]
-                           (collect-coerced-items-into-array! ~selector-sym ~array-sym)
-                           ~array-sym)]
+  (let [atomic-case `(cljs.core/array (coerce-key-dynamically ~selector-sym))
+        array-case selector-sym                                                                                               ; we assume native arrays are already paths, TODO: implement diagnostics checks
+        collection-case (let [path-sym (gensym "selector-path")]
+                          `(let [~path-sym (cljs.core/array)]
+                             (collect-coerced-keys-into-array! ~selector-sym ~path-sym)
+                             ~path-sym))]
     `(cond
        (or (string? ~selector-sym) (keyword? ~selector-sym)) ~atomic-case
        ~(gen-is-tagged? selector-sym) ~collection-case
-       (cljs.core/array? ~selector-sym) ~selector-sym                                                                         ; we assume native arrays are already paths, TODO: implement diagnostics checks
+       (cljs.core/array? ~selector-sym) ~array-case
        :else ~collection-case)))
 
 (defmacro get-key-dynamically-impl [obj-sym key-sym]
