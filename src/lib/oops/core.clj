@@ -138,13 +138,13 @@
 
 (defmacro build-path-dynamically-impl [selector-sym]
   {:pre [(symbol? selector-sym)]}
-  `(if-not (sequential? ~selector-sym)
-     (list (coerce-key-dynamically ~selector-sym))
-     (let [reducer# (fn [path# key#]
-                      (if (sequential? key#)
-                        (concat path# (build-path-dynamically key#))
-                        (concat path# [(coerce-key-dynamically key#)])))]
-       (reduce reducer# (list) ~selector-sym))))
+  (let [array-sym (gensym "array")]
+    `(cond
+       (cljs.core/array? ~selector-sym) ~selector-sym                                                                         ; we assume native arrays are already paths, TODO: implement diagnostics checks
+       (or (string? ~selector-sym) (keyword? ~selector-sym)) (cljs.core/array (coerce-key-dynamically ~selector-sym))
+       :else (let [~array-sym (cljs.core/array)]
+               (collect-coerced-items-into-array! ~selector-sym ~array-sym)
+               ~array-sym))))
 
 (defmacro get-key-dynamically-impl [obj-sym key-sym]
   {:pre [(symbol? obj-sym)

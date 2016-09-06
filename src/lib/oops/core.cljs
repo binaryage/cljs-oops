@@ -19,6 +19,12 @@
 (defn coerce-key-dynamically [key]
   (coerce-key-dynamically-impl key))
 
+(defn collect-coerced-items-into-array! [coll arr]
+  (doseq [item coll]
+    (if (sequential? item)
+      (collect-coerced-items-into-array! item arr)
+      (.push arr (coerce-key-dynamically item)))))
+
 (defn validate-object-dynamically [obj]
   (validate-object-dynamically-impl obj))
 
