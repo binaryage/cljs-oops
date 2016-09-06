@@ -5,6 +5,19 @@
 
 ; -- helper code generators -------------------------------------------------------------------------------------------------
 
+(defn gen-tagged-array [items]
+  `(let [arr# (cljs.core/array ~@items)]
+     (set! (.-oops-tag$ arr#) true)
+     arr#))
+
+(defn gen-is-tagged? [obj]
+  `(.-oops-tag$ ~obj))
+
+(defn gen-selector-list [items]
+  (if (config/diagnostics?)
+    `(cljs.core/list ~@items)                                                                                                 ; this is the slow path under diagnostics we want selector list be a valid selector
+    (gen-tagged-array items)))                                                                                                ; this is the fast path for advanced optimizations without diagnostics
+
 (defn gen-throw-validation-error [obj-sym flavor]
   {:pre [(symbol? obj-sym)]}
   `(throw (ex-info (str "Unexpected object value (" ~flavor ")") {:obj ~obj-sym})))
@@ -83,9 +96,9 @@
 
 (defn gen-dynamic-selector-get [obj selector-list]
   (case (count selector-list)
-    0 obj                                                                                                                     ; get-selector-dynamically with emtpy selector would return obj
+    0 obj                                                                                                                     ; get-selector-dynamically passed emtpy selector would return obj
     1 `(get-selector-dynamically ~obj ~(first selector-list))                                                                 ; we want to unwrap selector wrapped in oget (in this case)
-    `(get-selector-dynamically ~obj ~(cons 'cljs.core/list selector-list))))
+    `(get-selector-dynamically ~obj ~(gen-selector-list selector-list))))
 
 (defn gen-validate-selector-wrapper [selector-sym body]
   {:pre [(symbol? selector-sym)]}
@@ -137,13 +150,16 @@
 
 (defmacro build-path-dynamically-impl [selector-sym]
   {:pre [(symbol? selector-sym)]}
-  (let [array-sym (gensym "array")]
+  (let [array-sym (gensym "array")
+        atomic-case `(cljs.core/array (coerce-key-dynamically ~selector-sym))
+        collection-case `(let [~array-sym (cljs.core/array)]
+                           (collect-coerced-items-into-array! ~selector-sym ~array-sym)
+                           ~array-sym)]
     `(cond
+       (or (string? ~selector-sym) (keyword? ~selector-sym)) ~atomic-case
+       ~(gen-is-tagged? selector-sym) ~collection-case
        (cljs.core/array? ~selector-sym) ~selector-sym                                                                         ; we assume native arrays are already paths, TODO: implement diagnostics checks
-       (or (string? ~selector-sym) (keyword? ~selector-sym)) (cljs.core/array (coerce-key-dynamically ~selector-sym))
-       :else (let [~array-sym (cljs.core/array)]
-               (collect-coerced-items-into-array! ~selector-sym ~array-sym)
-               ~array-sym))))
+       :else ~collection-case)))
 
 (defmacro get-key-dynamically-impl [obj-sym key-sym]
   {:pre [(symbol? obj-sym)
