@@ -121,11 +121,11 @@
   "The goal here is to rename all generated $<number>$ identifiers with stable numbering."
   (let [* (fn [state match]
             (let [needle (first match)
-                  stable-replacement (str "$" (:counter state) "$")]
+                  stable-replacement (str (:counter state) (nth match 2))]
               (-> state
                   (update-in [:counter] inc)
                   (update-in [:content] string/replace needle stable-replacement))))]
-    (:content (reduce * {:counter 1 :content content} (re-seq #"\$(\d+)\$" content)))))
+    (:content (reduce * {:counter 1 :content content} (re-seq #"(\d+)(\$|__)" content)))))
 
 (defn safe-spit [path content]
   (io/make-parents path)
