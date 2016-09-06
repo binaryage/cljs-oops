@@ -33,15 +33,15 @@
       (is (= (oget sample-obj (make-selector-dynamically ["nested" "nested-key1"])) "nk1"))
       (is (= (oget sample-obj [(make-selector-dynamically "nested") "nested-key1"]) "nk1")))
     (when-none-mode
-      (testing "invalid dynamic selectors"
-        (are [input] (thrown-with-msg? js/Error #"Invalid dynamic selector" (oget sample-obj (make-selector-dynamically input)))
+      (testing "invalid selectors"
+        (are [input] (thrown-with-msg? js/Error #"Invalid selector" (oget sample-obj (make-selector-dynamically input)))
           'sym
           identity
           0
           #js {}))
       (testing "dynamic get via js array (path)"
         (is (= (oget sample-obj (make-selector-dynamically #js ["nested" "nested-key1"])) "nk1"))
-        (is (thrown-with-msg? js/Error #"Invalid dynamic path" (oget sample-obj (make-selector-dynamically #js ["nested" :nested-key1])))))
+        (is (thrown-with-msg? js/Error #"Invalid path" (oget sample-obj (make-selector-dynamically #js ["nested" :nested-key1])))))
       (testing "object access validation should throw by default"
         (are [o msg] (thrown-with-msg? js/Error msg (oget o "key"))
           nil #"Unexpected object value \(nil\)"
@@ -63,12 +63,12 @@
         (with-runtime-config {:error-reporting-mode :console}
           (let [recorder (atom [""])
                 expected-warnings "
-ERROR: (\"Unexpected object value (nil), while calling `(oget nil \\\"key\\\")`\" {:obj nil, :context \"(oget nil \\\"key\\\")\"})
-ERROR: (\"Unexpected object value (undefined), while calling `(oget js/undefined \\\"key\\\")`\" {:obj nil, :context \"(oget js/undefined \\\"key\\\")\"})
-ERROR: (\"Unexpected object value (string), while calling `(oget \\\"s\\\" \\\"key\\\")`\" {:obj \"s\", :context \"(oget \\\"s\\\" \\\"key\\\")\"})
-ERROR: (\"Unexpected object value (number), while calling `(oget 42 \\\"key\\\")`\" {:obj 42, :context \"(oget 42 \\\"key\\\")\"})
-ERROR: (\"Unexpected object value (boolean), while calling `(oget true \\\"key\\\")`\" {:obj true, :context \"(oget true \\\"key\\\")\"})
-ERROR: (\"Unexpected object value (boolean), while calling `(oget false \\\"key\\\")`\" {:obj false, :context \"(oget false \\\"key\\\")\"})"]
+ERROR: (\"Unexpected object value (nil) while calling `(oget nil \\\"key\\\")`\" {:obj nil, :context \"(oget nil \\\"key\\\")\"})
+ERROR: (\"Unexpected object value (undefined) while calling `(oget js/undefined \\\"key\\\")`\" {:obj nil, :context \"(oget js/undefined \\\"key\\\")\"})
+ERROR: (\"Unexpected object value (string) while calling `(oget \\\"s\\\" \\\"key\\\")`\" {:obj \"s\", :context \"(oget \\\"s\\\" \\\"key\\\")\"})
+ERROR: (\"Unexpected object value (number) while calling `(oget 42 \\\"key\\\")`\" {:obj 42, :context \"(oget 42 \\\"key\\\")\"})
+ERROR: (\"Unexpected object value (boolean) while calling `(oget true \\\"key\\\")`\" {:obj true, :context \"(oget true \\\"key\\\")\"})
+ERROR: (\"Unexpected object value (boolean) while calling `(oget false \\\"key\\\")`\" {:obj false, :context \"(oget false \\\"key\\\")\"})"]
             (with-console-recording recorder
               (are [o] (= (oget o "key") nil)
                 nil
@@ -111,7 +111,7 @@ ERROR: (\"Unexpected object value (boolean), while calling `(oget false \\\"key\
         ["yyy"]
         ["nested" "y"])
       (is (= (js/JSON.stringify sample-obj) "{\"nested\":{\"y\":\"val\"},\"xxx\":\"val\",\"yyy\":\"val\"}"))))
-  (testing "simple dynamic selector set"
+  (testing "simple selector set"
     (let [sample-obj #js {"nested" #js {}}
           dynamic-key-fn (fn [name] name)]
       (are [selector] (= (oget (oset! sample-obj selector "val") selector) "val")
