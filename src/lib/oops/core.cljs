@@ -15,13 +15,8 @@
 
 ; -- diagnostics reporting --------------------------------------------------------------------------------------------------
 
-(defn ^:dynamic print-error-to-console [& args]
-  (.apply (.-error js/console) js/console (into-array args))
-  nil)
-
-(defn ^:dynamic print-warning-to-console [& args]
-  (.apply (.-warn js/console) js/console (into-array args))
-  nil)
+(def ^:dynamic *diagnostics-context*)
+(def ^:dynamic *console-reporter*)
 
 (defn ^:dynamic report-runtime-error [msg data]
   (report-runtime-error-impl msg data))

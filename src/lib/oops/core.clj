@@ -132,21 +132,40 @@
            ~parent-obj-sym ~(gen-dynamic-path-get obj-sym parent-obj-path-sym)]
        (set-key-dynamically ~parent-obj-sym ~key-sym ~val))))
 
+(defn gen-diagnostics-context [form body]
+  (if (config/diagnostics?)
+    `(binding [*diagnostics-context* ~(str form)
+               *console-reporter* (fn [kind# & args#]                                                                         ; it is imporant to keep this inline so we get proper call-site location line numbers
+                                    (let [f# (case kind#
+                                               :error (.-error js/console)
+                                               :warning (.-warn js/console))]
+                                      (.apply f# js/console (into-array args#))))]
+       ~body)
+    body))
+
+(defn gen-enhance-diagnostics-msg [msg]
+  `(str ~msg ", while calling `" *diagnostics-context* "`"))
+
+(defn gen-enhance-diagnostics-data [data]
+  `(assoc ~data :context *diagnostics-context*))
+
 ; -- helper macros ----------------------------------------------------------------------------------------------------------
 
 (defmacro report-runtime-error-impl [msg data]
-  `(do
+  `(let [msg# ~(gen-enhance-diagnostics-msg msg)
+         data# ~(gen-enhance-diagnostics-data data)]
      (case (config/error-reporting-mode)
-       :throw (throw (ex-info ~msg ~data))
-       :console (print-error-to-console ~msg ~data)
+       :throw (throw (ex-info msg# data#))
+       :console (*console-reporter* :error msg# data#)
        false nil)
      nil))
 
 (defmacro report-runtime-warning-impl [msg data]
-  `(do
+  `(let [msg# ~(gen-enhance-diagnostics-msg msg)
+         data# ~(gen-enhance-diagnostics-data data)]
      (case (config/warning-reporting-mode)
-       :throw (throw (ex-info ~msg ~data))
-       :console (print-warning-to-console ~msg ~data)
+       :throw (throw (ex-info msg# data#))
+       :console (*console-reporter* :warning msg# data#)
        false nil)
      nil))
 
@@ -192,15 +211,15 @@
   (let [path `(build-path-dynamically ~selector-sym)]
     (gen-dynamic-selector-validation-wrapper selector-sym (gen-dynamic-path-set obj-sym path val-sym))))
 
-; -- public macros ----------------------------------------------------------------------------------------------------------
+; -- raw implementations ----------------------------------------------------------------------------------------------------
 
-(defmacro oget [obj & selector]
+(defn gen-oget [obj & selector]
   (let [path (schema/selector->path selector)]
     (if-not (= path :invalid-path)
       (gen-static-path-get obj path)
       (gen-dynamic-selector-get obj selector))))
 
-(defmacro oset! [obj selector val]
+(defn gen-oset! [obj selector val]
   (let [obj-sym (gensym "obj")
         path (schema/selector->path selector)]
     `(let [~obj-sym ~obj]
@@ -209,24 +228,44 @@
           (gen-dynamic-selector-set obj-sym selector val))
        ~obj-sym)))
 
-(defmacro ocall [obj selector & args]
+(defn gen-ocall [obj selector & args]
   (let [obj-sym (gensym "obj")]
     `(let [~obj-sym ~obj]
-       (.call (oget ~obj-sym ~selector) ~obj-sym ~@args))))
+       (.call ~(gen-oget obj-sym selector) ~obj-sym ~@args))))
+
+(defn gen-oapply [obj selector args]
+  (let [obj-sym (gensym "obj")]
+    `(let [~obj-sym ~obj]
+       (.apply ~(gen-oget obj-sym selector) ~obj-sym (into-array ~args)))))
+
+; -- public macros ----------------------------------------------------------------------------------------------------------
+
+(defmacro oget [obj & selector]
+  (gen-diagnostics-context &form
+    (apply gen-oget obj selector)))
+
+(defmacro oset! [obj selector val]
+  (gen-diagnostics-context &form
+    (gen-oset! obj selector val)))
+
+(defmacro ocall [obj selector & args]
+  (gen-diagnostics-context &form
+    (apply gen-ocall obj selector args)))
 
 (defmacro oapply [obj selector args]
-  (let [obj-sym (gensym "obj")]
-    `(let [~obj-sym ~obj]
-       (.apply (oget ~obj-sym ~selector) ~obj-sym (into-array ~args)))))
+  (gen-diagnostics-context &form
+    (gen-oapply obj selector args)))
 
 ; -- convenience macros -----------------------------------------------------------------------------------------------------
 
 (defmacro ocall!
   "This macro is identical to ocall, use it if you want to express a side-effecting call."
-  [& args]
-  `(ocall ~@args))
+  [obj selector & args]
+  (gen-diagnostics-context &form
+    (apply gen-ocall obj selector args)))
 
 (defmacro oapply!
   "This macro is identical to oapply, use it if you want to express a side-effecting call."
-  [& args]
-  `(oapply ~@args))
+  [obj selector args]
+  (gen-diagnostics-context &form
+    (gen-oapply obj selector args)))

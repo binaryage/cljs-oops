@@ -63,12 +63,12 @@
         (with-runtime-config {:error-reporting-mode :console}
           (let [recorder (atom [""])
                 expected-warnings "
-ERROR: (\"Unexpected object value (nil)\" {:obj nil})
-ERROR: (\"Unexpected object value (undefined)\" {:obj nil})
-ERROR: (\"Unexpected object value (string)\" {:obj \"s\"})
-ERROR: (\"Unexpected object value (number)\" {:obj 42})
-ERROR: (\"Unexpected object value (boolean)\" {:obj true})
-ERROR: (\"Unexpected object value (boolean)\" {:obj false})"]
+ERROR: (\"Unexpected object value (nil), while calling `(oget nil \\\"key\\\")`\" {:obj nil, :context \"(oget nil \\\"key\\\")\"})
+ERROR: (\"Unexpected object value (undefined), while calling `(oget js/undefined \\\"key\\\")`\" {:obj nil, :context \"(oget js/undefined \\\"key\\\")\"})
+ERROR: (\"Unexpected object value (string), while calling `(oget \\\"s\\\" \\\"key\\\")`\" {:obj \"s\", :context \"(oget \\\"s\\\" \\\"key\\\")\"})
+ERROR: (\"Unexpected object value (number), while calling `(oget 42 \\\"key\\\")`\" {:obj 42, :context \"(oget 42 \\\"key\\\")\"})
+ERROR: (\"Unexpected object value (boolean), while calling `(oget true \\\"key\\\")`\" {:obj true, :context \"(oget true \\\"key\\\")\"})
+ERROR: (\"Unexpected object value (boolean), while calling `(oget false \\\"key\\\")`\" {:obj false, :context \"(oget false \\\"key\\\")\"})"]
             (with-console-recording recorder
               (are [o] (= (oget o "key") nil)
                 nil
