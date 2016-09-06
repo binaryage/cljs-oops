@@ -48,18 +48,18 @@
    :variant variant
    :options (build-options (get-main-from-source source) variant config)})
 
-(defn get-atomic-options [mode]
-  {:atomic-set-mode mode
-   :atomic-get-mode mode})
+(defn get-key-mode-options [mode]
+  {:key-set-mode mode
+   :key-get-mode mode})
 
-(defn get-build-variants [source main]
+(defn get-build-variants [source]
   [(make-build source "default")
-   (make-build source "goog" (get-atomic-options :goog))])
+   (make-build source "goog" (get-key-mode-options :goog))])
 
 (def builds
   (concat
-    (get-build-variants "test/src/arena/oops/arena/basic_oget.cljs" "oops.arena.basic-oget")
-    (get-build-variants "test/src/arena/oops/arena/dynamic_oget.cljs" "oops.arena.dynamic-oget")))
+    (get-build-variants "test/src/arena/oops/arena/basic_oget.cljs")
+    (get-build-variants "test/src/arena/oops/arena/dynamic_oget.cljs")))
 
 (defn get-build-name [build]
   (let [{:keys [source variant]} build]
