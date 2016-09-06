@@ -24,7 +24,7 @@
          data# {:obj ~obj-sym}]
      (report-runtime-error msg# data#)))
 
-(defn gen-object-access-validation [obj-sym]
+(defn gen-dynamic-object-access-validation [obj-sym]
   {:pre [(symbol? obj-sym)]}
   `(if (config/error-reporting-mode)
      (cond
@@ -48,20 +48,20 @@
     :raw `(~'js* "(~{}[~{}] = ~{})" ~obj ~key ~val)
     :goog `(goog.object/set ~obj ~key ~val)))
 
-(defn gen-validate-object-wrapper [obj-sym body]
+(defn gen-dynamic-object-access-validation-wrapper [obj-sym body]
   {:pre [(symbol? obj-sym)]}
   (if (config/diagnostics?)
-    `(if ~(gen-object-access-validation obj-sym)
+    `(if ~(gen-dynamic-object-access-validation obj-sym)
        ~body)
     body))
 
 (defn gen-instrumented-key-get [obj-sym key]
   {:pre [(symbol? obj-sym)]}
-  (gen-validate-object-wrapper obj-sym (gen-key-get obj-sym key)))
+  (gen-dynamic-object-access-validation-wrapper obj-sym (gen-key-get obj-sym key)))
 
 (defn gen-instrumented-key-set [obj-sym key val]
   {:pre [(symbol? obj-sym)]}
-  (gen-validate-object-wrapper obj-sym (gen-key-set obj-sym key val)))
+  (gen-dynamic-object-access-validation-wrapper obj-sym (gen-key-set obj-sym key val)))
 
 (defn gen-static-path-get [obj path]
   (if (empty? path)
