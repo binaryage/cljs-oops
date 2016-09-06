@@ -22,7 +22,8 @@
   {:pre [(symbol? obj-sym)]}
   `(let [msg# (str "Unexpected object value (" ~flavor ")")
          data# {:obj ~obj-sym}]
-     (report-runtime-error msg# data#)))
+     (report-runtime-error msg# data#)
+     false))
 
 (defn gen-dynamic-object-access-validation [obj-sym]
   {:pre [(symbol? obj-sym)]}
