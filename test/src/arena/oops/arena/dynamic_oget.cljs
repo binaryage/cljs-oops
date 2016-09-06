@@ -20,3 +20,21 @@
 
 ; simple miss
 (oget #js {"key" "val"} (return-this-key "xxx"))
+
+; nested get
+(def o1 #js {"key"    "val"
+             "nested" #js {"nested-key" "nested-val"}})
+(oget o1 (return-this-key "key") (return-this-key "nested"))
+
+(def o2 #js {"key"    "val"
+             "nested" #js {"nested-key" "nested-val"}})
+(oget o2 [(return-this-key "key") (return-this-key "nested")])
+
+(def o3 #js {"key"    "val"
+             "nested" #js {"nested-key" "nested-val"}})
+(oget o3 (return-this-key "key") [(return-this-key "nested")])
+
+
+(def o4 #js {"key"    "val"
+             "nested" #js {"nested-key" "nested-val"}})
+(oget o4 #js ["key" "nested"])

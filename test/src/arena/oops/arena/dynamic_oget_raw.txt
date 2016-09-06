@@ -1,5 +1,41 @@
-$oops$core$get_selector_dynamically$$("key");
-$oops$core$get_selector_dynamically$$("key");
+$oops$core$get_selector_dynamically$$({
+  key: "val"
+}, "key");
+$oops$core$get_selector_dynamically$$({
+  key: "val"
+}, "key");
 window.x = "dirty";
-$oops$core$get_selector_dynamically$$("key");
-$oops$core$get_selector_dynamically$$("xxx");
+$oops$core$get_selector_dynamically$$({
+  key: "val"
+}, "key");
+$oops$core$get_selector_dynamically$$({
+  key: "val"
+}, "xxx");
+var $arr__19472__auto__$$inline_747$$ = ["key", "nested"];
+$arr__19472__auto__$$inline_747$$.$oops_tag$$ = !0;
+$oops$core$get_selector_dynamically$$({
+  key: "val",
+  nested: {
+    "nested-key": "nested-val"
+  }
+}, $arr__19472__auto__$$inline_747$$);
+$oops$core$get_selector_dynamically$$({
+  key: "val",
+  nested: {
+    "nested-key": "nested-val"
+  }
+}, new $cljs$core$PersistentVector$$(null, 2, 5, $cljs$core$PersistentVector$EMPTY_NODE$$, ["key", "nested"], null));
+var $arr__19472__auto__$$inline_749$$ = ["key", new $cljs$core$PersistentVector$$(null, 1, 5, $cljs$core$PersistentVector$EMPTY_NODE$$, ["nested"], null)];
+$arr__19472__auto__$$inline_749$$.$oops_tag$$ = !0;
+$oops$core$get_selector_dynamically$$({
+  key: "val",
+  nested: {
+    "nested-key": "nested-val"
+  }
+}, $arr__19472__auto__$$inline_749$$);
+$oops$core$get_selector_dynamically$$({
+  key: "val",
+  nested: {
+    "nested-key": "nested-val"
+  }
+}, ["key", "nested"]);
