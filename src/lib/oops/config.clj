@@ -9,10 +9,10 @@
    })
 
 (def default-compiler-config
-  {:diagnostics     true
-   :atomic-get-mode :aget                                                                                                     ; #{:aget :goog}
-   :atomic-set-mode :aset                                                                                                     ; #{:aget :goog}
-   :runtime-config  default-runtime-config})
+  {:diagnostics    true
+   :key-get-mode   :core                                                                                                      ; #{:core :goog}
+   :key-set-mode   :core                                                                                                      ; #{:core :goog}
+   :runtime-config default-runtime-config})
 
 (def advanced-mode-compiler-config-overrides
   {:diagnostics false})
@@ -56,8 +56,8 @@
 (defn diagnostics? [& [config]]
   (true? (:diagnostics (or config (get-current-compiler-config)))))
 
-(defn atomic-get-mode [& [config]]
-  (:atomic-get-mode (or config (get-current-compiler-config))))
+(defn key-get-mode [& [config]]
+  (:key-get-mode (or config (get-current-compiler-config))))
 
-(defn atomic-set-mode [& [config]]
-  (:atomic-set-mode (or config (get-current-compiler-config))))
+(defn key-set-mode [& [config]]
+  (:key-set-mode (or config (get-current-compiler-config))))
