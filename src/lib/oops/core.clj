@@ -24,7 +24,7 @@
          data# {:obj ~obj-sym}]
      (report-runtime-error msg# data#)))
 
-(defn gen-object-access-validation-check [obj-sym]
+(defn gen-object-access-validation [obj-sym]
   {:pre [(symbol? obj-sym)]}
   `(if (config/error-reporting-mode)
      (cond
@@ -51,7 +51,7 @@
 (defn gen-validate-object-wrapper [obj-sym body]
   {:pre [(symbol? obj-sym)]}
   (if (config/diagnostics?)
-    `(if (validate-object-dynamically ~obj-sym)
+    `(if ~(gen-object-access-validation obj-sym)
        ~body)
     body))
 
@@ -146,11 +146,6 @@
 (defmacro coerce-key-dynamically-impl [key-sym]
   {:pre [(symbol? key-sym)]}
   `(name ~key-sym))
-
-(defmacro validate-object-dynamically-impl [obj-sym]
-  {:pre [(symbol? obj-sym)]}
-  (if (config/diagnostics?)
-    (gen-object-access-validation-check obj-sym)))
 
 (defmacro build-path-dynamically-impl [selector-sym]
   {:pre [(symbol? selector-sym)]}

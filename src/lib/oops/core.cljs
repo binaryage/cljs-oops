@@ -1,7 +1,6 @@
 (ns oops.core
   (:require-macros [oops.core :refer [report-runtime-error-impl
                                       coerce-key-dynamically-impl
-                                      validate-object-dynamically-impl
                                       build-path-dynamically-impl
                                       get-key-dynamically-impl
                                       set-key-dynamically-impl
@@ -31,9 +30,6 @@
           (collect-coerced-keys-into-array! item arr)
           (.push arr (coerce-key-dynamically item)))
         (recur (next items))))))
-
-(defn validate-object-dynamically [obj]
-  (validate-object-dynamically-impl obj))
 
 (defn build-path-dynamically [selector]
   (build-path-dynamically-impl selector))
