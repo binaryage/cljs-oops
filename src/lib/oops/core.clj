@@ -81,12 +81,11 @@
       `(let [~obj-sym ~(gen-static-path-get obj (butlast path))]
          ~(gen-instrumented-key-get obj-sym (last path))))))
 
-(defn gen-dynamic-selector-get [obj selector-as-data]
-  (if (empty? selector-as-data)
-    obj
-    ; TODO: implement optimized case for 1-arity call?
-    (let [selector-as-code (cons 'cljs.core/list selector-as-data)]
-      `(get-selector-dynamically ~obj ~selector-as-code))))
+(defn gen-dynamic-selector-get [obj selector-list]
+  (case (count selector-list)
+    0 obj                                                                                                                     ; get-selector-dynamically with emtpy selector would return obj
+    1 `(get-selector-dynamically ~obj ~(first selector-list))                                                                 ; we want to unwrap selector wrapped in oget (in this case)
+    `(get-selector-dynamically ~obj ~(cons 'cljs.core/list selector-list))))
 
 (defn gen-validate-selector-wrapper [selector-sym body]
   {:pre [(symbol? selector-sym)]}
