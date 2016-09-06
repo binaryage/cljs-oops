@@ -10,7 +10,7 @@
 
   :dependencies [[org.clojure/clojure "1.8.0" :scope "provided"]
                  [clojure-future-spec "1.9.0-alpha11" :scope "provided"]
-                 [org.clojure/clojurescript "1.9.227" :scope "provided"]
+                 [org.clojure/clojurescript "1.9.229" :scope "provided"]
                  [binaryage/devtools "0.8.1" :scope "test"]
                  [org.clojure/tools.logging "0.3.1" :scope "test"]
                  [clj-logging-config "1.9.12" :scope "test"]
