@@ -9,16 +9,20 @@
   (assoc warnings-table
     :dynamic-property-access true))
 
-(defmacro hook-compiler! [& body]
+(defmacro with-hooked-compiler! [& body]
   `(binding [ana/*cljs-warnings* (register-warnings! ana/*cljs-warnings*)]
      ~@body))
 
+(defmacro with-compiler-diagnostics-context! [form env opts & body]
+  `(binding [oops.state/*invoked-form* ~form
+             oops.state/*invoked-env* ~env
+             oops.state/*invoked-opts* ~opts]
+     ~@body))
+
 (defmacro with-diagnostics-context! [form env opts & body]
-  `(oops.compiler/hook-compiler!
-     (binding [oops.state/*invoked-form* ~form
-               oops.state/*invoked-env* ~env
-               oops.state/*invoked-opts* ~opts]
-       (oops.core/gen-diagnostics-context! ~form ~env ~@body))))
+  `(oops.compiler/with-hooked-compiler!
+     (oops.compiler/with-compiler-diagnostics-context! ~form ~env ~opts
+       (oops.core/gen-runtime-diagnostics-context! ~form ~env ~@body))))
 
 (defn annotate-with-state [info]
   (assoc info :form oops.state/*invoked-form*))

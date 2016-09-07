@@ -145,7 +145,7 @@
            ~parent-obj-sym ~(gen-dynamic-path-get obj-sym parent-obj-path-sym)]
        (set-key-dynamically ~parent-obj-sym ~key-sym ~val))))
 
-(defn gen-diagnostics-context! [form _env body]
+(defn gen-runtime-diagnostics-context! [form _env body]
   (if (config/diagnostics?)
     `(binding [oops.state/*invoked-form* ~(str form)
                oops.state/*console-reporter* (fn [kind# & args#]                                                              ; it is imporant to keep this inline so we get proper call-site location and line number
