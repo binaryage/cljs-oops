@@ -5,18 +5,13 @@
             [oops.state :as state]
             [oops.debug :refer [log]]))
 
-(def ^:dynamic *warnings-registered* false)
-
 (defn register-warnings! [warnings-table]
   (assoc warnings-table
     :dynamic-property-access true))
 
 (defmacro hook-compiler! [& body]
-  (if *warnings-registered*
-    `(do ~@body)
-    `(binding [*warnings-registered* true
-               ana/*cljs-warnings* (register-warnings! ana/*cljs-warnings*)]
-       ~@body)))
+  `(binding [ana/*cljs-warnings* (register-warnings! ana/*cljs-warnings*)]
+     ~@body))
 
 (defmacro with-diagnostics-context! [form env opts & body]
   `(oops.compiler/hook-compiler!
