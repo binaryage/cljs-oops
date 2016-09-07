@@ -1,7 +1,8 @@
 (ns oops.main
   (:require [cljs.test :refer-macros [deftest testing is are run-tests use-fixtures]]
             [clojure.string :as string]
-            [oops.core :refer [oget oset! ocall! oapply! ocall oapply]]
+            [oops.core :refer [oget oset! ocall! oapply! ocall oapply
+                               oget+ oset!+ ocall!+ oapply!+ ocall+ oapply+]]
             [oops.config :refer [with-runtime-config]]
             [oops.tools
              :refer [with-captured-console]
@@ -27,21 +28,21 @@
         "@#$%fancy key^&*" "fancy-val"
         ["nested" "nested-key2"] 2))
     (testing "simple dynamic get"
-      (is (= (oget sample-obj (make-selector-dynamically "key")) "val"))
-      (is (= (oget sample-obj (make-selector-dynamically "xxx")) nil))
-      (is (= (oget sample-obj (make-selector-dynamically "nested") "nested-key1") "nk1"))
-      (is (= (oget sample-obj (make-selector-dynamically ["nested" "nested-key1"])) "nk1"))
-      (is (= (oget sample-obj [(make-selector-dynamically "nested") "nested-key1"]) "nk1")))
+      (is (= (oget+ sample-obj (make-selector-dynamically "key")) "val"))
+      (is (= (oget+ sample-obj (make-selector-dynamically "xxx")) nil))
+      (is (= (oget+ sample-obj (make-selector-dynamically "nested") "nested-key1") "nk1"))
+      (is (= (oget+ sample-obj (make-selector-dynamically ["nested" "nested-key1"])) "nk1"))
+      (is (= (oget+ sample-obj [(make-selector-dynamically "nested") "nested-key1"]) "nk1")))
     (when-none-mode
       (testing "invalid selectors"
-        (are [input] (thrown-with-msg? js/Error #"Invalid selector" (oget sample-obj (make-selector-dynamically input)))
+        (are [input] (thrown-with-msg? js/Error #"Invalid selector" (oget+ sample-obj (make-selector-dynamically input)))
           'sym
           identity
           0
           #js {}))
       (testing "dynamic get via js array (path)"
-        (is (= (oget sample-obj (make-selector-dynamically #js ["nested" "nested-key1"])) "nk1"))
-        (is (thrown-with-msg? js/Error #"Invalid path" (oget sample-obj (make-selector-dynamically #js ["nested" :nested-key1])))))
+        (is (= (oget+ sample-obj (make-selector-dynamically #js ["nested" "nested-key1"])) "nk1"))
+        (is (thrown-with-msg? js/Error #"Invalid path" (oget+ sample-obj (make-selector-dynamically #js ["nested" :nested-key1])))))
       (testing "object access validation should throw by default"
         (are [o msg] (thrown-with-msg? js/Error msg (oget o "key"))
           nil #"Unexpected object value \(nil\)"
@@ -114,7 +115,7 @@ ERROR: (\"Unexpected object value (boolean) while calling `(oget false \\\"key\\
   (testing "simple selector set"
     (let [sample-obj #js {"nested" #js {}}
           dynamic-key-fn (fn [name] name)]
-      (are [selector] (= (oget (oset! sample-obj selector "val") selector) "val")
+      (are [selector] (= (oget+ (oset!+ sample-obj selector "val") selector) "val")
         (dynamic-key-fn "key")
         [(dynamic-key-fn "nested") (dynamic-key-fn "key2")])
       (is (= (js/JSON.stringify sample-obj) "{\"nested\":{\"key2\":\"val\"},\"key\":\"val\"}"))))
