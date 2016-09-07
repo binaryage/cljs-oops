@@ -258,7 +258,7 @@
     (apply gen-oget obj selector)))
 
 (defmacro oget+ [obj & selector]
-  (with-diagnostics-context! &form &env {:suppress-reporting {:dynamic-property-access true}}
+  (with-diagnostics-context! &form &env {:suppress-reporting #{:dynamic-property-access}}
     (apply gen-oget obj selector)))
 
 (defmacro oset! [obj selector val]
@@ -266,7 +266,7 @@
     (gen-oset! obj selector val)))
 
 (defmacro oset!+ [obj selector val]
-  (with-diagnostics-context! &form &env {:suppress-reporting {:dynamic-property-access true}}
+  (with-diagnostics-context! &form &env {:suppress-reporting #{:dynamic-property-access}}
     (gen-oset! obj selector val)))
 
 (defmacro ocall [obj selector & args]
@@ -274,7 +274,7 @@
     (apply gen-ocall obj selector args)))
 
 (defmacro ocall+ [obj selector & args]
-  (with-diagnostics-context! &form &env {:suppress-reporting {:dynamic-property-access true}}
+  (with-diagnostics-context! &form &env {:suppress-reporting #{:dynamic-property-access}}
     (apply gen-ocall obj selector args)))
 
 (defmacro oapply [obj selector args]
@@ -282,7 +282,7 @@
     (gen-oapply obj selector args)))
 
 (defmacro oapply+ [obj selector args]
-  (with-diagnostics-context! &form &env {:suppress-reporting {:dynamic-property-access true}}
+  (with-diagnostics-context! &form &env {:suppress-reporting #{:dynamic-property-access}}
     (gen-oapply obj selector args)))
 
 ; -- convenience macros -----------------------------------------------------------------------------------------------------
@@ -296,7 +296,7 @@
 (defmacro ocall!+
   "This macro is identical to ocall, use it if you want to express a side-effecting call."
   [obj selector & args]
-  (with-diagnostics-context! &form &env {:suppress-reporting {:dynamic-property-access true}}
+  (with-diagnostics-context! &form &env {:suppress-reporting #{:dynamic-property-access}}
     (apply gen-ocall obj selector args)))
 
 (defmacro oapply!
@@ -308,5 +308,5 @@
 (defmacro oapply!+
   "This macro is identical to oapply, use it if you want to express a side-effecting call."
   [obj selector args]
-  (with-diagnostics-context! &form &env {:suppress-reporting {:dynamic-property-access true}}
+  (with-diagnostics-context! &form &env {:suppress-reporting #{:dynamic-property-access}}
     (gen-oapply obj selector args)))
