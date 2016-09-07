@@ -15,9 +15,6 @@
 
 ; -- diagnostics reporting --------------------------------------------------------------------------------------------------
 
-(def ^:dynamic *diagnostics-context*)
-(def ^:dynamic *console-reporter*)
-
 (defn ^:dynamic report-runtime-error [msg data]
   (report-runtime-error-impl msg data))
 
@@ -52,3 +49,4 @@
 
 (defn set-selector-dynamically [obj selector val]
   (set-selector-dynamically-impl obj selector val))
+
