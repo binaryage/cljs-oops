@@ -1,15 +1,19 @@
 (ns oops.config
-  (:require [oops.state]
+  (:require [cljs.env]
+            [oops.state]
             [oops.debug :refer [log]]))
 
-(def default-config
-  {:diagnostics                    true
+(def default-config                                                                                                           ; falsy below means 'nil' or 'false'
+  {:diagnostics                    true                                                                                       ; #{true falsy}
    :key-get-mode                   :core                                                                                      ; #{:core :goog}
    :key-set-mode                   :core                                                                                      ; #{:core :goog}
 
+   ; compiler warnigns/errors
+   :dynamic-property-access        :warn                                                                                      ; #{:error :warn falsy}
+
    ; runtime config
-   :runtime-error-reporting-mode   :throw                                                                                     ; #{:throw :console false}
-   :runtime-warning-reporting-mode :console                                                                                   ; #{:throw :console false}
+   :runtime-error-reporting-mode   :throw                                                                                     ; #{:throw :console falsy}
+   :runtime-warning-reporting-mode :console                                                                                   ; #{:throw :console falsy}
    })
 
 (def advanced-mode-compiler-config-overrides
@@ -38,12 +42,13 @@
 ; -- public api--------------------------------------------------------------------------------------------------------------
 
 (defn get-current-compiler-config []
-  (get-compiler-config))
+  (get-compiler-config))                                                                                                      ; TODO: should we somehow cache this?
 
 (defn get-runtime-config [& [config]]
   (let [* (fn [[key val]]
             (if-let [m (re-matches #"^runtime-(.*)$" (name key))]
-              [(keyword (second m)) val]))]                                                                                   ; drop :runtime- prefix
+              [(keyword (second m)) val]))]
+    ; select all :runtime-something keys and drop :runtime- prefix
     (into {} (keep * (or config (get-current-compiler-config))))))
 
 ; -- runtime macros ---------------------------------------------------------------------------------------------------------
@@ -58,10 +63,17 @@
 ; -- icing ------------------------------------------------------------------------------------------------------------------
 
 (defn diagnostics? [& [config]]
+  {:post [(contains? #{true false nil} %)]}
   (true? (:diagnostics (or config (get-current-compiler-config)))))
 
 (defn key-get-mode [& [config]]
+  {:post [(contains? #{:core :goog} %)]}
   (:key-get-mode (or config (get-current-compiler-config))))
 
 (defn key-set-mode [& [config]]
+  {:post [(contains? #{:core :goog} %)]}
   (:key-set-mode (or config (get-current-compiler-config))))
+
+(defn dynamic-property-access-mode [& [config]]
+  {:post [(contains? #{:error :warn nil false} %)]}
+  (:dynamic-property-access (or config (get-current-compiler-config))))

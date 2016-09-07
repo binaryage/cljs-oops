@@ -1,9 +1,20 @@
 (ns oops.core
   (:require [oops.schema :as schema]
             [oops.config :as config]
+            [oops.compiler :as compiler :refer [with-diagnostics-context!]]
             [oops.debug :refer [log]]))
 
 ; -- helper code generators -------------------------------------------------------------------------------------------------
+
+(defn supress-reporting? [type]
+  (boolean (get-in oops.state/*invoked-opts* [:suppress-reporting type])))
+
+(defn report-if-needed! [mode type & [info]]
+  (if-not (supress-reporting? type)
+    (case mode
+      :warn (compiler/warn! type info)
+      :error (compiler/error! type info)
+      nil)))
 
 (defn gen-tagged-array [items]
   `(let [arr# (cljs.core/array ~@items)]
@@ -70,6 +81,7 @@
          ~(gen-instrumented-key-get obj-sym (last path))))))
 
 (defn gen-dynamic-selector-get [obj selector-list]
+  (report-if-needed! (config/dynamic-property-access-mode) :dynamic-property-access)
   (case (count selector-list)
     0 obj                                                                                                                     ; get-selector-dynamically passed emtpy selector would return obj
     1 `(get-selector-dynamically ~obj ~(first selector-list))                                                                 ; we want to unwrap selector wrapped in oget (in this case)
@@ -118,6 +130,7 @@
        ~(gen-instrumented-key-set parent-obj-sym key val))))
 
 (defn gen-dynamic-selector-set [obj selector val]
+  (report-if-needed! (config/dynamic-property-access-mode) :dynamic-property-access)
   `(set-selector-dynamically ~obj ~selector ~val))
 
 (defn gen-dynamic-path-set [obj-sym path val]
@@ -132,22 +145,22 @@
            ~parent-obj-sym ~(gen-dynamic-path-get obj-sym parent-obj-path-sym)]
        (set-key-dynamically ~parent-obj-sym ~key-sym ~val))))
 
-(defn gen-diagnostics-context [form body]
+(defn gen-diagnostics-context! [form _env body]
   (if (config/diagnostics?)
-    `(binding [*diagnostics-context* ~(str form)
-               *console-reporter* (fn [kind# & args#]                                                                         ; it is imporant to keep this inline so we get proper call-site location line numbers
-                                    (let [f# (case kind#
-                                               :error (.-error js/console)
-                                               :warning (.-warn js/console))]
-                                      (.apply f# js/console (into-array args#))))]
+    `(binding [oops.state/*invoked-form* ~(str form)
+               oops.state/*console-reporter* (fn [kind# & args#]                                                              ; it is imporant to keep this inline so we get proper call-site location and line number
+                                               (let [f# (case kind#
+                                                          :error (.-error js/console)
+                                                          :warning (.-warn js/console))]
+                                                 (.apply f# js/console (into-array args#))))]
        ~body)
     body))
 
 (defn gen-enhance-diagnostics-msg [msg]
-  `(str ~msg " while calling `" *diagnostics-context* "`"))
+  `(str ~msg " while calling `" oops.state/*invoked-form* "`"))                                                               ; TODO: guard against long forms
 
 (defn gen-enhance-diagnostics-data [data]
-  `(assoc ~data :context *diagnostics-context*))
+  `(assoc ~data :context oops.state/*invoked-form*))
 
 ; -- helper macros ----------------------------------------------------------------------------------------------------------
 
@@ -156,7 +169,7 @@
          data# ~(gen-enhance-diagnostics-data data)]
      (case (config/error-reporting-mode)
        :throw (throw (ex-info msg# data#))
-       :console (*console-reporter* :error msg# data#)
+       :console (oops.state/*console-reporter* :error msg# data#)
        false nil)
      nil))
 
@@ -165,7 +178,7 @@
          data# ~(gen-enhance-diagnostics-data data)]
      (case (config/warning-reporting-mode)
        :throw (throw (ex-info msg# data#))
-       :console (*console-reporter* :warning msg# data#)
+       :console (oops.state/*console-reporter* :warning msg# data#)
        false nil)
      nil))
 
@@ -241,19 +254,35 @@
 ; -- public macros ----------------------------------------------------------------------------------------------------------
 
 (defmacro oget [obj & selector]
-  (gen-diagnostics-context &form
+  (with-diagnostics-context! &form &env {}
+    (apply gen-oget obj selector)))
+
+(defmacro oget+ [obj & selector]
+  (with-diagnostics-context! &form &env {:suppress-reporting {:dynamic-property-access true}}
     (apply gen-oget obj selector)))
 
 (defmacro oset! [obj selector val]
-  (gen-diagnostics-context &form
+  (with-diagnostics-context! &form &env {}
+    (gen-oset! obj selector val)))
+
+(defmacro oset!+ [obj selector val]
+  (with-diagnostics-context! &form &env {:suppress-reporting {:dynamic-property-access true}}
     (gen-oset! obj selector val)))
 
 (defmacro ocall [obj selector & args]
-  (gen-diagnostics-context &form
+  (with-diagnostics-context! &form &env {}
+    (apply gen-ocall obj selector args)))
+
+(defmacro ocall+ [obj selector & args]
+  (with-diagnostics-context! &form &env {:suppress-reporting {:dynamic-property-access true}}
     (apply gen-ocall obj selector args)))
 
 (defmacro oapply [obj selector args]
-  (gen-diagnostics-context &form
+  (with-diagnostics-context! &form &env {}
+    (gen-oapply obj selector args)))
+
+(defmacro oapply+ [obj selector args]
+  (with-diagnostics-context! &form &env {:suppress-reporting {:dynamic-property-access true}}
     (gen-oapply obj selector args)))
 
 ; -- convenience macros -----------------------------------------------------------------------------------------------------
@@ -261,11 +290,23 @@
 (defmacro ocall!
   "This macro is identical to ocall, use it if you want to express a side-effecting call."
   [obj selector & args]
-  (gen-diagnostics-context &form
+  (with-diagnostics-context! &form &env {}
+    (apply gen-ocall obj selector args)))
+
+(defmacro ocall!+
+  "This macro is identical to ocall, use it if you want to express a side-effecting call."
+  [obj selector & args]
+  (with-diagnostics-context! &form &env {:suppress-reporting {:dynamic-property-access true}}
     (apply gen-ocall obj selector args)))
 
 (defmacro oapply!
   "This macro is identical to oapply, use it if you want to express a side-effecting call."
   [obj selector args]
-  (gen-diagnostics-context &form
+  (with-diagnostics-context! &form &env {}
+    (gen-oapply obj selector args)))
+
+(defmacro oapply!+
+  "This macro is identical to oapply, use it if you want to express a side-effecting call."
+  [obj selector args]
+  (with-diagnostics-context! &form &env {:suppress-reporting {:dynamic-property-access true}}
     (gen-oapply obj selector args)))
