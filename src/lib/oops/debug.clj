@@ -9,7 +9,9 @@
   (if (= v "\n")
     v
     (trimr-nl (with-out-str
-                (binding [clojure.pprint/*print-right-margin* 200]
+                (binding [clojure.pprint/*print-right-margin* 200
+                          clojure.core/*print-length* 10
+                          clojure.core/*print-level* 5]
                   (clojure.pprint/pprint v))))))
 
 (defn log [& args]
