@@ -163,12 +163,16 @@
     :warning `(.-warn js/console)))
 
 (defn gen-report-runtime-message [kind msg data]
-  `(case (oops.config/error-reporting-mode)
-     :throw (throw (ex-info ~(gen-enhanced-reported-message msg) ~(gen-enhanced-reported-data data)))
-     :console (oops.state/*console-reporter* ~(gen-kind-fn kind)
-                                             ~(gen-enhanced-reported-message msg)
-                                             ~(gen-enhanced-reported-data data))
-     false nil))
+  {:pre [(contains? #{:error :warning} kind)]}
+  (let [mode (if (= kind :error)
+               `(oops.config/error-reporting-mode)
+               `(oops.config/warning-reporting-mode))]
+    `(case ~mode
+       :throw (throw (ex-info ~(gen-enhanced-reported-message msg) ~(gen-enhanced-reported-data data)))
+       :console (oops.state/*console-reporter* ~(gen-kind-fn kind)
+                                               ~(gen-enhanced-reported-message msg)
+                                               ~(gen-enhanced-reported-data data))
+       false nil)))
 
 ; -- helper macros ----------------------------------------------------------------------------------------------------------
 
