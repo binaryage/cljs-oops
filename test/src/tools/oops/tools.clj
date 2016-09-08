@@ -2,7 +2,8 @@
   (:require [environ.core :refer [env]]
             [oops.config :as config]))
 
-;(println (interpose "\n" (seq (.getURLs (ClassLoader/getSystemClassLoader)))))
+(defn get-classpath []
+  (apply str (interpose "\n" (seq (.getURLs (ClassLoader/getSystemClassLoader))))))
 
 (defmacro with-console-recording [recorder & body]
   `(let [recorder# ~recorder]
