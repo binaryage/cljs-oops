@@ -174,6 +174,12 @@
                                                ~(gen-enhanced-reported-data data))
        false nil)))
 
+(defn validate-object-statically [obj]
+  ; here we can try to detect some pathological cases and warn user at compile-time
+  (if (config/diagnostics?)
+    (cond
+      (nil? obj) (report-if-needed! :static-nil-object))))
+
 ; -- helper macros ----------------------------------------------------------------------------------------------------------
 
 (defmacro report-runtime-error-impl [msg data]
@@ -231,12 +237,14 @@
 ; -- raw implementations ----------------------------------------------------------------------------------------------------
 
 (defn gen-oget [obj & selector]
+  (validate-object-statically obj)
   (let [path (schema/selector->path selector)]
     (if-not (= path :invalid-path)
       (gen-static-path-get obj path)
       (gen-dynamic-selector-get obj selector))))
 
 (defn gen-oset! [obj selector val]
+  (validate-object-statically obj)
   (let [obj-sym (gensym "obj")
         path (schema/selector->path selector)]
     `(let [~obj-sym ~obj]
@@ -246,11 +254,13 @@
        ~obj-sym)))
 
 (defn gen-ocall [obj selector & args]
+  (validate-object-statically obj)
   (let [obj-sym (gensym "obj")]
     `(let [~obj-sym ~obj]
        (.call ~(gen-oget obj-sym selector) ~obj-sym ~@args))))
 
 (defn gen-oapply [obj selector args]
+  (validate-object-statically obj)
   (let [obj-sym (gensym "obj")]
     `(let [~obj-sym ~obj]
        (.apply ~(gen-oget obj-sym selector) ~obj-sym (into-array ~args)))))

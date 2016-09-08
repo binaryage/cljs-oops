@@ -42,3 +42,6 @@
 
 (defmethod ana/error-message :dynamic-property-access [_type _info]
   (str (enhance-error-message "Unexpected dynamic property access")))
+
+(defmethod ana/error-message :static-nil-object [_type _info]
+  (str (enhance-error-message "Unexpected nil object")))
