@@ -1,0 +1,23 @@
+goog.provide("oops.arena.warnings");
+goog.require("cljs.core");
+goog.require("oops.core");
+goog.require("oops.tools");
+var _STAR_console_reporter_STAR_1_2 = oops.state._STAR_console_reporter_STAR_;
+oops.state._STAR_console_reporter_STAR_ = function() {
+  arguments[0].apply(console, Array.prototype.slice.call(arguments, 1))
+};
+try {
+  var obj3_4 = function() {
+    var obj5 = function() {
+      var obj6 = null;
+      if (cljs.core.truth_(oops.core.validate_object_dynamically.call(null, obj6))) return obj6["k1"];
+      else return null
+    }();
+    if (cljs.core.truth_(oops.core.validate_object_dynamically.call(null, obj5))) return obj5["k2"];
+    else return null
+  }();
+  if (cljs.core.truth_(oops.core.validate_object_dynamically.call(null, obj3_4))) obj3_4["k3"];
+  else;
+} finally {
+  oops.state._STAR_console_reporter_STAR_ = _STAR_console_reporter_STAR_1_2
+};

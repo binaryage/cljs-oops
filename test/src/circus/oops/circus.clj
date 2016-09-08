@@ -59,7 +59,8 @@
 (def builds
   (concat
     (get-build-variants "basic_oget.cljs")
-    (get-build-variants "dynamic_oget.cljs")))
+    (get-build-variants "dynamic_oget.cljs")
+    [(make-build "warnings.cljs" "dev" {} {:optimizations :whitespace})]))
 
 (defn get-build-name [build]
   (let [{:keys [source variant]} build]
