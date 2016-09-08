@@ -146,8 +146,8 @@
 
 (defn gen-runtime-diagnostics-context! [_form _env body]
   (if (config/diagnostics?)
-    `(binding [oops.state/*console-reporter* (fn [f# & args#]                                                                 ; it is imporant to keep this inline so we get proper call-site location and line number
-                                               (.apply f# js/console (into-array args#)))]
+    `(binding [oops.state/*console-reporter* (fn [method# & args#]                                                            ; it is imporant to keep this inline so we get proper call-site location and line number
+                                               (.apply method# js/console (into-array args#)))]
        ~body)
     body))
 
@@ -157,19 +157,19 @@
 (defn gen-enhanced-reported-data [data]
   data)
 
-(defn gen-kind-fn [kind]
+(defn gen-console-method [kind]
   (case kind
     :error `(.-error js/console)
     :warning `(.-warn js/console)))
 
 (defn gen-report-runtime-message [kind msg data]
   {:pre [(contains? #{:error :warning} kind)]}
-  (let [mode (if (= kind :error)
-               `(oops.config/error-reporting-mode)
-               `(oops.config/warning-reporting-mode))]
+  (let [mode (case kind
+               :error `(oops.config/error-reporting-mode)
+               :warning `(oops.config/warning-reporting-mode))]
     `(case ~mode
        :throw (throw (ex-info ~(gen-enhanced-reported-message msg) ~(gen-enhanced-reported-data data)))
-       :console (oops.state/*console-reporter* ~(gen-kind-fn kind)
+       :console (oops.state/*console-reporter* ~(gen-console-method kind)
                                                ~(gen-enhanced-reported-message msg)
                                                ~(gen-enhanced-reported-data data))
        false nil)))
