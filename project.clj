@@ -103,8 +103,8 @@
                                                    :asset-path      "_compiled/basic_oadvanced_goog"
                                                    :main            oops.runner
                                                    :optimizations   :advanced
-                                                   :external-config {:oops/config {:atomic-get-mode :goog
-                                                                                   :atomic-set-mode :goog}}}}}}}
+                                                   :external-config {:oops/config {:key-get :goog
+                                                                                   :key-set :goog}}}}}}}
 
              :auto-testing
              {:cljsbuild {:builds {:basic-onone          {:notify-command ["scripts/rerun-tests.sh" "basic_onone"]}

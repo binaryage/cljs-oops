@@ -25,7 +25,7 @@
 ; -- icing ------------------------------------------------------------------------------------------------------------------
 
 (defn error-reporting-mode [& [config]]
-  (:error-reporting-mode (or config (get-current-runtime-config))))
+  (:error-reporting (or config (get-current-runtime-config))))
 
 (defn warning-reporting-mode [& [config]]
-  (:warning-reporting-mode (or config (get-current-runtime-config))))
+  (:warning-reporting (or config (get-current-runtime-config))))

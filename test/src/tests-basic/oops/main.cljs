@@ -56,7 +56,7 @@
           42 #"Unexpected object value \(number\)"
           true #"Unexpected object value \(boolean\)"
           false #"Unexpected object value \(boolean\)")
-        (with-runtime-config {:error-reporting-mode false}
+        (with-runtime-config {:error-reporting false}
           (under-phantom
             (are [o msg] (thrown-with-msg? js/TypeError msg (oget o "key"))
               nil #"null is not an object"
@@ -67,7 +67,7 @@
             true
             false)))
       (testing "with {:error-reporting-mode :console} object access validation should report errors to console"
-        (with-runtime-config {:error-reporting-mode :console}
+        (with-runtime-config {:error-reporting :console}
           (let [recorder (atom [""])
                 expected-warnings "
 ERROR: (\"Oops, Unexpected object value (nil)\" {:obj nil})
@@ -86,7 +86,7 @@ ERROR: (\"Oops, Unexpected object value (boolean)\" {:obj false})"]
                 false))
             (is (= (string/join "\n" @recorder) expected-warnings)))))
       (testing "with {:error-reporting-mode false} object access validation should be elided"
-        (with-runtime-config {:error-reporting-mode false}
+        (with-runtime-config {:error-reporting false}
           (under-phantom
             (are [o msg] (thrown-with-msg? js/TypeError msg (oget o "key"))
               nil #"null is not an object"
@@ -98,7 +98,7 @@ ERROR: (\"Oops, Unexpected object value (boolean)\" {:obj false})"]
             false)))
       (when-advanced-mode                                                                                                     ; advanced optimizations
         (testing "object access validation should crash or silently fail in advanced mode (no diagnostics)"
-          (when-not-compiler-config {:atomic-get-mode :goog}
+          (when-not-compiler-config {:key-get :goog}
                                     (are [o msg] (thrown-with-msg? js/TypeError msg (oget o "key"))
                                       nil #"null is not an object"
                                       js/undefined #"undefined is not an object")

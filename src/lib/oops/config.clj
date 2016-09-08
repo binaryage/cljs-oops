@@ -4,16 +4,16 @@
             [oops.debug :refer [log]]))
 
 (def default-config                                                                                                           ; falsy below means 'nil' or 'false'
-  {:diagnostics                    true                                                                                       ; #{true falsy}
-   :key-get-mode                   :core                                                                                      ; #{:core :goog}
-   :key-set-mode                   :core                                                                                      ; #{:core :goog}
+  {:diagnostics               true                                                                                            ; #{true falsy}
+   :key-get                   :core                                                                                           ; #{:core :goog}
+   :key-set                   :core                                                                                           ; #{:core :goog}
 
    ; compiler warnigns/errors
-   :dynamic-property-access        :warn                                                                                      ; #{:error :warn falsy}
+   :dynamic-property-access   :warn                                                                                           ; #{:error :warn falsy}
 
    ; runtime config
-   :runtime-error-reporting-mode   :throw                                                                                     ; #{:throw :console falsy}
-   :runtime-warning-reporting-mode :console                                                                                   ; #{:throw :console falsy}
+   :runtime-error-reporting   :throw                                                                                          ; #{:throw :console falsy}
+   :runtime-warning-reporting :console                                                                                        ; #{:throw :console falsy}
    })
 
 (def advanced-mode-compiler-config-overrides
@@ -68,11 +68,11 @@
 
 (defn key-get-mode [& [config]]
   {:post [(contains? #{:core :goog} %)]}
-  (:key-get-mode (or config (get-current-compiler-config))))
+  (:key-get (or config (get-current-compiler-config))))
 
 (defn key-set-mode [& [config]]
   {:post [(contains? #{:core :goog} %)]}
-  (:key-set-mode (or config (get-current-compiler-config))))
+  (:key-set (or config (get-current-compiler-config))))
 
 (defn dynamic-property-access-mode [& [config]]
   {:post [(contains? #{:error :warn nil false} %)]}

@@ -49,8 +49,8 @@
    :options (build-options (get-main-from-source source) variant config)})
 
 (defn get-key-mode-options [mode]
-  {:key-set-mode mode
-   :key-get-mode mode})
+  {:key-set mode
+   :key-get mode})
 
 (defn get-build-variants [source]
   [(make-build source "default")
