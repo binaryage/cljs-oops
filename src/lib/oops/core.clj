@@ -61,7 +61,7 @@
 (defn gen-dynamic-object-access-validation-wrapper [obj-sym body]
   {:pre [(symbol? obj-sym)]}
   (if (config/diagnostics?)
-    `(if ~(gen-dynamic-object-access-validation obj-sym)
+    `(if (validate-object-dynamically ~obj-sym)
        ~body)
     body))
 
@@ -185,6 +185,10 @@
 (defmacro coerce-key-dynamically-impl [key-sym]
   {:pre [(symbol? key-sym)]}
   `(name ~key-sym))
+
+(defmacro validate-object-dynamically-impl [obj-sym]
+  {:pre [(symbol? obj-sym)]}
+  (gen-dynamic-object-access-validation obj-sym))
 
 (defmacro build-path-dynamically-impl [selector-sym]
   {:pre [(symbol? selector-sym)]}

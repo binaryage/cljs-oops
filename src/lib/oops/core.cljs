@@ -2,6 +2,7 @@
   (:require-macros [oops.core :refer [report-runtime-error-impl
                                       report-runtime-warning-impl
                                       coerce-key-dynamically-impl
+                                      validate-object-dynamically-impl
                                       build-path-dynamically-impl
                                       get-key-dynamically-impl
                                       set-key-dynamically-impl
@@ -35,6 +36,9 @@
           (.push arr (coerce-key-dynamically item)))
         (recur (next items))))))
 
+(defn validate-object-dynamically [obj]
+  (validate-object-dynamically-impl obj))
+
 (defn build-path-dynamically [selector]
   (build-path-dynamically-impl selector))
 
@@ -49,4 +53,3 @@
 
 (defn set-selector-dynamically [obj selector val]
   (set-selector-dynamically-impl obj selector val))
-
