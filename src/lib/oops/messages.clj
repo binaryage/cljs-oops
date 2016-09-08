@@ -5,7 +5,8 @@
 
 (defn register-messages! [table]
   (assoc table
-    :dynamic-property-access true))
+    :dynamic-property-access true
+    :static-nil-object true))
 
 (defn post-process-error-message [msg]
   (str "Oops, " msg))
