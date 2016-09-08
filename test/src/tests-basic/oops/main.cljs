@@ -7,11 +7,16 @@
             [oops.tools
              :refer [with-captured-console]
              :refer-macros [init-test!
+                            runonce
                             when-advanced-mode when-none-mode
+                            under-phantom
+                            under-chrome
+                            if-phantom
                             with-console-recording
                             when-compiler-config when-not-compiler-config]]))
 
-(init-test!)
+(runonce
+  (init-test!))
 
 (use-fixtures :once with-captured-console)
 
@@ -52,9 +57,10 @@
           true #"Unexpected object value \(boolean\)"
           false #"Unexpected object value \(boolean\)")
         (with-runtime-config {:error-reporting-mode false}
-          (are [o msg] (thrown-with-msg? js/TypeError msg (oget o "key"))
-            nil #"null is not an object"
-            js/undefined #"undefined is not an object")
+          (under-phantom
+            (are [o msg] (thrown-with-msg? js/TypeError msg (oget o "key"))
+              nil #"null is not an object"
+              js/undefined #"undefined is not an object"))
           (are [o] (= (oget o "key") nil)
             "s"
             42
@@ -81,9 +87,10 @@ ERROR: (\"Unexpected object value (boolean) while calling `(oget false \\\"key\\
             (is (= (string/join "\n" @recorder) expected-warnings)))))
       (testing "with {:error-reporting-mode false} object access validation should be elided"
         (with-runtime-config {:error-reporting-mode false}
-          (are [o msg] (thrown-with-msg? js/TypeError msg (oget o "key"))
-            nil #"null is not an object"
-            js/undefined #"undefined is not an object")
+          (under-phantom
+            (are [o msg] (thrown-with-msg? js/TypeError msg (oget o "key"))
+              nil #"null is not an object"
+              js/undefined #"undefined is not an object"))
           (are [o] (= (oget o "key") nil)
             "s"
             42
