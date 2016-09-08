@@ -43,9 +43,22 @@
   (let [comment (str " @preserve " (get-arena-separator) "")]
     `(~'js-inline-comment ~comment)))
 
+(defmacro under-phantom [& body]
+  `(when (re-find #"PhantomJS" js/window.navigator.userAgent)
+     ~@body))
+
+(defmacro under-chrome [& body]
+  `(when-not (re-find #"PhantomJS" js/window.navigator.userAgent)
+     ~@body))
+
+(defmacro if-phantom [phantom-code & [chrome-code]]
+  `(if (re-find #"PhantomJS" js/window.navigator.userAgent)
+     ~phantom-code
+     ~chrome-code))
+
 (defn gen-devtools-if-needed []
   (if-not (= (env :oops-elide-devtools) "1")
-    `(if-not (re-find #"PhantomJS" js/window.navigator.userAgent)
+    `(under-chrome
        (devtools.core/install!))))
 
 (defmacro init-test! []
