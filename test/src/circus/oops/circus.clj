@@ -126,6 +126,18 @@
                   (update-in [:content] string/replace needle stable-replacement))))]
     (:content (reduce * {:counter 1 :content content} (re-seq #"(\d+)(\$|__)" content)))))
 
+(defn normalize-gensyms [content]
+  "The goal here is to rename all generated name<NUM> identifiers with stable numbering."
+  (let [* (fn [state match]
+            (if (> (Long/parseLong (first match)) 1000)
+              (let [needle (first match)
+                    stable-replacement (str (:counter state))]
+                (-> state
+                    (update-in [:counter] inc)
+                    (update-in [:content] string/replace needle stable-replacement)))
+              state))]
+    (:content (reduce * {:counter 1 :content content} (re-seq #"(\d+)" content)))))
+
 (defn safe-spit [path content]
   (io/make-parents path)
   (spit path content))
@@ -159,6 +171,7 @@
         relevant-output (-> (read-build-output build)
                             (extract-relevant-output)
                             (normalize-identifiers)
+                            (normalize-gensyms)
                             (get-canonical-transcript))]
     (log/debug (str "Writing build transcript to '" actual-transcript-path "' (" (count relevant-output) " chars)"))
     (safe-spit actual-transcript-path relevant-output)
