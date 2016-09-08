@@ -8,8 +8,9 @@
    :key-get                   :core                                                                                           ; #{:core :goog}
    :key-set                   :core                                                                                           ; #{:core :goog}
 
-   ; compiler warnigns/errors
+   ; compile-time warnings/errors
    :dynamic-property-access   :warn                                                                                           ; #{:error :warn falsy}
+   :static-nil-object         :warn
 
    ; runtime config
    :runtime-error-reporting   :throw                                                                                          ; #{:throw :console falsy}
