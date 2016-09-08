@@ -37,5 +37,8 @@
 
 ; -- error/warning messages -------------------------------------------------------------------------------------------------
 
+(defn enhance-error-message [msg]
+  (str "Oops, " msg))
+
 (defmethod ana/error-message :dynamic-property-access [_type _info]
-  (str "Oops, Unexpected dynamic property access"))
+  (str (enhance-error-message "Unexpected dynamic property access")))
