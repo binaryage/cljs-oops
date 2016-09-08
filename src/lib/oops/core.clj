@@ -31,9 +31,8 @@
 
 (defn gen-object-access-validation-error [obj-sym flavor]
   {:pre [(symbol? obj-sym)]}
-  `(let [msg# (str "Unexpected object value (" ~flavor ")")
-         data# {:obj ~obj-sym}]
-     (report-runtime-error msg# data#)
+  `(do
+     (report-runtime-error (str "Unexpected object value (" ~flavor ")") {:obj ~obj-sym})
      false))
 
 (defn gen-dynamic-object-access-validation [obj-sym]
