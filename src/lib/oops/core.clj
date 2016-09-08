@@ -155,19 +155,19 @@
        ~body)
     body))
 
+(defn gen-report-runtime-message [kind msg data]
+  `(case (oops.config/error-reporting-mode)
+     :throw (throw (ex-info ~msg ~data))
+     :console (oops.state/*console-reporter* ~kind ~msg ~data)
+     false nil))
+
 ; -- helper macros ----------------------------------------------------------------------------------------------------------
 
 (defmacro report-runtime-error-impl [msg data]
-  `(case (oops.config/error-reporting-mode)
-     :throw (throw (ex-info ~msg ~data))
-     :console (oops.state/*console-reporter* :error ~msg ~data)
-     false nil))
+  (gen-report-runtime-message :error msg data))
 
 (defmacro report-runtime-warning-impl [msg data]
-  `(case (oops.config/warning-reporting-mode)
-     :throw (throw (ex-info ~msg ~data))
-     :console (oops.state/*console-reporter* :warning ~msg ~data)
-     false nil))
+  (gen-report-runtime-message :warning msg data))
 
 (defmacro coerce-key-dynamically-impl [key-sym]
   {:pre [(symbol? key-sym)]}
