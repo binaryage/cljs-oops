@@ -31,7 +31,7 @@
 
 (defn gen-object-access-validation-error [obj-sym flavor]
   {:pre [(symbol? obj-sym)]}
-  `(let [msg# (str "Unexpected object value (" ~flavor ")")
+  `(let [msg# (str "Oops, Unexpected object value (" ~flavor ")")
          data# {:obj ~obj-sym}]
      (report-runtime-error msg# data#)
      false))
@@ -91,16 +91,16 @@
   {:pre [(symbol? path-sym)]}
   `(if-not (clojure.spec/valid? ::oops.sdefs/obj-path ~path-sym)
      (let [explanation# (clojure.spec/explain-data ::oops.sdefs/obj-path ~path-sym)]
-       (report-runtime-error "Invalid path" {:path        ~path-sym
-                                             :explanation explanation#}))
+       (report-runtime-error "Oops, Invalid path" {:path        ~path-sym
+                                                   :explanation explanation#}))
      true))
 
 (defn gen-dynamic-selector-validation [selector-sym]
   {:pre [(symbol? selector-sym)]}
   `(if-not (clojure.spec/valid? ::oops.sdefs/obj-selector ~selector-sym)
      (let [explanation# (clojure.spec/explain-data ::oops.sdefs/obj-selector ~selector-sym)]
-       (report-runtime-error "Invalid selector" {:selector    ~selector-sym
-                                                 :explanation explanation#}))
+       (report-runtime-error "Oops, Invalid selector" {:selector    ~selector-sym
+                                                       :explanation explanation#}))
      true))
 
 (defn gen-dynamic-selector-or-path-validation [selector-or-path-sym]

@@ -37,5 +37,5 @@
 
 ; -- error/warning messages -------------------------------------------------------------------------------------------------
 
-(defmethod ana/error-message :dynamic-property-access [_type info]
-  (str "Unexpected dynamic property access while calling " (:form info)))
+(defmethod ana/error-message :dynamic-property-access [_type _info]
+  (str "Oops, Unexpected dynamic property access"))
