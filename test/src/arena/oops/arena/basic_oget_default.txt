@@ -1,3 +1,12 @@
+// COMPILER CONFIG:
+//   arena/basic_oget.cljs [default]
+//   {:elide-asserts true,
+//    :main oops.arena.basic-oget,
+//    :optimizations :advanced,
+//    :output-dir "test/resources/_compiled/basic-oget-default/_workdir",
+//    :output-to "test/resources/_compiled/basic-oget-default/main.js",
+//    :pseudo-names true}
+// ----------------------------------------------------------------------------------------------------------
 "val";
 ({
   key: "val"

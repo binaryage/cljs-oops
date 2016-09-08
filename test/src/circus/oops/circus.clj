@@ -1,6 +1,6 @@
 (ns oops.circus
   (:require [clojure.test :refer :all]
-            [cljs.build.api :as api]
+            [cljs.build.api :as compiler]
             [cljs.util :as cljs-util]
             [environ.core :refer [env]]
             [clj-logging-config.log4j :as config]
@@ -11,8 +11,10 @@
             [cuerdas.core :as cuerdas]
             [clojure.java.shell :as shell]
             [clojure.stacktrace :as stacktrace]
+            [clojure.pprint :refer [pprint]]
             [clansi])
-  (:import (org.apache.log4j Level)))
+  (:import (org.apache.log4j Level)
+           (java.io StringWriter)))
 
 (defn report-error [& args]
   (binding [*out* *err*]
@@ -27,13 +29,14 @@
 (defn build-options [main variant config & [overrides]]
   (assert main (str "main must be specified!"))
   (let [out (str (last (string/split main #"\.")) "-" variant)
-        compiler-config {:pseudo-names    true
-                         :elide-asserts   true
-                         :optimizations   :advanced
-                         :main            (symbol main)
-                         :external-config {:oops/config (or config {})}
-                         :output-dir      (str "test/resources/_compiled/" out "/_workdir")
-                         :output-to       (str "test/resources/_compiled/" out "/main.js")}]
+        compiler-config (merge {:pseudo-names  true
+                                :elide-asserts true
+                                :optimizations :advanced
+                                :main          (symbol main)
+                                :output-dir    (str "test/resources/_compiled/" out "/_workdir")
+                                :output-to     (str "test/resources/_compiled/" out "/main.js")}
+                               (if-not (empty? config)
+                                 {:external-config {:oops/config config}}))]
     (merge compiler-config overrides)))
 
 (defn get-main-from-source [source]
@@ -112,10 +115,9 @@
 (defn extract-relevant-output [content]
   (let [separator (get-arena-separator)]
     (if-let [separator-index (string/last-index-of content separator)]
-      (let [nl-index (or (string/index-of content "\n" separator-index) separator-index)
-            relevant-content (.substring content (+ nl-index 1))]
-        relevant-content)
-      content)))
+      (let [semicolon-index (or (string/index-of content ";" separator-index) separator-index)
+            relevant-content (.substring content (+ semicolon-index 1))]
+        relevant-content))))
 
 (defn normalize-identifiers [content]
   "The goal here is to rename all generated $<number>$ identifiers with stable numbering."
@@ -163,19 +165,56 @@
 
 ; -- building ---------------------------------------------------------------------------------------------------------------
 
+(defn pprint-str [v]
+  (with-out-str
+    (binding [*print-level* 5
+              *print-length* 10]
+      (pprint v))))
+
 (defn build! [build]
   (log/info (str "Building '" (get-build-name build) "'"))
-  (api/build (:source build) (:options build)))
+  (let [captured-out (new StringWriter)
+        captured-err (new StringWriter)]
+    (binding [*out* captured-out
+              *err* captured-err]
+      (try
+        (compiler/build (:source build) (:options build))
+        (catch Throwable e
+          (.println *err* (str "THROWN: " (.getMessage e))))))
+    {:build build
+     :out   (str captured-out)
+     :err   (str captured-err)
+     :code  (extract-relevant-output (read-build-output build))}))
 
-(defn write-build-transcript! [build]
-  (let [actual-transcript-path (get-actual-transcript-path build)
-        relevant-output (-> (read-build-output build)
-                            (extract-relevant-output)
-                            (normalize-identifiers)
-                            (normalize-gensyms)
-                            (get-canonical-transcript))]
-    (log/debug (str "Writing build transcript to '" actual-transcript-path "' (" (count relevant-output) " chars)"))
-    (safe-spit actual-transcript-path relevant-output)
+(defn prepare-build-info [build]
+  (str (get-build-name build) "\n"
+       (pprint-str (into (sorted-map) (:options build)))))
+
+(defn post-process-code [code]
+  (-> code
+      (normalize-identifiers)
+      (normalize-gensyms)))
+
+(defn comment-out-text [s & [stuffer]]
+  (->> s
+       (cuerdas/lines)
+       (map #(str "// " stuffer %))
+       (cuerdas/unlines)))
+
+(defn write-build-transcript! [build-result]
+  (let [{:keys [build code out err]} build-result
+        separator "----------------------------------------------------------------------------------------------------------"
+        actual-transcript-path (get-actual-transcript-path build)
+        post-processed-code (post-process-code code)
+        build-info (prepare-build-info build)
+        parts [(str "// COMPILER CONFIG:\n" (comment-out-text build-info "  "))
+               (if-not (empty? out) (str "// COMPILER STDOUT:\n" (comment-out-text out "  ")))
+               (if-not (empty? err) (str "// COMPILER STDERR:\n" (comment-out-text err "  ")))
+               post-processed-code]
+        transcript (string/join "\n" (interpose (comment-out-text separator) (remove nil? parts)))
+        canonical-transcript (get-canonical-transcript transcript)]
+    (log/debug (str "Writing build transcript to '" actual-transcript-path "' (" (count canonical-transcript) " chars)"))
+    (safe-spit actual-transcript-path canonical-transcript)
     (beautify-js! actual-transcript-path)))
 
 (defn silent-slurp [path]
@@ -215,9 +254,9 @@
       (stacktrace/print-stack-trace e))))
 
 (defn exercise-build! [build]
-  (build! build)
-  (write-build-transcript! build)
-  (compare-transcripts! build))
+  (let [build-result (build! build)]
+    (write-build-transcript! build-result)
+    (compare-transcripts! build)))
 
 (defn exercise-builds! [builds]
   (doseq [build builds]

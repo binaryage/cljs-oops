@@ -1,23 +1,44 @@
-goog.provide("oops.arena.warnings");
-goog.require("cljs.core");
-goog.require("oops.core");
-goog.require("oops.tools");
+// COMPILER CONFIG:
+//   arena/warnings.cljs [dev]
+//   {:elide-asserts true,
+//    :main oops.arena.warnings,
+//    :optimizations :whitespace,
+//    :output-dir "test/resources/_compiled/warnings-dev/_workdir",
+//    :output-to "test/resources/_compiled/warnings-dev/main.js",
+//    :pseudo-names true}
+// ----------------------------------------------------------------------------------------------------------
+// COMPILER STDERR:
+//   WARNING: Oops, Unexpected dynamic property access at line 14 test/src/arena/oops/arena/warnings.cljs
+//   WARNING: Oops, Unexpected nil object at line 16 test/src/arena/oops/arena/warnings.cljs
+// ----------------------------------------------------------------------------------------------------------
+oops.arena.warnings.o = {
+  "key": "val"
+};
 var _STAR_console_reporter_STAR_1_2 = oops.state._STAR_console_reporter_STAR_;
 oops.state._STAR_console_reporter_STAR_ = function() {
   arguments[0].apply(console, Array.prototype.slice.call(arguments, 1))
 };
 try {
-  var obj3_4 = function() {
-    var obj5 = function() {
-      var obj6 = null;
-      if (cljs.core.truth_(oops.core.validate_object_dynamically.call(null, obj6))) return obj6["k1"];
-      else return null
-    }();
-    if (cljs.core.truth_(oops.core.validate_object_dynamically.call(null, obj5))) return obj5["k2"];
-    else return null
-  }();
-  if (cljs.core.truth_(oops.core.validate_object_dynamically.call(null, obj3_4))) obj3_4["k3"];
-  else;
+  oops.core.get_selector_dynamically.call(null, oops.arena.warnings.o, cljs.core.identity.call(null, "key"))
 } finally {
   oops.state._STAR_console_reporter_STAR_ = _STAR_console_reporter_STAR_1_2
+}
+var _STAR_console_reporter_STAR_5_6 = oops.state._STAR_console_reporter_STAR_;
+oops.state._STAR_console_reporter_STAR_ = function() {
+  arguments[0].apply(console, Array.prototype.slice.call(arguments, 1))
+};
+try {
+  var obj7_8 = function() {
+    var obj9 = function() {
+      var obj10 = null;
+      if (cljs.core.truth_(oops.core.validate_object_dynamically.call(null, obj10))) return obj10["k1"];
+      else return null
+    }();
+    if (cljs.core.truth_(oops.core.validate_object_dynamically.call(null, obj9))) return obj9["k2"];
+    else return null
+  }();
+  if (cljs.core.truth_(oops.core.validate_object_dynamically.call(null, obj7_8))) obj7_8["k3"];
+  else;
+} finally {
+  oops.state._STAR_console_reporter_STAR_ = _STAR_console_reporter_STAR_5_6
 };

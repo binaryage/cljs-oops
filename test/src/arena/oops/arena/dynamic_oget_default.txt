@@ -1,3 +1,12 @@
+// COMPILER CONFIG:
+//   arena/dynamic_oget.cljs [default]
+//   {:elide-asserts true,
+//    :main oops.arena.dynamic-oget,
+//    :optimizations :advanced,
+//    :output-dir "test/resources/_compiled/dynamic-oget-default/_workdir",
+//    :output-to "test/resources/_compiled/dynamic-oget-default/main.js",
+//    :pseudo-names true}
+// ----------------------------------------------------------------------------------------------------------
 $oops$core$get_selector_dynamically$$({
   key: "val"
 }, "key");
