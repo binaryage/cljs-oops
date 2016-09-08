@@ -24,18 +24,17 @@
   (config/set-loggers! :root {:out   :console
                               :level (Level/toLevel log-level Level/INFO)}))
 
-(def common-options
-  {:optimizations :advanced})
-
-(defn build-options [main variant config]
+(defn build-options [main variant config & [overrides]]
   (assert main (str "main must be specified!"))
-  (let [out (str (last (string/split main #"\.")) "-" variant)]
-    (merge common-options {:pseudo-names    true
-                           :elide-asserts   true
-                           :main            (symbol main)
-                           :external-config {:oops/config (or config {})}
-                           :output-dir      (str "test/resources/_compiled/" out "/_workdir")
-                           :output-to       (str "test/resources/_compiled/" out "/main.js")})))
+  (let [out (str (last (string/split main #"\.")) "-" variant)
+        compiler-config {:pseudo-names    true
+                         :elide-asserts   true
+                         :optimizations   :advanced
+                         :main            (symbol main)
+                         :external-config {:oops/config (or config {})}
+                         :output-dir      (str "test/resources/_compiled/" out "/_workdir")
+                         :output-to       (str "test/resources/_compiled/" out "/main.js")}]
+    (merge compiler-config overrides)))
 
 (defn get-main-from-source [source]
   (if-let [m (re-matches #"test\/src\/arena\/(.*?)\.cljs" source)]
@@ -43,23 +42,24 @@
         (string/replace #"\/" ".")
         (string/replace #"_" "-"))))
 
-(defn make-build [source variant & [config]]
-  {:source  source
-   :variant variant
-   :options (build-options (get-main-from-source source) variant config)})
+(defn make-build [file variant & [config overrides]]
+  (let [source (str "test/src/arena/oops/arena/" file)]
+    {:source  source
+     :variant variant
+     :options (build-options (get-main-from-source source) variant config overrides)}))
 
 (defn get-key-mode-options [mode]
   {:key-set mode
    :key-get mode})
 
-(defn get-build-variants [source]
-  [(make-build source "default")
-   (make-build source "goog" (get-key-mode-options :goog))])
+(defn get-build-variants [file]
+  [(make-build file "default")
+   (make-build file "goog" (get-key-mode-options :goog))])
 
 (def builds
   (concat
-    (get-build-variants "test/src/arena/oops/arena/basic_oget.cljs")
-    (get-build-variants "test/src/arena/oops/arena/dynamic_oget.cljs")))
+    (get-build-variants "basic_oget.cljs")
+    (get-build-variants "dynamic_oget.cljs")))
 
 (defn get-build-name [build]
   (let [{:keys [source variant]} build]
