@@ -1,4 +1,5 @@
 (ns oops.runner
+  (:require-macros [oops.runner :refer [ansi-enabled?]])
   (:require [cljs.test :as test :refer-macros [run-tests] :refer [report]]
             [oops.main]))
 
@@ -36,7 +37,7 @@
    })
 
 
-(def ^:dynamic *use-ansi* "Rebind this to false if you don't want to see ANSI codes in some part of your code." true)
+(def ^:dynamic *use-ansi* "Rebind this to false if you don't want to see ANSI codes in some part of your code." (ansi-enabled?))
 
 (defn ansi
   "Output an ANSI escape code using a style key.
