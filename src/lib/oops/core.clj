@@ -145,10 +145,9 @@
            ~parent-obj-sym ~(gen-dynamic-path-get obj-sym parent-obj-path-sym)]
        (set-key-dynamically ~parent-obj-sym ~key-sym ~val))))
 
-(defn gen-runtime-diagnostics-context! [form _env body]
+(defn gen-runtime-diagnostics-context! [_form _env body]
   (if (config/diagnostics?)
-    `(binding [oops.state/*invoked-form* ~(str form)
-               oops.state/*console-reporter* (fn [kind# & args#]                                                              ; it is imporant to keep this inline so we get proper call-site location and line number
+    `(binding [oops.state/*console-reporter* (fn [kind# & args#]                                                              ; it is imporant to keep this inline so we get proper call-site location and line number
                                                (let [f# (case kind#
                                                           :error (.-error js/console)
                                                           :warning (.-warn js/console))]
@@ -156,31 +155,19 @@
        ~body)
     body))
 
-(defn gen-enhance-diagnostics-msg [msg]
-  `(str ~msg " while calling `" oops.state/*invoked-form* "`"))                                                               ; TODO: guard against long forms
-
-(defn gen-enhance-diagnostics-data [data]
-  `(assoc ~data :context oops.state/*invoked-form*))
-
 ; -- helper macros ----------------------------------------------------------------------------------------------------------
 
 (defmacro report-runtime-error-impl [msg data]
-  `(let [msg# ~(gen-enhance-diagnostics-msg msg)
-         data# ~(gen-enhance-diagnostics-data data)]
-     (case (config/error-reporting-mode)
-       :throw (throw (ex-info msg# data#))
-       :console (oops.state/*console-reporter* :error msg# data#)
-       false nil)
-     nil))
+  `(case (oops.config/error-reporting-mode)
+     :throw (throw (ex-info ~msg ~data))
+     :console (oops.state/*console-reporter* :error ~msg ~data)
+     false nil))
 
 (defmacro report-runtime-warning-impl [msg data]
-  `(let [msg# ~(gen-enhance-diagnostics-msg msg)
-         data# ~(gen-enhance-diagnostics-data data)]
-     (case (config/warning-reporting-mode)
-       :throw (throw (ex-info msg# data#))
-       :console (oops.state/*console-reporter* :warning msg# data#)
-       false nil)
-     nil))
+  `(case (oops.config/warning-reporting-mode)
+     :throw (throw (ex-info ~msg ~data))
+     :console (oops.state/*console-reporter* :warning ~msg ~data)
+     false nil))
 
 (defmacro coerce-key-dynamically-impl [key-sym]
   {:pre [(symbol? key-sym)]}
