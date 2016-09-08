@@ -15,7 +15,7 @@
     (case (config/get-config-key type)
       :warn (compiler/warn! type info)
       :error (compiler/error! type info)
-      nil)))
+      (false nil) nil)))
 
 (defn gen-tagged-array [items]
   `(let [arr# (cljs.core/array ~@items)]
