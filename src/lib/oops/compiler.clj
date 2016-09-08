@@ -5,12 +5,12 @@
             [oops.state :as state]
             [oops.debug :refer [log]]))
 
-(defn register-warnings! [warnings-table]
-  (assoc warnings-table
+(defn register-messages! [table]
+  (assoc table
     :dynamic-property-access true))
 
 (defmacro with-hooked-compiler! [& body]
-  `(binding [ana/*cljs-warnings* (register-warnings! ana/*cljs-warnings*)]
+  `(binding [ana/*cljs-warnings* (register-messages! ana/*cljs-warnings*)]
      ~@body))
 
 (defmacro with-compiler-diagnostics-context! [form env opts & body]
