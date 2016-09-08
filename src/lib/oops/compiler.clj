@@ -2,12 +2,9 @@
   "Provides some helper utils for interaction with cljs compiler."
   (:require [cljs.analyzer :as ana]
             [cljs.env]
+            [oops.messages :refer [register-messages!]]
             [oops.state :as state]
             [oops.debug :refer [log]]))
-
-(defn register-messages! [table]
-  (assoc table
-    :dynamic-property-access true))
 
 (defmacro with-hooked-compiler! [& body]
   `(binding [ana/*cljs-warnings* (register-messages! ana/*cljs-warnings*)]
@@ -34,14 +31,3 @@
 (defn error! [type & [info]]
   (assert state/*invoked-env* "oops.state/*invoked-env* must be set via with-diagnostics-context! first!")
   (ana/error type state/*invoked-env* (annotate-with-state info)))
-
-; -- error/warning messages -------------------------------------------------------------------------------------------------
-
-(defn enhance-error-message [msg]
-  (str "Oops, " msg))
-
-(defmethod ana/error-message :dynamic-property-access [_type _info]
-  (str (enhance-error-message "Unexpected dynamic property access")))
-
-(defmethod ana/error-message :static-nil-object [_type _info]
-  (str (enhance-error-message "Unexpected nil object")))

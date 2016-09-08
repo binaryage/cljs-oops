@@ -1,6 +1,7 @@
 (ns oops.core
   (:require [oops.schema :as schema]
             [oops.config :as config]
+            [oops.messages :refer [runtime-message]]
             [oops.compiler :as compiler :refer [with-diagnostics-context!]]
             [oops.debug :refer [log]]))
 
@@ -32,7 +33,7 @@
 (defn gen-object-access-validation-error [obj-sym flavor]
   {:pre [(symbol? obj-sym)]}
   `(do
-     (report-runtime-error (str "Unexpected object value (" ~flavor ")") {:obj ~obj-sym})
+     (report-runtime-error ~(runtime-message :unexpected-object-value flavor) {:obj ~obj-sym})
      false))
 
 (defn gen-dynamic-object-access-validation [obj-sym]
@@ -90,16 +91,16 @@
   {:pre [(symbol? path-sym)]}
   `(if-not (clojure.spec/valid? ::oops.sdefs/obj-path ~path-sym)
      (let [explanation# (clojure.spec/explain-data ::oops.sdefs/obj-path ~path-sym)]
-       (report-runtime-error "Invalid path" {:path        ~path-sym
-                                             :explanation explanation#}))
+       (report-runtime-error ~(runtime-message :invalid-path) {:path        ~path-sym
+                                                               :explanation explanation#}))
      true))
 
 (defn gen-dynamic-selector-validation [selector-sym]
   {:pre [(symbol? selector-sym)]}
   `(if-not (clojure.spec/valid? ::oops.sdefs/obj-selector ~selector-sym)
      (let [explanation# (clojure.spec/explain-data ::oops.sdefs/obj-selector ~selector-sym)]
-       (report-runtime-error "Invalid selector" {:selector    ~selector-sym
-                                                 :explanation explanation#}))
+       (report-runtime-error ~(runtime-message :invalid-selector) {:selector    ~selector-sym
+                                                                   :explanation explanation#}))
      true))
 
 (defn gen-dynamic-selector-or-path-validation [selector-or-path-sym]
@@ -151,10 +152,10 @@
        ~body)
     body))
 
-(defn gen-enhanced-reported-message [msg]
-  `(str "Oops, " ~msg))
+(defn gen-reported-message [msg]
+  msg)
 
-(defn gen-enhanced-reported-data [data]
+(defn gen-reported-data [data]
   data)
 
 (defn gen-console-method [kind]
@@ -168,10 +169,10 @@
                :error `(oops.config/error-reporting-mode)
                :warning `(oops.config/warning-reporting-mode))]
     `(case ~mode
-       :throw (throw (ex-info ~(gen-enhanced-reported-message msg) ~(gen-enhanced-reported-data data)))
+       :throw (throw (ex-info ~(gen-reported-message msg) ~(gen-reported-data data)))
        :console (oops.state/*console-reporter* ~(gen-console-method kind)
-                                               ~(gen-enhanced-reported-message msg)
-                                               ~(gen-enhanced-reported-data data))
+                                               ~(gen-reported-message msg)
+                                               ~(gen-reported-data data))
        false nil)))
 
 (defn validate-object-statically [obj]
