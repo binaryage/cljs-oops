@@ -9,9 +9,9 @@
 (defn supress-reporting? [type]
   (boolean (get-in oops.state/*invoked-opts* [:suppress-reporting type])))
 
-(defn report-if-needed! [mode type & [info]]
+(defn report-if-needed! [type & [info]]
   (if-not (supress-reporting? type)
-    (case mode
+    (case (config/get-config-key type)
       :warn (compiler/warn! type info)
       :error (compiler/error! type info)
       nil)))
@@ -80,7 +80,7 @@
          ~(gen-instrumented-key-get obj-sym (last path))))))
 
 (defn gen-dynamic-selector-get [obj selector-list]
-  (report-if-needed! (config/dynamic-property-access-mode) :dynamic-property-access)
+  (report-if-needed! :dynamic-property-access)
   (case (count selector-list)
     0 obj                                                                                                                     ; get-selector-dynamically passed emtpy selector would return obj
     1 `(get-selector-dynamically ~obj ~(first selector-list))                                                                 ; we want to unwrap selector wrapped in oget (in this case)
@@ -129,7 +129,7 @@
        ~(gen-instrumented-key-set parent-obj-sym key val))))
 
 (defn gen-dynamic-selector-set [obj selector val]
-  (report-if-needed! (config/dynamic-property-access-mode) :dynamic-property-access)
+  (report-if-needed! :dynamic-property-access)
   `(set-selector-dynamically ~obj ~selector ~val))
 
 (defn gen-dynamic-path-set [obj-sym path val]

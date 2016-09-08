@@ -62,18 +62,18 @@
 
 ; -- icing ------------------------------------------------------------------------------------------------------------------
 
+(defn get-config-key [key & [config]]
+  (key (or config (get-current-compiler-config))))
+
 (defn diagnostics? [& [config]]
   {:post [(contains? #{true false nil} %)]}
-  (true? (:diagnostics (or config (get-current-compiler-config)))))
+  (true? (get-config-key :diagnostics config)))
 
 (defn key-get-mode [& [config]]
   {:post [(contains? #{:core :goog} %)]}
-  (:key-get (or config (get-current-compiler-config))))
+  (get-config-key :key-get config))
 
 (defn key-set-mode [& [config]]
   {:post [(contains? #{:core :goog} %)]}
-  (:key-set (or config (get-current-compiler-config))))
+  (get-config-key :key-set config))
 
-(defn dynamic-property-access-mode [& [config]]
-  {:post [(contains? #{:error :warn nil false} %)]}
-  (:dynamic-property-access (or config (get-current-compiler-config))))
