@@ -81,7 +81,11 @@
   (let [output-dir (get-in build [:options :output-dir])]
     (assert (not (empty? output-dir)))
     (log/debug (str "Cleaning by deleting '" output-dir "'"))
-    (recursive-delete (File. output-dir))))
+    (recursive-delete (File. output-dir)))
+  (let [output-to (get-in build [:options :output-to])]
+    (assert (not (empty? output-to)))
+    (log/debug (str "Cleaning by deleting '" output-to "'"))
+    (.delete (File. output-to))))
 
 (defn write-build-transcript! [compilation-result]
   (let [{:keys [build code out err]} compilation-result
