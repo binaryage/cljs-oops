@@ -14,7 +14,7 @@
             [clojure.pprint :refer [pprint]]
             [clansi])
   (:import (org.apache.log4j Level)
-           (java.io StringWriter)))
+           (java.io StringWriter File)))
 
 (def log-level (or (env :oops-log-level) "INFO"))                                                                             ; INFO, DEBUG, TRACE, ALL
 
@@ -181,7 +181,25 @@
               *print-length* 10]
       (pprint v))))
 
+(defn skip-clean? []
+  (not (empty? (:oops-ft-skip-clean env))))
+
+; taken from: https://github.com/macourtney/clojure-tools/blob/dcc9853514756f2f4fc3bfdfdba45abffd94c5dd/src/clojure/tools/file_utils.clj#L83
+(defn recursive-delete [directory]
+  (if (.isDirectory directory)
+    (when (reduce #(and %1 (recursive-delete %2)) true (.listFiles directory))
+      (.delete directory))
+    (.delete directory)))
+
+(defn clean-build! [build]
+  (let [output-dir (get-in build [:options :output-dir])]
+    (assert (not (empty? output-dir)))
+    (log/debug (str "Cleaning by deleting '" output-dir "'"))
+    (recursive-delete (File. output-dir))))
+
 (defn build! [build]
+  (if-not (skip-clean?)
+    (clean-build! build))
   (log/info (str "Building '" (get-build-name build) "'"))
   (let [captured-out (new StringWriter)
         captured-err (new StringWriter)]
