@@ -71,7 +71,7 @@
 
 (defn pprint-str [v]
   (with-out-str
-    (binding [*print-level* 5
+    (binding [*print-level* 10
               *print-length* 10]
       (pprint v))))
 

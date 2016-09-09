@@ -1,7 +1,7 @@
 // COMPILER CONFIG:
 //   arena/dynamic_oget.cljs [goog]
 //   {:elide-asserts true,
-//    :external-config {:oops/config {#, #}},
+//    :external-config {:oops/config {:key-set :goog, :key-get :goog}},
 //    :main oops.arena.dynamic-oget,
 //    :optimizations :advanced,
 //    :output-dir "test/resources/_compiled/dynamic-oget-goog/_workdir",
