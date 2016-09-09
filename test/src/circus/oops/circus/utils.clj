@@ -148,3 +148,10 @@
         (not (some * parts))))))
 
 (def get-build-filter (memoize make-build-filter))
+
+(defn print-cause-chain [tr]
+  (clojure.stacktrace/print-throwable tr)
+  (println)
+  (when-let [cause (.getCause tr)]
+    (print "Caused by: ")
+    (recur cause)))
