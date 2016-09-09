@@ -2,7 +2,7 @@
   (:require [oops.schema :as schema]
             [oops.config :as config]
             [oops.messages :refer [runtime-message]]
-            [oops.compiler :as compiler :refer [with-diagnostics-context!]]
+            [oops.compiler :as compiler :refer [with-diagnostics-context! with-compilation-opts!]]
             [oops.debug :refer [log]]))
 
 ; -- helper code generators -------------------------------------------------------------------------------------------------
@@ -273,59 +273,65 @@
 ; -- public macros ----------------------------------------------------------------------------------------------------------
 
 (defmacro oget [obj & selector]
-  (with-diagnostics-context! &form &env {}
+  (with-diagnostics-context! &form &env
     (apply gen-oget obj selector)))
 
 (defmacro oget+ [obj & selector]
-  (with-diagnostics-context! &form &env {:suppress-reporting #{:dynamic-property-access}}
-    (apply gen-oget obj selector)))
+  (with-diagnostics-context! &form &env
+    (with-compilation-opts! {:suppress-reporting #{:dynamic-property-access}}
+      (apply gen-oget obj selector))))
 
 (defmacro oset! [obj selector val]
-  (with-diagnostics-context! &form &env {}
+  (with-diagnostics-context! &form &env
     (gen-oset! obj selector val)))
 
 (defmacro oset!+ [obj selector val]
-  (with-diagnostics-context! &form &env {:suppress-reporting #{:dynamic-property-access}}
-    (gen-oset! obj selector val)))
+  (with-diagnostics-context! &form &env
+    (with-compilation-opts! {:suppress-reporting #{:dynamic-property-access}}
+      (gen-oset! obj selector val))))
 
 (defmacro ocall [obj selector & args]
-  (with-diagnostics-context! &form &env {}
+  (with-diagnostics-context! &form &env
     (apply gen-ocall obj selector args)))
 
 (defmacro ocall+ [obj selector & args]
-  (with-diagnostics-context! &form &env {:suppress-reporting #{:dynamic-property-access}}
-    (apply gen-ocall obj selector args)))
+  (with-diagnostics-context! &form &env
+    (with-compilation-opts! {:suppress-reporting #{:dynamic-property-access}}
+      (apply gen-ocall obj selector args))))
 
 (defmacro oapply [obj selector args]
-  (with-diagnostics-context! &form &env {}
+  (with-diagnostics-context! &form &env
     (gen-oapply obj selector args)))
 
 (defmacro oapply+ [obj selector args]
-  (with-diagnostics-context! &form &env {:suppress-reporting #{:dynamic-property-access}}
-    (gen-oapply obj selector args)))
+  (with-diagnostics-context! &form &env
+    (with-compilation-opts! {:suppress-reporting #{:dynamic-property-access}}
+      (gen-oapply obj selector args))))
 
 ; -- convenience macros -----------------------------------------------------------------------------------------------------
 
 (defmacro ocall!
   "This macro is identical to ocall, use it if you want to express a side-effecting call."
   [obj selector & args]
-  (with-diagnostics-context! &form &env {}
+  (with-diagnostics-context! &form &env
     (apply gen-ocall obj selector args)))
 
 (defmacro ocall!+
   "This macro is identical to ocall, use it if you want to express a side-effecting call."
   [obj selector & args]
-  (with-diagnostics-context! &form &env {:suppress-reporting #{:dynamic-property-access}}
-    (apply gen-ocall obj selector args)))
+  (with-diagnostics-context! &form &env
+    (with-compilation-opts! {:suppress-reporting #{:dynamic-property-access}}
+      (apply gen-ocall obj selector args))))
 
 (defmacro oapply!
   "This macro is identical to oapply, use it if you want to express a side-effecting call."
   [obj selector args]
-  (with-diagnostics-context! &form &env {}
+  (with-diagnostics-context! &form &env
     (gen-oapply obj selector args)))
 
 (defmacro oapply!+
   "This macro is identical to oapply, use it if you want to express a side-effecting call."
   [obj selector args]
-  (with-diagnostics-context! &form &env {:suppress-reporting #{:dynamic-property-access}}
-    (gen-oapply obj selector args)))
+  (with-diagnostics-context! &form &env
+    (with-compilation-opts! {:suppress-reporting #{:dynamic-property-access}}
+      (gen-oapply obj selector args))))

@@ -10,15 +10,18 @@
   `(binding [ana/*cljs-warnings* (register-messages! ana/*cljs-warnings*)]
      ~@body))
 
-(defmacro with-compiler-diagnostics-context! [form env opts & body]
-  `(binding [oops.state/*invoked-form* ~form
-             oops.state/*invoked-env* ~env
-             oops.state/*invoked-opts* ~opts]
+(defmacro with-compilation-opts! [opts & body]
+  `(binding [oops.state/*invoked-opts* (merge oops.state/*invoked-opts* ~opts)]
      ~@body))
 
-(defmacro with-diagnostics-context! [form env opts & body]
+(defmacro with-compiler-diagnostics-context! [form env & body]
+  `(binding [oops.state/*invoked-form* ~form
+             oops.state/*invoked-env* ~env]
+     ~@body))
+
+(defmacro with-diagnostics-context! [form env & body]
   `(oops.compiler/with-hooked-compiler!
-     (oops.compiler/with-compiler-diagnostics-context! ~form ~env ~opts
+     (oops.compiler/with-compiler-diagnostics-context! ~form ~env
        (oops.core/gen-runtime-diagnostics-context! ~form ~env ~@body))))
 
 (defn annotate-with-state [info]
