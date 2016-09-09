@@ -38,13 +38,13 @@ try {
   var obj37 = function() {
     var obj9 = function() {
       var obj10 = null;
-      if (cljs.core.truth_(oops.core.validate_object_dynamically.call(null, obj10))) return obj10["k1"];
+      if (oops.core.validate_object_dynamically.call(null, obj10)) return obj10["k1"];
       else return null
     }();
-    if (cljs.core.truth_(oops.core.validate_object_dynamically.call(null, obj9))) return obj9["k2"];
+    if (oops.core.validate_object_dynamically.call(null, obj9)) return obj9["k2"];
     else return null
   }();
-  if (cljs.core.truth_(oops.core.validate_object_dynamically.call(null, obj38))) obj39["k3"];
+  if (oops.core.validate_object_dynamically.call(null, obj38)) obj39["k3"];
   else;
 } finally {
   oops.state._STAR_console_reporter_STAR_ = _STAR_console_reporter_STAR_40
@@ -63,7 +63,7 @@ oops.state._STAR_console_reporter_STAR_ = function() {
 };
 try {
   var obj42 = o_21;
-  if (cljs.core.truth_(oops.core.validate_object_dynamically.call(null, obj43))) obj44["key"];
+  if (oops.core.validate_object_dynamically.call(null, obj43)) obj44["key"];
   else;
 } finally {
   oops.state._STAR_console_reporter_STAR_ = _STAR_console_reporter_STAR_45
