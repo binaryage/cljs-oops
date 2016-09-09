@@ -65,13 +65,20 @@
   (let [{:keys [source variant]} build]
     (str (string/replace source #"test\/src\/arena\/oops\/" "") " [" variant "]")))
 
-(defn get-actual-transcript-path [build]
+(defn exctract-file-from-source-path [source]
+  (let [group (re-find #"\/([^/]*)\.cljs$" source)]
+    (assert group (str "unable to parse script name from '" source "'"))
+    (second group)))
+
+(defn get-transcript-path [kind build]
   (let [{:keys [source variant]} build]
-    (string/replace source #"\/([^/]*)\.cljs$" (str "/.actual/$1_" variant ".js"))))
+    (str "test/transcripts/" kind "/" (exctract-file-from-source-path source) "_" variant ".js")))
+
+(defn get-actual-transcript-path [build]
+  (get-transcript-path "actual" build))
 
 (defn get-expected-transcript-path [build]
-  (let [{:keys [source variant]} build]
-    (string/replace source #"\.cljs$" (str "_" variant ".js"))))
+  (get-transcript-path "expected" build))
 
 (defn produce-diff [path1 path2]
   (let [options-args ["-U" "5"]
