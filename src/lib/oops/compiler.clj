@@ -30,4 +30,5 @@
 
 (defn error! [type & [info]]
   (assert state/*invoked-env* "oops.state/*invoked-env* must be set via with-diagnostics-context! first!")
-  (ana/error type state/*invoked-env* (annotate-with-state info)))
+  (let [msg (ana/error-message type (annotate-with-state info))]
+    (throw (ana/error state/*invoked-env* msg))))
