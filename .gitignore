@@ -8,4 +8,4 @@ test/resources/_compiled
 .profiles/
 out/
 /.nrepl-port
-/test/transcripts/actual/
+test/transcripts/actual
