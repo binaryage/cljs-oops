@@ -28,9 +28,10 @@
             [lein-shell "0.5.0"]
             [lein-figwheel "0.5.7"]]
 
-  :source-paths ["src/lib"]
-
-  :test-paths []
+  ; this is just for IntelliJ + Cursive to play well
+  :source-paths ["src"]
+  :test-paths ["test/src"]
+  :resource-paths ["test/resources"]
 
   :cljsbuild {:builds {}}                                                                                                     ; prevent https://github.com/emezeske/lein-cljsbuild/issues/413
 
@@ -47,7 +48,8 @@
                          :repl                 false}}
 
              :repl-with-agent
-             {:source-paths ["test/src/circus"
+             {:source-paths ["src/lib"
+                             "test/src/circus"
                              "test/src/arena"
                              "test/src/tools"
                              "test/src/tests-basic"]
@@ -58,15 +60,10 @@
                                                  (dirac.agent/boot!))}}
 
              :circus
-             {:source-paths ["test/src/circus"
+             {:source-paths ["src/lib"
+                             "test/src/circus"
                              "test/src/arena"
                              "test/src/tools"]}
-             :devel
-             {:cljsbuild {:builds {:devel
-                                   {:source-paths ["src/lib"]
-                                    :compiler     {:output-to     "target/devel/cljs_oops.js"
-                                                   :output-dir    "target/devel"
-                                                   :optimizations :none}}}}}
 
              :testing-basic-onone
              {:cljsbuild {:builds {:basic-onone
@@ -78,8 +75,8 @@
                                                    :output-dir      "test/resources/_compiled/basic_onone"
                                                    :asset-path      "_compiled/basic_onone"
                                                    :external-config {:devtools/config {:dont-detect-custom-formatters true}
-                                                                     :oops/config {:dynamic-property-access false
-                                                                                   :static-nil-object false}}
+                                                                     :oops/config     {:dynamic-property-access false
+                                                                                       :static-nil-object       false}}
                                                    :main            oops.runner
                                                    :optimizations   :none}
                                     :figwheel     true}}}}
