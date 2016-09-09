@@ -144,11 +144,13 @@
       (try
         (compiler/build (:source build) (:options build))
         (catch Throwable e
-          (.write *err* (str "THROWN: " (.getMessage e))))))
+          (let [causes (with-out-str
+                         (print-cause-chain e))]
+            (.write *err* (str "THROWN: " causes))))))
     {:build build
      :out   (str captured-out)
      :err   (str captured-err)
-     :code  (or (extract-relevant-output (read-build-output build)) "NO GENERATED CODE")}))
+     :code  (or (extract-relevant-output (read-build-output build)) "// NO GENERATED CODE")}))
 
 (defn process-build! [build]
   (let [compilation-result (compile! build)]
