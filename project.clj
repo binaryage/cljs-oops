@@ -77,7 +77,9 @@
                                     :compiler     {:output-to       "test/resources/_compiled/basic_onone/main.js"
                                                    :output-dir      "test/resources/_compiled/basic_onone"
                                                    :asset-path      "_compiled/basic_onone"
-                                                   :external-config {:devtools/config {:dont-detect-custom-formatters true}}
+                                                   :external-config {:devtools/config {:dont-detect-custom-formatters true}
+                                                                     :oops/config {:dynamic-property-access false
+                                                                                   :static-nil-object false}}
                                                    :main            oops.runner
                                                    :optimizations   :none}
                                     :figwheel     true}}}}

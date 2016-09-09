@@ -1,16 +1,18 @@
 (ns oops.arena.warnings
   (:require [oops.core :refer [oget]]
-            [oops.tools :refer [init-test!]]))
+            [oops.tools :refer [init-arena-test! snippet]]))
 
-(println "XXX")
-
-(init-test!)
+(init-arena-test!)
 
 ; we are compiling under :optimizations :none mode
 ; we want to test compiler warnigns
 
-(def o #js {"key" "val"})
+(snippet
+  (oget #js {} (identity "key")))
 
-(oget o (identity "key"))
+(snippet
+  (oget nil "k1" "k2" "k3"))
 
-(oget nil "k1" "k2" "k3")
+(snippet
+  (let [o #js {"key" "val"}]
+    (oget o "key")))

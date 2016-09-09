@@ -5,7 +5,7 @@
             [environ.core :refer [env]]
             [clj-logging-config.log4j :as config]
             [clojure.tools.logging :as log]
-            [oops.tools :refer [get-arena-separator]]
+            [oops.tools :as tools :refer [get-arena-separator]]
             [clojure.string :as string]
             [clojure.java.io :as io]
             [cuerdas.core :as cuerdas]
@@ -15,10 +15,6 @@
             [clansi])
   (:import (org.apache.log4j Level)
            (java.io StringWriter)))
-
-(defn report-error [& args]
-  (binding [*out* *err*]
-    (apply println args)))
 
 (def log-level (or (env :oops-log-level) "INFO"))                                                                             ; INFO, DEBUG, TRACE, ALL
 
@@ -71,11 +67,11 @@
 
 (defn get-actual-transcript-path [build]
   (let [{:keys [source variant]} build]
-    (string/replace source #"\/([^/]*)\.cljs$" (str "/.actual/$1_" variant ".txt"))))
+    (string/replace source #"\/([^/]*)\.cljs$" (str "/.actual/$1_" variant ".js"))))
 
 (defn get-expected-transcript-path [build]
   (let [{:keys [source variant]} build]
-    (string/replace source #"\.cljs$" (str "_" variant ".txt"))))
+    (string/replace source #"\.cljs$" (str "_" variant ".js"))))
 
 (defn produce-diff [path1 path2]
   (let [options-args ["-U" "5"]
@@ -98,12 +94,12 @@
   (str text "\n"))
 
 (defn get-canonical-transcript [transcript]
-  (->> transcript
-       (cuerdas/lines)
-       (map get-canonical-line)
-       (filter significant-line?)                                                                                             ; filter empty lines to work around end-of-the-file new-line issue
-       (cuerdas/unlines)
-       (append-nl)))                                                                                                          ; we want to be compatible with "copy transcript!" button which copies to clipboard with extra new-line
+  (let [s (->> transcript
+               (cuerdas/lines)
+               (map get-canonical-line)
+               (cuerdas/unlines)
+               (append-nl))]                                                                                                  ; we want to be compatible with "copy transcript!" button which copies to clipboard with extra new-line
+    (string/replace s #"\n\n+" "\n\n")))
 
 (defn read-build-output [build]
   (let [output-path (get-in build [:options :output-to])]
@@ -163,6 +159,12 @@
       (catch Throwable e
         (log/error (str "! " (.getMessage e)))))))
 
+(defn comment-out-text [s & [stuffer]]
+  (->> s
+       (cuerdas/lines)
+       (map #(str "// " stuffer %))
+       (cuerdas/unlines)))
+
 ; -- building ---------------------------------------------------------------------------------------------------------------
 
 (defn pprint-str [v]
@@ -180,26 +182,45 @@
       (try
         (compiler/build (:source build) (:options build))
         (catch Throwable e
-          (.println *err* (str "THROWN: " (.getMessage e))))))
+          (.write *err* (str "THROWN: " (.getMessage e))))))
     {:build build
      :out   (str captured-out)
      :err   (str captured-err)
-     :code  (extract-relevant-output (read-build-output build))}))
+     :code  (or (extract-relevant-output (read-build-output build)) "NO GENERATED CODE")}))
 
 (defn prepare-build-info [build]
   (str (get-build-name build) "\n"
        (pprint-str (into (sorted-map) (:options build)))))
 
+(defn unwrap-snippets [content]
+  (let [counter (volatile! 0)
+        * (fn [match]
+            (vswap! counter inc)
+            (let [raw (string/replace (tools/decode (second match)) "\\n" "\n")
+                  commented (comment-out-text raw "  ")]
+              (str "\n"
+                   "\n"
+                   "// SNIPPET #" @counter ":\n"
+                   commented "\n"
+                   "// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n"
+                   "\n"
+                   "\n")))]
+    (string/replace content #"console\.log\(['\"]-12345-SNIPPET:(.*?)-54321-['\"]\);" *)))
+
+(defn replace-tagged-literals [content]
+  (let [counter (volatile! 0)
+        * (fn [match]
+            (vswap! counter inc)
+            (let [name (nth match 1)]
+              (str "<" name "#" @counter ">")))]
+    (string/replace content #"#object\[cljs\.tagged_literals\.(.*?) 0x(.*?) \"cljs\.tagged_literals\.(.*?)@(.*?)\"]" *)))
+
 (defn post-process-code [code]
   (-> code
+      (unwrap-snippets)
+      (replace-tagged-literals)
       (normalize-identifiers)
       (normalize-gensyms)))
-
-(defn comment-out-text [s & [stuffer]]
-  (->> s
-       (cuerdas/lines)
-       (map #(str "// " stuffer %))
-       (cuerdas/unlines)))
 
 (defn write-build-transcript! [build-result]
   (let [{:keys [build code out err]} build-result

@@ -1,6 +1,15 @@
 (ns oops.tools
   (:require [environ.core :refer [env]]
-            [oops.config :as config]))
+            [clojure.pprint :refer [pprint]]
+            [oops.config :as config]
+            [clojure.string :as string]))
+
+(defn pprint-code [v]
+  (with-out-str
+    (binding [clojure.pprint/*print-right-margin* 200
+              *print-level* 5
+              *print-length* 10]
+      (pprint v))))
 
 (defn get-classpath []
   (apply str (interpose "\n" (seq (.getURLs (ClassLoader/getSystemClassLoader))))))
@@ -20,10 +29,10 @@
     `(cljs.core/js-inline-comment ~preserved-comment)))
 
 (defn gen-marker [s]
-  `(.log js/console ~s))
+  `(.log js/console ~(str "-12345-" s "-54321-")))
 
 (defn get-arena-separator []
-  "###--- compiled main namespace starts here ---###")
+  "--- compiled main namespace starts here ---")
 
 (defn gen-arena-separator []
   (gen-marker (get-arena-separator)))
@@ -32,6 +41,33 @@
   (if-not (= (env :oops-elide-devtools) "1")
     `(under-chrome
        (devtools.core/install!))))
+
+; http://stackoverflow.com/a/15627016/84283
+(defn hexify "Convert byte sequence to hex string" [coll]
+  (let [hex [\0 \1 \2 \3 \4 \5 \6 \7 \8 \9 \a \b \c \d \e \f]]
+    (letfn [(hexify-byte [b]
+              (let [v (bit-and b 0xFF)]
+                [(hex (bit-shift-right v 4)) (hex (bit-and v 0x0F))]))]
+      (apply str (mapcat hexify-byte coll)))))
+
+(defn hexify-str [s]
+  (hexify (.getBytes s)))
+
+(defn unhexify "Convert hex string to byte sequence" [s]
+  (letfn [(unhexify-2 [c1 c2]
+            (unchecked-byte
+              (+ (bit-shift-left (Character/digit c1 16) 4)
+                 (Character/digit c2 16))))]
+    (map #(apply unhexify-2 %) (partition 2 s))))
+
+(defn unhexify-str [s]
+  (apply str (map char (unhexify s))))
+
+(defn encode [s]
+  (hexify-str s))
+
+(defn decode [s]
+  (unhexify-str s))
 
 ; -- macros -----------------------------------------------------------------------------------------------------------------
 
@@ -72,6 +108,10 @@
 
 (defmacro init-test! []
   `(do
+     ~(gen-devtools-if-needed)))
+
+(defmacro init-arena-test! []
+  `(do
      ~(gen-devtools-if-needed)
      ~(gen-arena-separator)))
 
@@ -82,3 +122,12 @@
         name (symbol (str "runonce_" code-hash))]
     `(defonce ~name {:value ~code
                      :code  ~code-string})))
+
+(defmacro snippet [& body]
+  (let [title (if (string? (first body)) (str "=> " (first body) "\n"))
+        code (remove string? body)
+        comment (string/join (map pprint-code code))
+        snippet-str (str "SNIPPET:" (encode (str title comment)))]
+    `(do
+       ~(gen-marker snippet-str)
+       (do ~@code))))
