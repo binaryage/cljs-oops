@@ -65,14 +65,15 @@
   (let [{:keys [source variant]} build]
     (str (string/replace source #"test\/src\/arena\/oops\/" "") " [" variant "]")))
 
-(defn exctract-file-from-source-path [source]
+(defn exctract-filename-from-source-path [source]
   (let [group (re-find #"\/([^/]*)\.cljs$" source)]
     (assert group (str "unable to parse script name from '" source "'"))
     (second group)))
 
 (defn get-transcript-path [kind build]
-  (let [{:keys [source variant]} build]
-    (str "test/transcripts/" kind "/" (exctract-file-from-source-path source) "_" variant ".js")))
+  (let [{:keys [source variant]} build
+        filename (exctract-filename-from-source-path source)]
+    (str "test/transcripts/" kind "/" filename "_" variant ".js")))
 
 (defn get-actual-transcript-path [build]
   (get-transcript-path "actual" build))
