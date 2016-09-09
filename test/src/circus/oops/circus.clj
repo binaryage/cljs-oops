@@ -138,6 +138,14 @@
               [content counter]))]
     (reduce * [content starting-counter] (re-seq #"(\d+)" content))))
 
+
+(defn normalize-twins [[content starting-counter]]
+  (let [counter (volatile! starting-counter)
+        * (fn [_match]
+            (vswap! counter inc)
+            (str @counter))]
+    [(string/replace content #"(\d+)_(\d+)" *) @counter]))
+
 (defn safe-spit [path content]
   (io/make-parents path)
   (spit path content))
@@ -222,7 +230,8 @@
                            (replace-tagged-literals))
         [stabilized-code] (-> [unwrapped-code 1]
                               (normalize-identifiers)
-                              (normalize-gensyms))]
+                              (normalize-gensyms)
+                              (normalize-twins))]
     stabilized-code))
 
 (defn write-build-transcript! [build-result]

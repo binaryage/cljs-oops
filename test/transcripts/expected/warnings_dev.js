@@ -16,26 +16,26 @@
 //   (oget <JSValue#1> (identity "key"))
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-var _STAR_console_reporter_STAR_1_2 = oops.state._STAR_console_reporter_STAR_;
+var _STAR_console_reporter_STAR_34 = oops.state._STAR_console_reporter_STAR_;
 oops.state._STAR_console_reporter_STAR_ = function() {
   arguments[0].apply(console, Array.prototype.slice.call(arguments, 1))
 };
 try {
   oops.core.get_selector_dynamically.call(null, {}, cljs.core.identity.call(null, "key"))
 } finally {
-  oops.state._STAR_console_reporter_STAR_ = _STAR_console_reporter_STAR_1_2
+  oops.state._STAR_console_reporter_STAR_ = _STAR_console_reporter_STAR_35
 }
 
 // SNIPPET #2:
 //   (oget nil "k1" "k2" "k3")
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-var _STAR_console_reporter_STAR_5_6 = oops.state._STAR_console_reporter_STAR_;
+var _STAR_console_reporter_STAR_36 = oops.state._STAR_console_reporter_STAR_;
 oops.state._STAR_console_reporter_STAR_ = function() {
   arguments[0].apply(console, Array.prototype.slice.call(arguments, 1))
 };
 try {
-  var obj7_8 = function() {
+  var obj37 = function() {
     var obj9 = function() {
       var obj10 = null;
       if (cljs.core.truth_(oops.core.validate_object_dynamically.call(null, obj10))) return obj10["k1"];
@@ -44,10 +44,10 @@ try {
     if (cljs.core.truth_(oops.core.validate_object_dynamically.call(null, obj9))) return obj9["k2"];
     else return null
   }();
-  if (cljs.core.truth_(oops.core.validate_object_dynamically.call(null, obj7_8))) obj7_8["k3"];
+  if (cljs.core.truth_(oops.core.validate_object_dynamically.call(null, obj38))) obj39["k3"];
   else;
 } finally {
-  oops.state._STAR_console_reporter_STAR_ = _STAR_console_reporter_STAR_5_6
+  oops.state._STAR_console_reporter_STAR_ = _STAR_console_reporter_STAR_40
 }
 
 // SNIPPET #3:
@@ -57,14 +57,14 @@ try {
 var o_21 = {
   "key": "val"
 };
-var _STAR_console_reporter_STAR_22_23 = oops.state._STAR_console_reporter_STAR_;
+var _STAR_console_reporter_STAR_41 = oops.state._STAR_console_reporter_STAR_;
 oops.state._STAR_console_reporter_STAR_ = function() {
   arguments[0].apply(console, Array.prototype.slice.call(arguments, 1))
 };
 try {
-  var obj24_25 = o_21;
-  if (cljs.core.truth_(oops.core.validate_object_dynamically.call(null, obj24_25))) obj24_25["key"];
+  var obj42 = o_21;
+  if (cljs.core.truth_(oops.core.validate_object_dynamically.call(null, obj43))) obj44["key"];
   else;
 } finally {
-  oops.state._STAR_console_reporter_STAR_ = _STAR_console_reporter_STAR_22_23
+  oops.state._STAR_console_reporter_STAR_ = _STAR_console_reporter_STAR_45
 };
