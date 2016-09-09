@@ -94,9 +94,6 @@
 (defn get-canonical-line [line]
   (string/trimr line))
 
-(defn significant-line? [line]
-  (not (empty? line)))
-
 (defn append-nl [text]
   (str text "\n"))
 
@@ -122,27 +119,23 @@
             relevant-content (.substring content (+ semicolon-index 1))]
         relevant-content))))
 
-(defn normalize-identifiers [content]
+(defn normalize-identifiers [[content starting-counter]]
   "The goal here is to rename all generated $<number>$ identifiers with stable numbering."
-  (let [* (fn [state match]
+  (let [* (fn [[content counter] match]
             (let [needle (first match)
-                  stable-replacement (str (:counter state) (nth match 2))]
-              (-> state
-                  (update-in [:counter] inc)
-                  (update-in [:content] string/replace needle stable-replacement))))]
-    (:content (reduce * {:counter 1 :content content} (re-seq #"(\d+)(\$|__)" content)))))
+                  replacement (str counter (nth match 2))]
+              [(string/replace content needle replacement) (inc counter)]))]
+    (reduce * [content starting-counter] (re-seq #"(\d+)(\$|__)" content))))
 
-(defn normalize-gensyms [content]
+(defn normalize-gensyms [[content starting-counter]]
   "The goal here is to rename all generated name<NUM> identifiers with stable numbering."
-  (let [* (fn [state match]
+  (let [* (fn [[content counter] match]
             (if (> (Long/parseLong (first match)) 1000)
               (let [needle (first match)
-                    stable-replacement (str (:counter state))]
-                (-> state
-                    (update-in [:counter] inc)
-                    (update-in [:content] string/replace needle stable-replacement)))
-              state))]
-    (:content (reduce * {:counter 1 :content content} (re-seq #"(\d+)" content)))))
+                    stable-replacement (str counter)]
+                [(string/replace content needle stable-replacement) (inc counter)])
+              [content counter]))]
+    (reduce * [content starting-counter] (re-seq #"(\d+)" content))))
 
 (defn safe-spit [path content]
   (io/make-parents path)
@@ -223,11 +216,13 @@
     (string/replace content #"#object\[cljs\.tagged_literals\.(.*?) 0x(.*?) \"cljs\.tagged_literals\.(.*?)@(.*?)\"]" *)))
 
 (defn post-process-code [code]
-  (-> code
-      (unwrap-snippets)
-      (replace-tagged-literals)
-      (normalize-identifiers)
-      (normalize-gensyms)))
+  (let [unwrapped-code (-> code
+                           (unwrap-snippets)
+                           (replace-tagged-literals))
+        [stabilized-code] (-> [unwrapped-code 1]
+                              (normalize-identifiers)
+                              (normalize-gensyms))]
+    stabilized-code))
 
 (defn write-build-transcript! [build-result]
   (let [{:keys [build code out err]} build-result
