@@ -25,7 +25,7 @@
 (defn gen-is-tagged? [obj]
   `(.-oops-tag$ ~obj))
 
-(defn gen-selector-list [items]
+(defn gen-selector-list [items]                                                                                               ; TODO: flip tagging logic here, tag native array case and leave raw js arrays for cljs path
   (if (config/diagnostics?)
     `(cljs.core/list ~@items)                                                                                                 ; this is the slow path under diagnostics we want selector list be a valid selector
     (gen-tagged-array items)))                                                                                                ; this is the fast path for advanced optimizations without diagnostics
@@ -83,7 +83,7 @@
 (defn gen-dynamic-selector-get [obj selector-list]
   (report-if-needed! :dynamic-property-access)
   (case (count selector-list)
-    0 obj                                                                                                                     ; get-selector-dynamically passed emtpy selector would return obj
+    0 obj                                                                                                                     ; get-selector-dynamically passed emtpy selector would return obj, TODO: report warning here?
     1 `(get-selector-dynamically ~obj ~(first selector-list))                                                                 ; we want to unwrap selector wrapped in oget (in this case)
     `(get-selector-dynamically ~obj ~(gen-selector-list selector-list))))
 
@@ -129,9 +129,12 @@
     `(let [~parent-obj-sym ~(gen-static-path-get obj-sym parent-obj-path)]
        ~(gen-instrumented-key-set parent-obj-sym key val))))
 
-(defn gen-dynamic-selector-set [obj selector val]
+(defn gen-dynamic-selector-set [obj selector-list val]
   (report-if-needed! :dynamic-property-access)
-  `(set-selector-dynamically ~obj ~selector ~val))
+  (case (count selector-list)
+    0 nil                                                                                                                     ; TODO: report warning here?
+    1 `(set-selector-dynamically ~obj ~(first selector-list) ~val)                                                            ; we want to unwrap selector wrapped in oset! (in this case)
+    `(set-selector-dynamically ~obj ~(gen-selector-list selector-list) ~val)))
 
 (defn gen-dynamic-path-set [obj-sym path val]
   {:pre [(symbol? obj-sym)]}
@@ -281,14 +284,18 @@
     (with-compilation-opts! {:suppress-reporting #{:dynamic-property-access}}
       (apply gen-oget obj selector))))
 
-(defmacro oset! [obj selector val]
+(defmacro oset! [obj & selector+val]
   (with-diagnostics-context! &form &env
-    (gen-oset! obj selector val)))
+    (let [val (last selector+val)
+          selector (butlast selector+val)]
+      (gen-oset! obj selector val))))
 
-(defmacro oset!+ [obj selector val]
+(defmacro oset!+ [obj & selector+val]
   (with-diagnostics-context! &form &env
     (with-compilation-opts! {:suppress-reporting #{:dynamic-property-access}}
-      (gen-oset! obj selector val))))
+      (let [val (last selector+val)
+            selector (butlast selector+val)]
+        (gen-oset! obj selector val)))))
 
 (defmacro ocall [obj selector & args]
   (with-diagnostics-context! &form &env

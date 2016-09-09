@@ -126,6 +126,11 @@ ERROR: (\"Oops, Unexpected object value (boolean)\" {:obj false})"]
         (dynamic-key-fn "key")
         [(dynamic-key-fn "nested") (dynamic-key-fn "key2")])
       (is (= (js/JSON.stringify sample-obj) "{\"nested\":{\"key2\":\"val\"},\"key\":\"val\"}"))))
+  (testing "flexible selector in oset!"
+    (let [sample-obj #js {"n1" #js {"n2" #js {}}}]
+      (is (= (oget (oset! sample-obj "n1" "n2" "val") "n1" "n2") "val"))
+      (is (= (oget (oset! sample-obj ["n1" "n2"] "val") "n1" "n2") "val"))
+      #_(is (= (oget (oset! sample-obj #js ["n1" "n2"] "val") "n1" "n2") "val"))))
   (testing "oset corner cases"
     ; TODO
     ))
