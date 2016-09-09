@@ -303,12 +303,15 @@
     (if (filter-fn build-name)
       (str "env OOPS_FT_FILTER='" filter-str "'"))))
 
+(defn process-build [build]
+  (let [build-result (build! build)]
+    (write-build-transcript! build-result)
+    (compare-transcripts! build)))
+
 (defn exercise-build! [build]
   (if-let [reason (skip-build? build)]
     (log/info (str "Skipping '" (get-build-name build) "' because of " reason))
-    (let [build-result (build! build)]
-      (write-build-transcript! build-result)
-      (compare-transcripts! build))))
+    (process-build build)))
 
 (defn exercise-builds! [builds]
   (doseq [build builds]
