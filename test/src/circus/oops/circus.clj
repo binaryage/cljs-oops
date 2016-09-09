@@ -138,7 +138,6 @@
               [content counter]))]
     (reduce * [content starting-counter] (re-seq #"(\d+)" content))))
 
-
 (defn normalize-twins [[content starting-counter]]
   (let [counter (volatile! starting-counter)
         * (fn [_match]
@@ -286,10 +285,30 @@
                   :actual   (str e)})
       (stacktrace/print-stack-trace e))))
 
+(defn make-build-filter [filter]
+  (if (empty? filter)
+    (constantly false)
+    (fn [name]
+      (let [parts (string/split filter #"\s")
+            * (fn [part]
+                (re-find (re-pattern part) name))]
+        (not (some * parts))))))
+
+(def get-build-filter (memoize make-build-filter))
+
+(defn skip-build? [build]
+  (let [build-name (get-build-name build)
+        filter-str (:oops-ft-filter env)
+        filter-fn (get-build-filter filter-str)]
+    (if (filter-fn build-name)
+      (str "env OOPS_FT_FILTER='" filter-str "'"))))
+
 (defn exercise-build! [build]
-  (let [build-result (build! build)]
-    (write-build-transcript! build-result)
-    (compare-transcripts! build)))
+  (if-let [reason (skip-build? build)]
+    (log/info (str "Skipping '" (get-build-name build) "' because of " reason))
+    (let [build-result (build! build)]
+      (write-build-transcript! build-result)
+      (compare-transcripts! build))))
 
 (defn exercise-builds! [builds]
   (doseq [build builds]
