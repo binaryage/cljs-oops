@@ -30,9 +30,8 @@
   (walk/postwalk coerce-selector-node destured-selector))
 
 (defn build-selector-path [destructured-selector]
-  {:post [(s/valid? ::sdefs/obj-path %)]}
-  (if (= destructured-selector ::s/invalid)
-    :invalid-path
+  {:post [(or (nil? %) (s/valid? ::sdefs/obj-path %))]}
+  (if-not (= destructured-selector ::s/invalid)
     (-> destructured-selector
         (coerce-selector-keys)
         (coerce-nested-selectors)

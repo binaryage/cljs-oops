@@ -246,17 +246,16 @@
 
 (defn gen-oget [obj & selector]
   (validate-object-statically obj)
-  (let [path (schema/selector->path selector)]
-    (if-not (= path :invalid-path)
-      (gen-static-path-get obj path)
-      (gen-dynamic-selector-get obj selector))))
+  (if-let [path (schema/selector->path selector)]
+    (gen-static-path-get obj path)
+    (gen-dynamic-selector-get obj selector)))
 
 (defn gen-oset! [obj selector val]
   (validate-object-statically obj)
   (let [obj-sym (gensym "obj")
         path (schema/selector->path selector)]
     `(let [~obj-sym ~obj]
-       ~(if-not (= path :invalid-path)
+       ~(if path
           (gen-static-path-set obj-sym path val)
           (gen-dynamic-selector-set obj-sym selector val))
        ~obj-sym)))
