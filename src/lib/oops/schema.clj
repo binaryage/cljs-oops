@@ -2,15 +2,16 @@
   (:require [clojure.spec :as s]
             [clojure.walk :as walk]
             [oops.sdefs :as sdefs]
+            [oops.constants :refer [dot-access soft-access punch-access]]
             [clojure.string :as string]))
 
 ; --- path utils ------------------------------------------------------------------------------------------------------------
 
 (defn parse-selector-element [element-str]
   (case (first element-str)
-    \? [:soft (.substring element-str 1)]
-    \! [:punch (.substring element-str 1)]
-    [:dot element-str]))
+    \? [soft-access (.substring element-str 1)]
+    \! [punch-access (.substring element-str 1)]
+    [dot-access element-str]))
 
 (defn parse-selector-string [selector-str]
   (let [elements (remove empty? (string/split selector-str #"\."))]                                                           ; TODO: handle dot escaping somehow

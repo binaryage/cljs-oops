@@ -3,6 +3,7 @@
             [oops.config :as config]
             [oops.messages :refer [runtime-message]]
             [oops.compiler :as compiler :refer [with-diagnostics-context! with-compilation-opts!]]
+            [oops.constants :refer [dot-access soft-access punch-access get-dot-access get-soft-access get-punch-access]]
             [oops.debug :refer [log]]))
 
 ; -- helper code generators -------------------------------------------------------------------------------------------------
@@ -41,8 +42,8 @@
          (symbol? mode-sym)]}
   `(if (config/error-reporting-mode)
      (cond
-       (and (= ~mode-sym :dot) (cljs.core/undefined? ~obj-sym)) ~(gen-object-access-validation-error obj-sym "undefined")
-       (and (= ~mode-sym :dot) (cljs.core/nil? ~obj-sym)) ~(gen-object-access-validation-error obj-sym "nil")
+       (and (= ~mode-sym ~dot-access) (cljs.core/undefined? ~obj-sym)) ~(gen-object-access-validation-error obj-sym "undefined")
+       (and (= ~mode-sym ~dot-access) (cljs.core/nil? ~obj-sym)) ~(gen-object-access-validation-error obj-sym "nil")
        (cljs.core/boolean? ~obj-sym) ~(gen-object-access-validation-error obj-sym "boolean")
        (cljs.core/number? ~obj-sym) ~(gen-object-access-validation-error obj-sym "number")
        (cljs.core/string? ~obj-sym) ~(gen-object-access-validation-error obj-sym "string")
@@ -82,20 +83,24 @@
           obj-sym (gensym "obj")
           next-obj-sym (gensym "next-obj")
           new-prop-sym (gensym "new-prop")]
+      ; http://stackoverflow.com/questions/32300269/make-vars-constant-for-use-in-case-statements-in-clojure
+      (assert (= dot-access 0))
+      (assert (= soft-access 1))
+      (assert (= punch-access 2))
       (case mode
-        :dot `(let [~obj-sym ~obj]
-                ~(gen-static-path-get (gen-instrumented-key-get obj-sym key mode) (rest path)))
-        :soft `(let [~obj-sym ~obj
-                     ~next-obj-sym ~(gen-instrumented-key-get obj-sym key mode)]
-                 (if (some? ~next-obj-sym)
-                   ~(gen-static-path-get next-obj-sym (rest path))))
-        :punch `(let [~obj-sym ~obj
-                      ~next-obj-sym ~(gen-instrumented-key-get obj-sym key mode)]
-                  (if-not (some? ~next-obj-sym)
-                    (let [~new-prop-sym (oops.state/*punching-factory*)]
-                      (oset! ~obj-sym ~key ~new-prop-sym)
-                      ~(gen-static-path-get new-prop-sym (rest path)))
-                    ~(gen-static-path-get next-obj-sym (rest path))))))))
+        0 `(let [~obj-sym ~obj]
+             ~(gen-static-path-get (gen-instrumented-key-get obj-sym key mode) (rest path)))
+        1 `(let [~obj-sym ~obj
+                 ~next-obj-sym ~(gen-instrumented-key-get obj-sym key mode)]
+             (if (some? ~next-obj-sym)
+               ~(gen-static-path-get next-obj-sym (rest path))))
+        2 `(let [~obj-sym ~obj
+                 ~next-obj-sym ~(gen-instrumented-key-get obj-sym key mode)]
+             (if-not (some? ~next-obj-sym)
+               (let [~new-prop-sym (oops.state/*punching-factory*)]
+                 (oset! ~obj-sym ~key ~new-prop-sym)
+                 ~(gen-static-path-get new-prop-sym (rest path)))
+               ~(gen-static-path-get next-obj-sym (rest path))))))))
 
 (defn gen-dynamic-selector-get [obj selector-list]
   (report-if-needed! :dynamic-property-access)
@@ -144,7 +149,7 @@
         [_mode key] (last path)
         parent-obj-sym (gensym "parent-obj")]
     `(let [~parent-obj-sym ~(gen-static-path-get obj-sym parent-obj-path)]
-       ~(gen-instrumented-key-set parent-obj-sym key val :dot))))
+       ~(gen-instrumented-key-set parent-obj-sym key val dot-access))))
 
 (defn gen-dynamic-selector-set [obj selector-list val]
   (report-if-needed! :dynamic-property-access)
