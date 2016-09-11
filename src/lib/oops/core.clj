@@ -36,15 +36,17 @@
      (report-runtime-error ~(runtime-message :unexpected-object-value flavor) {:obj ~obj-sym})
      false))
 
-(defn gen-dynamic-object-access-validation [obj-sym]
-  {:pre [(symbol? obj-sym)]}
+(defn gen-dynamic-object-access-validation [obj-sym mode-sym]
+  {:pre [(symbol? obj-sym)
+         (symbol? mode-sym)]}
   `(if (config/error-reporting-mode)
      (cond
-       (cljs.core/undefined? ~obj-sym) ~(gen-object-access-validation-error obj-sym "undefined")
-       (cljs.core/nil? ~obj-sym) ~(gen-object-access-validation-error obj-sym "nil")
+       (and (= ~mode-sym :dot) (cljs.core/undefined? ~obj-sym)) ~(gen-object-access-validation-error obj-sym "undefined")
+       (and (= ~mode-sym :dot) (cljs.core/nil? ~obj-sym)) ~(gen-object-access-validation-error obj-sym "nil")
        (cljs.core/boolean? ~obj-sym) ~(gen-object-access-validation-error obj-sym "boolean")
        (cljs.core/number? ~obj-sym) ~(gen-object-access-validation-error obj-sym "number")
        (cljs.core/string? ~obj-sym) ~(gen-object-access-validation-error obj-sym "string")
+       ; TODO: here we could possibly do additional checks
        :else true)
      true))
 
@@ -58,27 +60,42 @@
     :core `(cljs.core/aset ~obj ~key ~val)                                                                                    ; => `(~'js* "(~{}[~{}] = ~{})" ~obj ~key ~val)
     :goog `(goog.object/set ~obj ~key ~val)))
 
-(defn gen-dynamic-object-access-validation-wrapper [obj-sym body]
+(defn gen-dynamic-object-access-validation-wrapper [obj-sym mode body]
   {:pre [(symbol? obj-sym)]}
   (if (config/diagnostics?)
-    `(if (validate-object-dynamically ~obj-sym)
+    `(if (validate-object-dynamically ~obj-sym ~mode)
        ~body)
     body))
 
-(defn gen-instrumented-key-get [obj-sym key]
+(defn gen-instrumented-key-get [obj-sym key mode]
   {:pre [(symbol? obj-sym)]}
-  (gen-dynamic-object-access-validation-wrapper obj-sym (gen-key-get obj-sym key)))
+  (gen-dynamic-object-access-validation-wrapper obj-sym mode (gen-key-get obj-sym key)))
 
-(defn gen-instrumented-key-set [obj-sym key val]
+(defn gen-instrumented-key-set [obj-sym key val mode]
   {:pre [(symbol? obj-sym)]}
-  (gen-dynamic-object-access-validation-wrapper obj-sym (gen-key-set obj-sym key val)))
+  (gen-dynamic-object-access-validation-wrapper obj-sym mode (gen-key-set obj-sym key val)))
 
 (defn gen-static-path-get [obj path]
   (if (empty? path)
     obj
-    (let [obj-sym (gensym "obj")]
-      `(let [~obj-sym ~(gen-static-path-get obj (butlast path))]
-         ~(gen-instrumented-key-get obj-sym (second (last path)))))))
+    (let [[mode key] (first path)
+          obj-sym (gensym "obj")
+          next-obj-sym (gensym "next-obj")
+          new-prop-sym (gensym "new-prop")]
+      (case mode
+        :dot `(let [~obj-sym ~obj]
+                ~(gen-static-path-get (gen-instrumented-key-get obj-sym key mode) (rest path)))
+        :soft `(let [~obj-sym ~obj
+                     ~next-obj-sym ~(gen-instrumented-key-get obj-sym key mode)]
+                 (if (some? ~next-obj-sym)
+                   ~(gen-static-path-get next-obj-sym (rest path))))
+        :punch `(let [~obj-sym ~obj
+                      ~next-obj-sym ~(gen-instrumented-key-get obj-sym key mode)]
+                  (if-not (some? ~next-obj-sym)
+                    (let [~new-prop-sym (oops.state/*punching-factory*)]
+                      (oset! ~obj-sym ~key ~new-prop-sym)
+                      ~(gen-static-path-get new-prop-sym (rest path)))
+                    ~(gen-static-path-get next-obj-sym (rest path))))))))
 
 (defn gen-dynamic-selector-get [obj selector-list]
   (report-if-needed! :dynamic-property-access)
@@ -124,10 +141,10 @@
   {:pre [(not (empty? path))
          (symbol? obj-sym)]}
   (let [parent-obj-path (butlast path)
-        key (second (last path))
+        [_mode key] (last path)
         parent-obj-sym (gensym "parent-obj")]
     `(let [~parent-obj-sym ~(gen-static-path-get obj-sym parent-obj-path)]
-       ~(gen-instrumented-key-set parent-obj-sym key val))))
+       ~(gen-instrumented-key-set parent-obj-sym key val :dot))))
 
 (defn gen-dynamic-selector-set [obj selector-list val]
   (report-if-needed! :dynamic-property-access)
@@ -200,9 +217,9 @@
   {:pre [(symbol? key-sym)]}
   `(name ~key-sym))
 
-(defmacro validate-object-dynamically-impl [obj-sym]
+(defmacro validate-object-dynamically-impl [obj-sym mode]
   {:pre [(symbol? obj-sym)]}
-  (gen-dynamic-object-access-validation obj-sym))
+  (gen-dynamic-object-access-validation obj-sym mode))
 
 (defmacro build-path-dynamically-impl [selector-sym]
   {:pre [(symbol? selector-sym)]}
@@ -221,13 +238,13 @@
 (defmacro get-key-dynamically-impl [obj-sym key-sym]
   {:pre [(symbol? obj-sym)
          (symbol? key-sym)]}
-  (gen-instrumented-key-get obj-sym key-sym))
+  (gen-instrumented-key-get obj-sym key-sym :dot))
 
 (defmacro set-key-dynamically-impl [obj-sym key-sym val-sym]
   {:pre [(symbol? obj-sym)
          (symbol? key-sym)
          (symbol? val-sym)]}
-  (gen-instrumented-key-set obj-sym key-sym val-sym))
+  (gen-instrumented-key-set obj-sym key-sym val-sym :dot))
 
 (defmacro get-selector-dynamically-impl [obj-sym selector-sym]
   {:pre [(symbol? obj-sym)

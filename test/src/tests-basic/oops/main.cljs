@@ -38,6 +38,13 @@
       (is (= (oget+ sample-obj (make-selector-dynamically "nested") "nested-key1") "nk1"))
       (is (= (oget+ sample-obj (make-selector-dynamically ["nested" "nested-key1"])) "nk1"))
       (is (= (oget+ sample-obj [(make-selector-dynamically "nested") "nested-key1"]) "nk1")))
+    (testing "static soft get"
+      (are [selector expected] (= (oget sample-obj selector) expected)
+        ".?key" "val"
+        ".?x.?y" nil
+        "?a" nil
+        "?nested.nested-key1" "nk1"
+        "?nested.?missing.?xxx" nil))
     (when-none-mode
       (testing "invalid selectors"
         (are [input] (thrown-with-msg? js/Error #"Invalid selector" (oget+ sample-obj (make-selector-dynamically input)))
@@ -112,20 +119,27 @@ ERROR: (\"Oops, Unexpected object value (boolean)\" {:obj false})"]
       )))
 
 (deftest test-oset
-  (testing "simple key store"
+  (testing "static set"
     (let [sample-obj #js {"nested" #js {}}]
       (are [selector] (= (oget (oset! sample-obj selector "val") selector) "val")
-        ["xxx"]
+        "xxx"
         ["yyy"]
         ["nested" "y"])
       (is (= (js/JSON.stringify sample-obj) "{\"nested\":{\"y\":\"val\"},\"xxx\":\"val\",\"yyy\":\"val\"}"))))
-  (testing "simple selector set"
+  (testing "dynamic selector set"
     (let [sample-obj #js {"nested" #js {}}
           dynamic-key-fn (fn [name] name)]
       (are [selector] (= (oget+ (oset!+ sample-obj selector "val") selector) "val")
         (dynamic-key-fn "key")
         [(dynamic-key-fn "nested") (dynamic-key-fn "key2")])
       (is (= (js/JSON.stringify sample-obj) "{\"nested\":{\"key2\":\"val\"},\"key\":\"val\"}"))))
+  (testing "static punching set!"
+    (let [sample-obj #js {"nested" #js {}}]
+      (are [selector] (= (oget+ (oset!+ sample-obj selector "val") selector) "val")
+        ".!nested.!xxx"
+        "!aaa"
+        ["!z1" "!z2" "!z3"])
+      (is (= (js/JSON.stringify sample-obj) "{\"nested\":{\"xxx\":\"val\"},\"aaa\":\"val\",\"z1\":{\"z2\":{\"z3\":\"val\"}}}"))))
   (testing "flexible selector in oset!"
     (let [sample-obj #js {"n1" #js {"n2" #js {}}}]
       (is (= (oget (oset! sample-obj "n1" "n2" "val") "n1" "n2") "val"))

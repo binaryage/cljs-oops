@@ -36,8 +36,8 @@
           (.push arr (coerce-key-dynamically item)))
         (recur (next items))))))
 
-(defn ^boolean validate-object-dynamically [obj]
-  (validate-object-dynamically-impl obj))
+(defn ^boolean validate-object-dynamically [obj mode]
+  (validate-object-dynamically-impl obj mode))
 
 (defn build-path-dynamically [selector]
   (build-path-dynamically-impl selector))

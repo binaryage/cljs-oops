@@ -61,14 +61,14 @@ $oops$core$get_selector_dynamically$$({
     "nested-key": "nested-val"
   }
 }, new $cljs$core$PersistentVector$$(null, 2, 5, $cljs$core$PersistentVector$EMPTY_NODE$$, ["key", "nested"], null));
-var $arr__1__auto__$$inline_8$$ = ["key", new $cljs$core$PersistentVector$$(null, 1, 5, $cljs$core$PersistentVector$EMPTY_NODE$$, ["nested"], null)];
-$arr__1__auto__$$inline_8$$.$oops_tag$$ = !0;
+var $arr__1__auto__$$inline_3$$ = ["key", new $cljs$core$PersistentVector$$(null, 1, 5, $cljs$core$PersistentVector$EMPTY_NODE$$, ["nested"], null)];
+$arr__1__auto__$$inline_3$$.$oops_tag$$ = !0;
 $oops$core$get_selector_dynamically$$({
   key: "val",
   nested: {
     "nested-key": "nested-val"
   }
-}, $arr__1__auto__$$inline_8$$);
+}, $arr__1__auto__$$inline_3$$);
 $oops$core$get_selector_dynamically$$({
   key: "val",
   nested: {

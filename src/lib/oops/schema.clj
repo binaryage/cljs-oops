@@ -1,15 +1,26 @@
 (ns oops.schema
   (:require [clojure.spec :as s]
             [clojure.walk :as walk]
-            [oops.sdefs :as sdefs]))
+            [oops.sdefs :as sdefs]
+            [clojure.string :as string]))
 
 ; --- path utils ------------------------------------------------------------------------------------------------------------
+
+(defn parse-selector-element [element-str]
+  (case (first element-str)
+    \? [:soft (.substring element-str 1)]
+    \! [:punch (.substring element-str 1)]
+    [:dot element-str]))
+
+(defn parse-selector-string [selector-str]
+  (let [elements (remove empty? (string/split selector-str #"\."))]                                                           ; TODO: handle dot escaping somehow
+    (map parse-selector-element elements)))
 
 (defn coerce-key [destructured-key]
   (let [value (second destructured-key)]
     (case (first destructured-key)
-      :string [:dot value]
-      :keyword [:dot (name value)])))
+      :string (parse-selector-string value)
+      :keyword (parse-selector-string (name value)))))
 
 (defn coerce-key-node [node]
   (if (and (sequential? node)

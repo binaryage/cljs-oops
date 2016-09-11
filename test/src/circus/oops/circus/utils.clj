@@ -40,39 +40,65 @@
             relevant-content (.substring content (+ semicolon-index 1))]
         relevant-content))))
 
-(defn normalize-identifiers [[content starting-counter]]
-  "The goal here is to rename all generated $<number>$ identifiers with stable numbering."
-  (let [* (fn [[content counter] match]
-            (let [needle (first match)
-                  replacement (str counter (nth match 2))]
-              [(string/replace content needle replacement) (inc counter)]))]
-    (reduce * [content starting-counter] (re-seq #"(\d+)(\$|__)" content))))
+(defn make-empty-normalizer-state []
+  {:counter  1
+   :mappings {}})
 
-(defn normalize-gensyms [[content starting-counter]]
+(defn get-counter [normalizer-state]
+  (:counter normalizer-state))
+
+(defn register-mapping [normalizer-state name replacement]
+  (-> normalizer-state
+      (update :counter inc)
+      (update :mappings assoc name replacement)))
+
+(defn get-mapping [normalizer-state name]
+  (get-in normalizer-state [:mappings name]))
+
+(defn register-mapping-if-needed [normalizer-state name replacement]
+  (if (get-mapping normalizer-state name)
+    normalizer-state
+    (register-mapping normalizer-state name replacement)))
+
+(defn normalize-identifiers [[content normalizer-state]]
+  "The goal here is to rename all generated $<number>$ identifiers with stable numbering."
+  (let [* (fn [[content normalizer-state] match]
+            (let [needle (first match)
+                  replacement (str (get-counter normalizer-state) (nth match 2))
+                  new-normalizer-state (register-mapping-if-needed normalizer-state needle replacement)
+                  new-content (string/replace content needle (get-mapping new-normalizer-state needle))]
+              [new-content new-normalizer-state]))]
+    (reduce * [content normalizer-state] (re-seq #"(\d+)(\$|__)" content))))
+
+(defn normalize-gensyms [[content normalizer-state]]
   "The goal here is to rename all generated name<NUM> identifiers with stable numbering."
-  (let [* (fn [[content counter] match]
+  (let [* (fn [[content normalizer-state] match]
             (if (> (Long/parseLong (first match)) 1000)
               (let [needle (first match)
-                    stable-replacement (str counter)]
-                [(string/replace content needle stable-replacement) (inc counter)])
-              [content counter]))]
-    (reduce * [content starting-counter] (re-seq #"(\d+)" content))))
+                    replacement (str (get-counter normalizer-state))
+                    new-normalizer-state (register-mapping-if-needed normalizer-state needle replacement)
+                    new-content (string/replace content needle (get-mapping new-normalizer-state needle))]
+                [new-content new-normalizer-state])
+              [content normalizer-state]))]
+    (reduce * [content normalizer-state] (re-seq #"(\d+)" content))))
 
-(defn normalize-twins [[content starting-counter]]
-  (let [counter (volatile! starting-counter)
-        * (fn [_match]
-            (vswap! counter inc)
-            (str @counter))]
-    [(string/replace content #"(\d+)_(\d+)" *) @counter]))
+(defn normalize-twins [[content normalizer-state]]
+  "The goal here is to rename all generated <NUM>_<NUM> identifiers with stable numbering."
+  (let [* (fn [[content normalizer-state] needle]
+            (let [replacement (str (get-counter normalizer-state))
+                  new-normalizer-state (register-mapping-if-needed normalizer-state needle replacement)
+                  new-content (string/replace content needle (get-mapping new-normalizer-state needle))]
+              [new-content new-normalizer-state]))]
+    (reduce * [content normalizer-state] (re-seq #"\d+_\d+" content))))
 
 (defn safe-spit [path content]
   (io/make-parents path)
   (spit path content))
 
-(defn pprint-str [v]
+(defn pprint-str [v & [length level]]
   (with-out-str
-    (binding [*print-level* 10
-              *print-length* 10]
+    (binding [*print-level* (or level 10)
+              *print-length* (or length 10)]
       (pprint v))))
 
 (defn beautify-js! [path]
@@ -126,10 +152,11 @@
   (let [unwrapped-code (-> code
                            (unwrap-snippets)
                            (replace-tagged-literals))
-        [stabilized-code] (-> [unwrapped-code 1]
-                              (normalize-identifiers)
-                              (normalize-gensyms)
-                              (normalize-twins))]
+        [stabilized-code normalizer-state] (-> [unwrapped-code (make-empty-normalizer-state)]
+                                               (normalize-identifiers)
+                                               (normalize-gensyms)
+                                               (normalize-twins))]
+    (log/debug "normalizer state:\n" (pprint-str normalizer-state 10000))
     stabilized-code))
 
 (defn silent-slurp [path]

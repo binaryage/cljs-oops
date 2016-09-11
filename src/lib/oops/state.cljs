@@ -5,3 +5,5 @@
 (def ^:dynamic *runtime-config*)
 
 (def ^:dynamic *console-reporter*)
+
+(def ^:dynamic *punching-factory* js-obj)
