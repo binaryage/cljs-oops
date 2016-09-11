@@ -8,8 +8,8 @@
 (defn coerce-key [destructured-key]
   (let [value (second destructured-key)]
     (case (first destructured-key)
-      :string value
-      :keyword (name value))))
+      :string [:dot value]
+      :keyword [:dot (name value)])))
 
 (defn coerce-key-node [node]
   (if (and (sequential? node)
@@ -32,10 +32,12 @@
 (defn build-selector-path [destructured-selector]
   {:post [(or (nil? %) (s/valid? ::sdefs/obj-path %))]}
   (if-not (= destructured-selector ::s/invalid)
-    (-> destructured-selector
-        (coerce-selector-keys)
-        (coerce-nested-selectors)
-        (flatten))))
+    (->> destructured-selector
+         (coerce-selector-keys)
+         (coerce-nested-selectors)
+         (flatten)
+         (partition 2)
+         (map vec))))
 
 (defn selector->path [selector]
   (->> selector

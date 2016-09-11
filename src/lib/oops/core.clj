@@ -78,7 +78,7 @@
     obj
     (let [obj-sym (gensym "obj")]
       `(let [~obj-sym ~(gen-static-path-get obj (butlast path))]
-         ~(gen-instrumented-key-get obj-sym (last path))))))
+         ~(gen-instrumented-key-get obj-sym (second (last path)))))))
 
 (defn gen-dynamic-selector-get [obj selector-list]
   (report-if-needed! :dynamic-property-access)
@@ -124,7 +124,7 @@
   {:pre [(not (empty? path))
          (symbol? obj-sym)]}
   (let [parent-obj-path (butlast path)
-        key (last path)
+        key (second (last path))
         parent-obj-sym (gensym "parent-obj")]
     `(let [~parent-obj-sym ~(gen-static-path-get obj-sym parent-obj-path)]
        ~(gen-instrumented-key-set parent-obj-sym key val))))
