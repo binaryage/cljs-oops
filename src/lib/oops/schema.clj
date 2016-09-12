@@ -3,7 +3,8 @@
             [clojure.walk :as walk]
             [oops.sdefs :as sdefs]
             [oops.constants :refer [dot-access soft-access punch-access]]
-            [clojure.string :as string]))
+            [clojure.string :as string]
+            [oops.debug :refer [debug-assert]]))
 
 ; --- path utils ------------------------------------------------------------------------------------------------------------
 
@@ -43,13 +44,15 @@
 
 (defn build-selector-path [destructured-selector]
   {:post [(or (nil? %) (s/valid? ::sdefs/obj-path %))]}
-  (if-not (= destructured-selector ::s/invalid)
-    (->> destructured-selector
-         (coerce-selector-keys)
-         (coerce-nested-selectors)
-         (flatten)
-         (partition 2)
-         (map vec))))
+  (let [path (if-not (= destructured-selector ::s/invalid)
+               (->> destructured-selector
+                    (coerce-selector-keys)
+                    (coerce-nested-selectors)
+                    (flatten)
+                    (partition 2)
+                    (map vec)))]
+    (debug-assert (or (nil? path) (s/valid? ::sdefs/obj-path path)))
+    path))
 
 (defn selector->path [selector]
   (->> selector

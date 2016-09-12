@@ -5,7 +5,7 @@
             [oops.messages :refer [runtime-message]]
             [oops.compiler :as compiler :refer [gensym with-diagnostics-context! with-compilation-opts!]]
             [oops.constants :refer [dot-access soft-access punch-access get-dot-access get-soft-access get-punch-access]]
-            [oops.debug :refer [log]]
+            [oops.debug :refer [log debug-assert]]
             [clojure.spec :as s]))
 
 ; -- helper code generators -------------------------------------------------------------------------------------------------
@@ -34,14 +34,14 @@
     (gen-tagged-array items)))                                                                                                ; this is the fast path for advanced optimizations without diagnostics
 
 (defn gen-object-access-validation-error [obj-sym flavor]
-  {:pre [(symbol? obj-sym)]}
+  (debug-assert (symbol? obj-sym))
   `(do
      (report-runtime-error ~(runtime-message :unexpected-object-value flavor) {:obj ~obj-sym})
      false))
 
 (defn gen-dynamic-object-access-validation [obj-sym mode-sym]
-  {:pre [(symbol? obj-sym)
-         (symbol? mode-sym)]}
+  (debug-assert (symbol? obj-sym))
+  (debug-assert (symbol? mode-sym))
   `(if (config/error-reporting-mode)
      (cond
        (and (= ~mode-sym ~dot-access) (cljs.core/undefined? ~obj-sym)) ~(gen-object-access-validation-error obj-sym "undefined")
@@ -64,18 +64,18 @@
     :goog `(goog.object/set ~obj ~key ~val)))
 
 (defn gen-dynamic-object-access-validation-wrapper [obj-sym mode body]
-  {:pre [(symbol? obj-sym)]}
+  (debug-assert (symbol? obj-sym))
   (if (config/diagnostics?)
     `(if (validate-object-dynamically ~obj-sym ~mode)
        ~body)
     body))
 
 (defn gen-instrumented-key-get [obj-sym key mode]
-  {:pre [(symbol? obj-sym)]}
+  (debug-assert (symbol? obj-sym))
   (gen-dynamic-object-access-validation-wrapper obj-sym mode (gen-key-get obj-sym key)))
 
 (defn gen-instrumented-key-set [obj-sym key val mode]
-  {:pre [(symbol? obj-sym)]}
+  (debug-assert (symbol? obj-sym))
   (gen-dynamic-object-access-validation-wrapper obj-sym mode (gen-key-set obj-sym key val)))
 
 (defn gen-static-path-get [obj path]
@@ -105,7 +105,7 @@
                  ~(gen-static-path-get new-prop-sym (rest path)))))))))
 
 (defn gen-dynamic-path-get [initial-obj-sym path]
-  {:pre [(symbol? initial-obj-sym)]}
+  (debug-assert (symbol? initial-obj-sym))
   (let [path-sym (gensym "path")
         len-sym (gensym "len")
         i-sym (gensym "i")
@@ -142,7 +142,7 @@
     `(get-selector-dynamically ~obj ~(gen-selector-list selector-list))))
 
 (defn gen-dynamic-path-validation [path-sym]
-  {:pre [(symbol? path-sym)]}
+  (debug-assert (symbol? path-sym))
   `(if-not (clojure.spec/valid? ::oops.sdefs/obj-path ~path-sym)
      (let [explanation# (clojure.spec/explain-data ::oops.sdefs/obj-path ~path-sym)]
        (report-runtime-error ~(runtime-message :invalid-path) {:path        ~path-sym
@@ -150,7 +150,7 @@
      true))
 
 (defn gen-dynamic-selector-validation [selector-sym]
-  {:pre [(symbol? selector-sym)]}
+  (debug-assert (symbol? selector-sym))
   `(if-not (clojure.spec/valid? ::oops.sdefs/obj-selector ~selector-sym)
      (let [explanation# (clojure.spec/explain-data ::oops.sdefs/obj-selector ~selector-sym)]
        (report-runtime-error ~(runtime-message :invalid-selector) {:selector    ~selector-sym
@@ -158,21 +158,21 @@
      true))
 
 (defn gen-dynamic-selector-or-path-validation [selector-or-path-sym]
-  {:pre [(symbol? selector-or-path-sym)]}
+  (debug-assert (symbol? selector-or-path-sym))
   `(if (cljs.core/array? ~selector-or-path-sym)
      ~(gen-dynamic-path-validation selector-or-path-sym)
      ~(gen-dynamic-selector-validation selector-or-path-sym)))
 
 (defn gen-dynamic-selector-validation-wrapper [selector-sym body]
-  {:pre [(symbol? selector-sym)]}
+  (debug-assert (symbol? selector-sym))
   (if (config/diagnostics?)
     `(if ~(gen-dynamic-selector-or-path-validation selector-sym)
        ~body)
     body))
 
 (defn gen-static-path-set [obj-sym path val]
-  {:pre [(not (empty? path))
-         (symbol? obj-sym)]}
+  (debug-assert (not (empty? path)))
+  (debug-assert (symbol? obj-sym))
   (let [parent-obj-path (butlast path)
         [_mode key] (last path)
         parent-obj-sym (gensym "parent-obj")]
@@ -187,7 +187,7 @@
     `(set-selector-dynamically ~obj ~(gen-selector-list selector-list) ~val)))
 
 (defn gen-dynamic-path-set [obj-sym path val]
-  {:pre [(symbol? obj-sym)]}
+  (debug-assert (symbol? obj-sym))
   (let [path-sym (gensym "path")
         key-sym (gensym "key")
         mode-sym (gensym "mode")
@@ -214,7 +214,7 @@
     :warning `(.-warn js/console)))
 
 (defn gen-report-runtime-message [kind msg data]
-  {:pre [(contains? #{:error :warning} kind)]}
+  (debug-assert (contains? #{:error :warning} kind))
   (let [mode (case kind
                :error `(oops.config/error-reporting-mode)
                :warning `(oops.config/warning-reporting-mode))]
@@ -251,13 +251,13 @@
   (gen-report-runtime-message :warning msg data))
 
 (defmacro validate-object-dynamically-impl [obj-sym mode]
-  {:pre [(symbol? obj-sym)]}
+  (debug-assert (symbol? obj-sym))
   (gen-dynamic-object-access-validation obj-sym mode))
 
 ; TODO: check result with dynamic spec (in debug mode)
 ; (s/valid? ::sdefs/obj-path %)
 (defmacro build-path-dynamically-impl [selector-sym]
-  {:pre [(symbol? selector-sym)]}
+  (debug-assert (symbol? selector-sym))
   (let [atomic-case (let [path-sym (gensym "selector-path")]
                       `(let [~path-sym (cljs.core/array)]
                          (oops.schema/coerce-key-dynamically! ~selector-sym ~path-sym)
@@ -266,29 +266,32 @@
         collection-case (let [path-sym (gensym "selector-path")]
                           `(let [~path-sym (cljs.core/array)]
                              (oops.schema/collect-coerced-keys-into-array! ~selector-sym ~path-sym)
-                             ~path-sym))]
-    `(let [path# (cond
-                   (or (string? ~selector-sym) (keyword? ~selector-sym)) ~atomic-case
-                   ~(gen-is-tagged? selector-sym) ~collection-case
-                   (cljs.core/array? ~selector-sym) ~array-case
-                   :else ~collection-case)]
-       (assert (clojure.spec/valid? :oops.sdefs/obj-path path#))
-       path#)))
+                             ~path-sym))
+        build-path-code `(cond
+                           (or (string? ~selector-sym) (keyword? ~selector-sym)) ~atomic-case
+                           ~(gen-is-tagged? selector-sym) ~collection-case
+                           (cljs.core/array? ~selector-sym) ~array-case
+                           :else ~collection-case)]
+    (if (config/debug?)
+      `(let [path# ~build-path-code]
+         (assert (clojure.spec/valid? :oops.sdefs/obj-path path#))
+         path#)
+      build-path-code)))
 
 (defmacro get-key-dynamically-impl [obj-sym key-sym mode]
-  {:pre [(symbol? obj-sym)
-         (symbol? key-sym)]}
+  (debug-assert (symbol? obj-sym))
+  (debug-assert (symbol? key-sym))
   (gen-instrumented-key-get obj-sym key-sym mode))
 
 (defmacro set-key-dynamically-impl [obj-sym key-sym val-sym mode]
-  {:pre [(symbol? obj-sym)
-         (symbol? key-sym)
-         (symbol? val-sym)]}
+  (debug-assert (symbol? obj-sym))
+  (debug-assert (symbol? key-sym))
+  (debug-assert (symbol? val-sym))
   (gen-instrumented-key-set obj-sym key-sym val-sym mode))
 
 (defmacro get-selector-dynamically-impl [obj-sym selector-sym]
-  {:pre [(symbol? obj-sym)
-         (symbol? selector-sym)]}
+  (debug-assert (symbol? obj-sym))
+  (debug-assert (symbol? selector-sym))
   (let [path `(build-path-dynamically ~selector-sym)]
     (gen-dynamic-selector-validation-wrapper selector-sym (gen-dynamic-path-get obj-sym path))))
 
@@ -296,6 +299,9 @@
   {:pre [(symbol? obj-sym)
          (symbol? selector-sym)
          (symbol? val-sym)]}
+  (debug-assert (symbol? obj-sym))
+  (debug-assert (symbol? selector-sym))
+  (debug-assert (symbol? val-sym))
   (let [path `(build-path-dynamically ~selector-sym)]
     (gen-dynamic-selector-validation-wrapper selector-sym (gen-dynamic-path-set obj-sym path val-sym))))
 
