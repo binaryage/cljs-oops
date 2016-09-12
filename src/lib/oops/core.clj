@@ -99,7 +99,7 @@
                  ~next-obj-sym ~(gen-instrumented-key-get obj-sym key mode)]
              (if (some? ~next-obj-sym)
                ~(gen-static-path-get next-obj-sym (rest path))
-               (let [~new-prop-sym (oops.state/*punching-factory*)]
+               (let [~new-prop-sym (oops.state/*property-punching-factory*)]
                  ~(gen-key-set obj-sym key new-prop-sym)
                  ~(gen-static-path-get new-prop-sym (rest path)))))))))
 
@@ -128,7 +128,7 @@
                               (recur ~next-i ~next-obj-sym))
                ~punch-access (if (some? ~next-obj-sym)
                                (recur ~next-i ~next-obj-sym)
-                               (let [~new-prop-sym (oops.state/*punching-factory*)]
+                               (let [~new-prop-sym (oops.state/*property-punching-factory*)]
                                  ~(gen-key-set obj-sym key-sym new-prop-sym)
                                  (recur ~next-i ~new-prop-sym)))))
            ~obj-sym)))))

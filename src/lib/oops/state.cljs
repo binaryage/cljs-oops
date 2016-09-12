@@ -6,4 +6,4 @@
 
 (def ^:dynamic *console-reporter*)
 
-(def ^:dynamic *punching-factory* js-obj)
+(def ^:dynamic *property-punching-factory* js-obj)
