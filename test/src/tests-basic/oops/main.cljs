@@ -147,6 +147,13 @@ ERROR: (\"Oops, Unexpected object value (boolean)\" {:obj false})"]
         "!aaa"
         ["!z1" "!z2" "!z3"])
       (is (= (js/JSON.stringify sample-obj) "{\"nested\":{\"xxx\":\"val\"},\"aaa\":\"val\",\"z1\":{\"z2\":{\"z3\":\"val\"}}}"))))
+  (testing "dynamic punching set!"
+    (let [sample-obj #js {"nested" #js {}}]
+      (are [selector] (= (oget+ (oset!+ sample-obj (identity selector) "val") selector) "val")
+        ".!nested.!xxx"
+        "!aaa"
+        ["!z1" "!z2" "!z3"])
+      (is (= (js/JSON.stringify sample-obj) "{\"nested\":{\"xxx\":\"val\"},\"aaa\":\"val\",\"z1\":{\"z2\":{\"z3\":\"val\"}}}"))))
   (testing "flexible selector in oset!"
     (let [sample-obj #js {"n1" #js {"n2" #js {}}}]
       (is (= (oget (oset! sample-obj "n1" "n2" "val") "n1" "n2") "val"))
