@@ -15,6 +15,9 @@
    ; runtime config
    :runtime-error-reporting   :throw                                                                                          ; #{:throw :console falsy}
    :runtime-warning-reporting :console                                                                                        ; #{:throw :console falsy}
+
+   ; enable debug if you want to debug/hack oops itself
+   :debug                     false                                                                                           ; #{true falsy}
    })
 
 (def advanced-mode-compiler-config-overrides
@@ -78,3 +81,9 @@
   {:post [(contains? #{:core :goog} %)]}
   (get-config-key :key-set config))
 
+(defn debug? [& [config]]
+  {:post [(contains? #{true false nil} %)]}
+  (true? (get-config-key :debug config)))
+
+(defmacro should-debug? []
+  (debug?))

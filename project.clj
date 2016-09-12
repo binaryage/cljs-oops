@@ -76,7 +76,8 @@
                                                    :output-dir      "test/resources/_compiled/basic_onone"
                                                    :asset-path      "_compiled/basic_onone"
                                                    :external-config {:devtools/config {:dont-detect-custom-formatters true}
-                                                                     :oops/config     {:dynamic-property-access false
+                                                                     :oops/config     {:debug                   true
+                                                                                       :dynamic-property-access false
                                                                                        :static-nil-object       false}}
                                                    :main            oops.runner
                                                    :optimizations   :none}
@@ -87,11 +88,13 @@
                                                    "test/src/runner"
                                                    "test/src/tools"
                                                    "test/src/tests-basic"]
-                                    :compiler     {:output-to     "test/resources/_compiled/basic_oadvanced/main.js"
-                                                   :output-dir    "test/resources/_compiled/basic_oadvanced"
-                                                   :asset-path    "_compiled/basic_oadvanced"
-                                                   :main          oops.runner
-                                                   :optimizations :advanced}}}}}
+                                    :compiler     {:output-to       "test/resources/_compiled/basic_oadvanced/main.js"
+                                                   :output-dir      "test/resources/_compiled/basic_oadvanced"
+                                                   :asset-path      "_compiled/basic_oadvanced"
+                                                   :elide-asserts   true
+                                                   :external-config {:oops/config {:debug true}}
+                                                   :main            oops.runner
+                                                   :optimizations   :advanced}}}}}
              :testing-basic-oadvanced-goog
              {:cljsbuild {:builds {:basic-oadvanced-goog
                                    {:source-paths ["src/lib"
@@ -101,9 +104,11 @@
                                     :compiler     {:output-to       "test/resources/_compiled/basic_oadvanced_goog/main.js"
                                                    :output-dir      "test/resources/_compiled/basic_oadvanced_goog"
                                                    :asset-path      "_compiled/basic_oadvanced_goog"
+                                                   :elide-asserts   true
                                                    :main            oops.runner
                                                    :optimizations   :advanced
-                                                   :external-config {:oops/config {:key-get :goog
+                                                   :external-config {:oops/config {:debug   true
+                                                                                   :key-get :goog
                                                                                    :key-set :goog}}}}}}}
 
              :auto-testing
