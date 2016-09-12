@@ -60,9 +60,9 @@
           identity
           0
           #js {}))
-      (testing "dynamic get via js array (path)"
-        (is (= (oget+ sample-obj (make-selector-dynamically #js [0 "nested" 0 "nested-key1"])) "nk1"))
-        (is (thrown-with-msg? js/Error #"Invalid path" (oget+ sample-obj (make-selector-dynamically #js ["nested" :nested-key1])))))
+      (testing "dynamic get via js array"
+        (is (= (oget+ sample-obj (make-selector-dynamically #js ["nested" "nested-key1"])) "nk1"))
+        (is (= (oget+ sample-obj (make-selector-dynamically #js ["nested" :nested-key1])) "nk1")))
       (testing "object access validation should throw by default"
         (are [o msg] (thrown-with-msg? js/Error msg (oget o "key"))
           nil #"Unexpected object value \(nil\)"

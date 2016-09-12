@@ -20,18 +20,8 @@
       :error (compiler/error! type info)
       (false nil) nil)))
 
-(defn gen-tagged-array [items]
-  `(let [arr# (cljs.core/array ~@items)]
-     (set! (.-oops-tag$ arr#) true)
-     arr#))
-
-(defn gen-is-tagged? [obj]
-  `(.-oops-tag$ ~obj))
-
-(defn gen-selector-list [items]                                                                                               ; TODO: flip tagging logic here, tag native array case and leave raw js arrays for cljs path
-  (if (config/diagnostics?)
-    `(cljs.core/list ~@items)                                                                                                 ; this is the slow path under diagnostics we want selector list be a valid selector
-    (gen-tagged-array items)))                                                                                                ; this is the fast path for advanced optimizations without diagnostics
+(defn gen-selector-list [items]
+  `(cljs.core/array ~@items))
 
 (defn gen-object-access-validation-error [obj-sym flavor]
   (debug-assert (symbol? obj-sym))
@@ -136,14 +126,6 @@
     1 `(get-selector-dynamically ~obj ~(first selector-list))                                                                 ; we want to unwrap selector wrapped in oget (in this case)
     `(get-selector-dynamically ~obj ~(gen-selector-list selector-list))))
 
-(defn gen-dynamic-path-validation [path-sym]
-  (debug-assert (symbol? path-sym))
-  `(if-not (clojure.spec/valid? :oops.sdefs/obj-path ~path-sym)
-     (let [explanation# (clojure.spec/explain-data :oops.sdefs/obj-path ~path-sym)]
-       (report-runtime-error ~(runtime-message :invalid-path) {:path        ~path-sym
-                                                               :explanation explanation#}))
-     true))
-
 (defn gen-dynamic-selector-validation [selector-sym]
   (debug-assert (symbol? selector-sym))
   `(if-not (clojure.spec/valid? :oops.sdefs/obj-selector ~selector-sym)
@@ -152,16 +134,10 @@
                                                                    :explanation explanation#}))
      true))
 
-(defn gen-dynamic-selector-or-path-validation [selector-or-path-sym]
-  (debug-assert (symbol? selector-or-path-sym))
-  `(if (cljs.core/array? ~selector-or-path-sym)
-     ~(gen-dynamic-path-validation selector-or-path-sym)
-     ~(gen-dynamic-selector-validation selector-or-path-sym)))
-
 (defn gen-dynamic-selector-validation-wrapper [selector-sym body]
   (debug-assert (symbol? selector-sym))
   (if (config/diagnostics?)
-    `(if ~(gen-dynamic-selector-or-path-validation selector-sym)
+    `(if ~(gen-dynamic-selector-validation selector-sym)
        ~body)
     body))
 
@@ -256,15 +232,12 @@
                       `(let [~path-sym (cljs.core/array)]
                          (oops.schema/coerce-key-dynamically! ~selector-sym ~path-sym)
                          ~path-sym))
-        array-case selector-sym                                                                                               ; we assume native arrays are already paths
         collection-case (let [path-sym (gensym "selector-path")]
                           `(let [~path-sym (cljs.core/array)]
                              (oops.schema/collect-coerced-keys-into-array! ~selector-sym ~path-sym)
                              ~path-sym))
         build-path-code `(cond
                            (or (string? ~selector-sym) (keyword? ~selector-sym)) ~atomic-case
-                           ~(gen-is-tagged? selector-sym) ~collection-case
-                           (cljs.core/array? ~selector-sym) ~array-case
                            :else ~collection-case)]
     (if (config/debug?)
       `(let [path# ~build-path-code]

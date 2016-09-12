@@ -48,28 +48,24 @@ $oops$core$get_selector_dynamically$$({
 //   (oget+ o4 <JSValue#9>)
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-var $arr__1__auto__$$inline_2$$ = ["key", "nested"];
-$arr__1__auto__$$inline_2$$.$oops_tag$$ = !0;
 $oops$core$get_selector_dynamically$$({
   key: "val",
   nested: {
     "nested-key": "nested-val"
   }
-}, $arr__1__auto__$$inline_2$$);
+}, ["key", "nested"]);
 $oops$core$get_selector_dynamically$$({
   key: "val",
   nested: {
     "nested-key": "nested-val"
   }
 }, new $cljs$core$PersistentVector$$(null, 2, 5, $cljs$core$PersistentVector$EMPTY_NODE$$, ["key", "nested"], null));
-var $arr__1__auto__$$inline_3$$ = ["key", new $cljs$core$PersistentVector$$(null, 1, 5, $cljs$core$PersistentVector$EMPTY_NODE$$, ["nested"], null)];
-$arr__1__auto__$$inline_3$$.$oops_tag$$ = !0;
 $oops$core$get_selector_dynamically$$({
   key: "val",
   nested: {
     "nested-key": "nested-val"
   }
-}, $arr__1__auto__$$inline_3$$);
+}, ["key", new $cljs$core$PersistentVector$$(null, 1, 5, $cljs$core$PersistentVector$EMPTY_NODE$$, ["nested"], null)]);
 $oops$core$get_selector_dynamically$$({
   key: "val",
   nested: {

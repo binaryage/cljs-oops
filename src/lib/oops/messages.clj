@@ -18,9 +18,6 @@
 (defmethod runtime-message :unexpected-object-value [_type flavor]
   (post-process-error-message (str "Unexpected object value (" flavor ")")))
 
-(defmethod runtime-message :invalid-path [_type]
-  (post-process-error-message "Invalid path"))
-
 (defmethod runtime-message :invalid-selector [_type]
   (post-process-error-message "Invalid selector"))
 
