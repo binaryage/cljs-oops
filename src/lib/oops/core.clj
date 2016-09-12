@@ -100,7 +100,7 @@
              (if (some? ~next-obj-sym)
                ~(gen-static-path-get next-obj-sym (rest path))
                (let [~new-prop-sym (oops.state/*punching-factory*)]
-                 (cljs.core/aset ~obj-sym ~key ~new-prop-sym)                                                                 ; TODO: use gen-key-set
+                 ~(gen-key-set obj-sym key new-prop-sym)
                  ~(gen-static-path-get new-prop-sym (rest path)))))))))
 
 (defn gen-dynamic-path-get [initial-obj-sym path]
@@ -129,7 +129,7 @@
                ~punch-access (if (some? ~next-obj-sym)
                                (recur ~next-i ~next-obj-sym)
                                (let [~new-prop-sym (oops.state/*punching-factory*)]
-                                 (cljs.core/aset ~obj-sym ~key-sym ~new-prop-sym)                                             ; TODO: use gen-key-set
+                                 ~(gen-key-set obj-sym key-sym new-prop-sym)
                                  (recur ~next-i ~new-prop-sym)))))
            ~obj-sym)))))
 
