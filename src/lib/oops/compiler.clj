@@ -1,10 +1,14 @@
 (ns oops.compiler
   "Provides some helper utils for interaction with cljs compiler."
+  (:refer-clojure :exclude [gensym])
   (:require [cljs.analyzer :as ana]
             [cljs.env]
             [oops.messages :refer [register-messages!]]
             [oops.state :as state]
             [oops.debug :refer [log]]))
+
+(defmacro gensym [name]
+  `(clojure.core/gensym (str ~name "-")))
 
 (defmacro with-hooked-compiler! [& body]
   `(binding [ana/*cljs-warnings* (register-messages! ana/*cljs-warnings*)]

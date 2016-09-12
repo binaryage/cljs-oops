@@ -35,10 +35,10 @@ oops.state._STAR_console_reporter_STAR_ = function() {
   arguments[0].apply(console, Array.prototype.slice.call(arguments, 1))
 };
 try {
-  var obj18 = null;
-  var obj19 = oops.core.validate_object_dynamically.call(null, obj18, 0) ? obj18["k1"] : null;
-  var obj20 = oops.core.validate_object_dynamically.call(null, obj19, 0) ? obj19["k2"] : null;
-  if (oops.core.validate_object_dynamically.call(null, obj20, 0)) obj20["k3"];
+  var obj_18 = null;
+  var obj_19 = oops.core.validate_object_dynamically.call(null, obj_18, 0) ? obj_18["k1"] : null;
+  var obj_20 = oops.core.validate_object_dynamically.call(null, obj_19, 0) ? obj_19["k2"] : null;
+  if (oops.core.validate_object_dynamically.call(null, obj_20, 0)) obj_20["k3"];
   else;
 } finally {
   oops.state._STAR_console_reporter_STAR_ = _STAR_console_reporter_STAR_17
@@ -56,8 +56,8 @@ oops.state._STAR_console_reporter_STAR_ = function() {
   arguments[0].apply(console, Array.prototype.slice.call(arguments, 1))
 };
 try {
-  var obj22 = o_11;
-  if (oops.core.validate_object_dynamically.call(null, obj22, 0)) obj22["key"];
+  var obj_22 = o_11;
+  if (oops.core.validate_object_dynamically.call(null, obj_22, 0)) obj_22["key"];
   else;
 } finally {
   oops.state._STAR_console_reporter_STAR_ = _STAR_console_reporter_STAR_21
