@@ -259,12 +259,12 @@
   {:pre [(symbol? selector-sym)]}
   (let [atomic-case (let [path-sym (gensym "selector-path")]
                       `(let [~path-sym (cljs.core/array)]
-                         (coerce-key-dynamically! ~selector-sym ~path-sym)
+                         (oops.schema/coerce-key-dynamically! ~selector-sym ~path-sym)
                          ~path-sym))
         array-case selector-sym                                                                                               ; we assume native arrays are already paths
         collection-case (let [path-sym (gensym "selector-path")]
                           `(let [~path-sym (cljs.core/array)]
-                             (collect-coerced-keys-into-array! ~selector-sym ~path-sym)
+                             (oops.schema/collect-coerced-keys-into-array! ~selector-sym ~path-sym)
                              ~path-sym))]
     `(let [path# (cond
                    (or (string? ~selector-sym) (keyword? ~selector-sym)) ~atomic-case
