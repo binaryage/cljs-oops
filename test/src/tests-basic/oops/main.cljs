@@ -144,7 +144,7 @@ ERROR: (\"Oops, Unexpected object value (undefined)\" {:obj nil})"]
                    ".\\\\." "x"                                                                                               ; this is a cljs bug, it does java string escaping and then again when emitting javascript string
                    "prop.1" #js {".k2" "v2"
                                  "k3." #js {:some "val"}}}]
-        (are [key expected] (= (oget o (identity key)) expected)
+        (are [key expected] (= (oget+ o (identity key)) expected)
           "prop\\.1.\\.k2" "v2"
           "prop\\.1.k3\\..some" "val"
           "\\.\\..\\.x\\." "."
