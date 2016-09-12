@@ -227,6 +227,7 @@
 
 (defn validate-object-statically [obj]
   ; here we can try to detect some pathological cases and warn user at compile-time
+  ; TODO: to be strict we should allow just symbols, lists (other than data lists) and JSValue objects
   (if (config/diagnostics?)
     (cond
       (nil? obj) (report-if-needed! :static-nil-object))))
@@ -254,8 +255,6 @@
   (debug-assert (symbol? obj-sym))
   (gen-dynamic-object-access-validation obj-sym mode))
 
-; TODO: check result with dynamic spec (in debug mode)
-; (s/valid? ::sdefs/obj-path %)
 (defmacro build-path-dynamically-impl [selector-sym]
   (debug-assert (symbol? selector-sym))
   (let [atomic-case (let [path-sym (gensym "selector-path")]
@@ -296,9 +295,6 @@
     (gen-dynamic-selector-validation-wrapper selector-sym (gen-dynamic-path-get obj-sym path))))
 
 (defmacro set-selector-dynamically-impl [obj-sym selector-sym val-sym]
-  {:pre [(symbol? obj-sym)
-         (symbol? selector-sym)
-         (symbol? val-sym)]}
   (debug-assert (symbol? obj-sym))
   (debug-assert (symbol? selector-sym))
   (debug-assert (symbol? val-sym))
