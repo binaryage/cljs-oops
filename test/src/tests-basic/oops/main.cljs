@@ -3,7 +3,7 @@
             [clojure.string :as string]
             [oops.core :refer [oget oset! ocall! oapply! ocall oapply
                                oget+ oset!+ ocall!+ oapply!+ ocall+ oapply+]]
-            [oops.config :refer [with-runtime-config]]
+            [oops.config :refer [with-runtime-config with-child-factory]]
             [oops.tools
              :refer [with-captured-console]
              :refer-macros [init-test!
@@ -161,6 +161,25 @@ ERROR: (\"Oops, Unexpected object value (undefined)\" {:obj nil})"]
         "!aaa"
         ["!z1" "!z2" "!z3"])
       (is (= (js/JSON.stringify sample-obj) "{\"nested\":{\"xxx\":\"val\"},\"aaa\":\"val\",\"z1\":{\"z2\":{\"z3\":\"val\"}}}"))))
+  (testing "punching set! with custom child-factory"
+    (let [sample-obj #js {"nested" #js {}}
+          counter (volatile! nil)]
+      (with-child-factory (fn [_obj key]
+                            (vreset! counter (str (if @counter (str @counter ",")) key))
+                            (js-obj))
+        (are [selector] (= (oget+ (oset!+ sample-obj selector "val") selector) "val")
+          ".!nested.!xxx"
+          "!aaa"
+          ["!z1" "!z2" "z3"])
+        (is (= @counter "z1,z2")))))                                                                                          ; only z1 and z2 are punched
+  (testing "punching set! with :js-array child-factory"
+    (let [sample-obj #js {"nested" #js {}}]
+      (with-child-factory :js-array
+        (are [selector] (= (oget+ (oset!+ sample-obj selector "val") selector) "val")
+          ".!nested.!xxx.1"
+          "!aaa"
+          ["!z1" "!0" "3"])
+        (is (= (js/JSON.stringify sample-obj) "{\"nested\":{\"xxx\":[null,\"val\"]},\"aaa\":\"val\",\"z1\":[[null,null,null,\"val\"]]}")))))
   (testing "flexible selector in oset!"
     (let [sample-obj #js {"n1" #js {"n2" #js {}}}]
       (is (= (oget (oset! sample-obj "n1" "n2" "val") "n1" "n2") "val"))

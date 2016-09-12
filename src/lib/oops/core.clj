@@ -42,7 +42,7 @@
 (defn gen-dynamic-object-access-validation [obj-sym mode-sym]
   (debug-assert (symbol? obj-sym))
   (debug-assert (symbol? mode-sym))
-  `(if (config/error-reporting-mode)
+  `(if (oops.config/get-error-reporting)
      (cond
        (and (= ~mode-sym ~dot-access) (cljs.core/undefined? ~obj-sym)) ~(gen-object-access-validation-error obj-sym "undefined")
        (and (= ~mode-sym ~dot-access) (cljs.core/nil? ~obj-sym)) ~(gen-object-access-validation-error obj-sym "nil")
@@ -83,12 +83,12 @@
     obj
     (let [[mode key] (first path)
           obj-sym (gensym "obj")
-          next-obj-sym (gensym "next-obj")
-          new-prop-sym (gensym "new-prop")]
+          next-obj-sym (gensym "next-obj")]
+      (debug-assert (string? key))
       ; http://stackoverflow.com/questions/32300269/make-vars-constant-for-use-in-case-statements-in-clojure
-      (assert (= dot-access 0))
-      (assert (= soft-access 1))
-      (assert (= punch-access 2))
+      (debug-assert (= dot-access 0))
+      (debug-assert (= soft-access 1))
+      (debug-assert (= punch-access 2))
       (case mode
         0 `(let [~obj-sym ~obj]
              ~(gen-static-path-get (gen-instrumented-key-get obj-sym key mode) (rest path)))
@@ -100,9 +100,7 @@
                  ~next-obj-sym ~(gen-instrumented-key-get obj-sym key mode)]
              (if (some? ~next-obj-sym)
                ~(gen-static-path-get next-obj-sym (rest path))
-               (let [~new-prop-sym (oops.state/*property-punching-factory*)]
-                 ~(gen-key-set obj-sym key new-prop-sym)
-                 ~(gen-static-path-get new-prop-sym (rest path)))))))))
+               ~(gen-static-path-get `(punch-key-dynamically! ~obj-sym ~key) (rest path))))))))
 
 (defn gen-dynamic-path-get [initial-obj-sym path]
   (debug-assert (symbol? initial-obj-sym))
@@ -113,7 +111,6 @@
         mode-sym (gensym "mode")
         key-sym (gensym "key")
         next-obj-sym (gensym "next-obj")
-        new-prop-sym (gensym "new-prop")
         next-i `(+ ~i-sym 2)]
     `(let [~path-sym ~path
            ~len-sym (.-length ~path-sym)]
@@ -129,9 +126,7 @@
                               (recur ~next-i ~next-obj-sym))
                ~punch-access (if (some? ~next-obj-sym)
                                (recur ~next-i ~next-obj-sym)
-                               (let [~new-prop-sym (oops.state/*property-punching-factory*)]
-                                 ~(gen-key-set obj-sym key-sym new-prop-sym)
-                                 (recur ~next-i ~new-prop-sym)))))
+                               (recur ~next-i (punch-key-dynamically! ~obj-sym ~key-sym)))))
            ~obj-sym)))))
 
 (defn gen-dynamic-selector-get [obj selector-list]
@@ -216,8 +211,8 @@
 (defn gen-report-runtime-message [kind msg data]
   (debug-assert (contains? #{:error :warning} kind))
   (let [mode (case kind
-               :error `(oops.config/error-reporting-mode)
-               :warning `(oops.config/warning-reporting-mode))]
+               :error `(oops.config/get-error-reporting)
+               :warning `(oops.config/get-warning-reporting))]
     `(case ~mode
        :throw (throw (ex-info ~(gen-reported-message msg) ~(gen-reported-data data)))
        :console (oops.state/*console-reporter* ~(gen-console-method kind)
@@ -300,6 +295,21 @@
   (debug-assert (symbol? val-sym))
   (let [path `(build-path-dynamically ~selector-sym)]
     (gen-dynamic-selector-validation-wrapper selector-sym (gen-dynamic-path-set obj-sym path val-sym))))
+
+(defmacro punch-key-dynamically-impl [obj-sym key-sym]
+  (debug-assert (symbol? obj-sym))
+  (debug-assert (symbol? key-sym))
+  (let [child-obj-sym (gensym "child-obj")
+        child-factory-sym (gensym "child-factory")]
+    `(let [~child-factory-sym (oops.config/get-child-factory)
+           ~child-factory-sym (case ~child-factory-sym
+                                :js-obj #(cljs.core/js-obj)
+                                :js-array #(cljs.core/array)
+                                ~child-factory-sym)]
+       (oops.debug/debug-assert (fn? ~child-factory-sym))
+       (let [~child-obj-sym (~child-factory-sym ~obj-sym ~key-sym)]
+         ~(gen-key-set obj-sym key-sym child-obj-sym)
+         ~child-obj-sym))))
 
 ; -- raw implementations ----------------------------------------------------------------------------------------------------
 

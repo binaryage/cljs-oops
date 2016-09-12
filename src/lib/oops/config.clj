@@ -14,6 +14,7 @@
    ; runtime config
    :runtime-error-reporting   :throw                                                                                          ; #{:throw :console falsy}
    :runtime-warning-reporting :console                                                                                        ; #{:throw :console falsy}
+   :runtime-child-factory     :js-obj                                                                                         ; #{:js-obj :js-array}
 
    ; enable debug if you want to debug/hack oops itself
    :debug                     false                                                                                           ; #{true falsy}
@@ -57,7 +58,11 @@
 ; -- runtime macros ---------------------------------------------------------------------------------------------------------
 
 (defmacro with-runtime-config [config & body]
-  `(binding [oops.state/*runtime-config* (merge (get-current-runtime-config) ~config)]
+  `(binding [*runtime-config* (merge (get-current-runtime-config) ~config)]
+     ~@body))
+
+(defmacro with-child-factory [factory-fn & body]
+  `(with-runtime-config {:child-factory ~factory-fn}
      ~@body))
 
 (defmacro gen-runtime-config [& [config]]

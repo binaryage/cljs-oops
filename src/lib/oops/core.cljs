@@ -1,6 +1,7 @@
 (ns oops.core
   (:require-macros [oops.core :refer [report-runtime-error-impl
                                       report-runtime-warning-impl
+                                      punch-key-dynamically-impl
                                       validate-object-dynamically-impl
                                       build-path-dynamically-impl
                                       get-key-dynamically-impl
@@ -23,6 +24,9 @@
   (report-runtime-warning-impl msg data))
 
 ; -- runtime support for macros ---------------------------------------------------------------------------------------------
+
+(defn ^:dynamic punch-key-dynamically! [obj key]
+  (punch-key-dynamically-impl obj key))
 
 (defn ^boolean validate-object-dynamically [obj mode]
   (validate-object-dynamically-impl obj mode))
