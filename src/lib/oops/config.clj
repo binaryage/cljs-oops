@@ -1,7 +1,6 @@
 (ns oops.config
   (:require [cljs.env]
-            [oops.state]
-            [oops.debug :refer [log]]))
+            [oops.state]))
 
 (def default-config                                                                                                           ; falsy below means 'nil' or 'false'
   {:diagnostics               true                                                                                            ; #{true falsy}

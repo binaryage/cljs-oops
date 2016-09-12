@@ -1,6 +1,7 @@
 (ns oops.debug
   (:require [clojure.pprint]
-            [clojure.string :as string]))
+            [clojure.string :as string]
+            [oops.config :as config]))
 
 (defn trimr-nl [s]
   (string/replace s #"\n$" ""))
@@ -17,3 +18,7 @@
 (defn log [& args]
   (let [msg (apply str (interpose " " (map pprint args)))]
     (.print System/out (str msg "\n"))))
+
+(defmacro debug-assert [& args]
+  (if (config/debug?)
+    `(assert ~@args)))
