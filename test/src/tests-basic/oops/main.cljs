@@ -128,6 +128,14 @@ ERROR: (\"Oops, Unexpected object value (undefined)\" {:obj nil})"]
                                       42
                                       true
                                       false)))))
+    (testing "static dot escaping"
+      (let [o #js {".."     #js {".x." "."}
+                   "prop.1" #js {".k2" "v2"
+                                 "k3." #js {:some "val"}}}]
+        (are [key expected] (= (oget o key) expected)
+          "prop\\.1.\\.k2" "v2"
+          "prop\\.1.k3\\..some" "val"
+          "\\.\\..\\.x\\." ".")))
     (testing "oget corner cases"
       ; TODO
       )))

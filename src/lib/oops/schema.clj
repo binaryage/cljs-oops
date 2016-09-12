@@ -4,7 +4,7 @@
             [oops.sdefs :as sdefs]
             [oops.constants :refer [dot-access soft-access punch-access]]
             [clojure.string :as string]
-            [oops.debug :refer [debug-assert]]))
+            [oops.debug :refer [debug-assert log]]))
 
 ; --- path utils ------------------------------------------------------------------------------------------------------------
 
@@ -14,8 +14,13 @@
     \! [punch-access (.substring element-str 1)]
     [dot-access element-str]))
 
+(defn unescape-dots [s]
+  (string/replace s #"\\\." "."))
+
 (defn parse-selector-string [selector-str]
-  (let [elements (remove empty? (string/split selector-str #"\."))]                                                           ; TODO: handle dot escaping somehow
+  (let [elements (->> (string/split selector-str #"(?<!\\)\.")                                                                ; http://stackoverflow.com/a/820223/84283
+                      (remove empty?)
+                      (map unescape-dots))]
     (map parse-selector-element elements)))
 
 (defn coerce-key [destructured-key]
