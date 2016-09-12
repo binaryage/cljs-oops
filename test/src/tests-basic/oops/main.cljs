@@ -4,6 +4,7 @@
             [oops.core :refer [oget oset! ocall! oapply! ocall oapply
                                oget+ oset!+ ocall!+ oapply!+ ocall+ oapply+]]
             [oops.config :refer [with-runtime-config with-child-factory]]
+            [oops.schema :as schema]
             [oops.tools
              :refer [with-captured-console]
              :refer-macros [init-test!
@@ -130,12 +131,24 @@ ERROR: (\"Oops, Unexpected object value (undefined)\" {:obj nil})"]
                                       false)))))
     (testing "static dot escaping"
       (let [o #js {".."     #js {".x." "."}
+                   ".\\\\." "x"                                                                                               ; this is a cljs bug, it does java string escaping and then again when emitting javascript string
                    "prop.1" #js {".k2" "v2"
                                  "k3." #js {:some "val"}}}]
         (are [key expected] (= (oget o key) expected)
           "prop\\.1.\\.k2" "v2"
           "prop\\.1.k3\\..some" "val"
-          "\\.\\..\\.x\\." ".")))
+          "\\.\\..\\.x\\." "."
+          "\\.\\\\." "x")))
+    (testing "dynamic dot escaping"
+      (let [o #js {".."     #js {".x." "."}
+                   ".\\\\." "x"                                                                                               ; this is a cljs bug, it does java string escaping and then again when emitting javascript string
+                   "prop.1" #js {".k2" "v2"
+                                 "k3." #js {:some "val"}}}]
+        (are [key expected] (= (oget o (identity key)) expected)
+          "prop\\.1.\\.k2" "v2"
+          "prop\\.1.k3\\..some" "val"
+          "\\.\\..\\.x\\." "."
+          "\\.\\\\." "x")))
     (testing "oget corner cases"
       ; TODO
       )))
