@@ -83,6 +83,3 @@
 (defn debug? [& [config]]
   {:post [(contains? #{true false nil} %)]}
   (true? (get-config-key :debug config)))
-
-(defmacro should-debug? []
-  (debug?))
