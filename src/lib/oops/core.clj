@@ -143,16 +143,16 @@
 
 (defn gen-dynamic-path-validation [path-sym]
   (debug-assert (symbol? path-sym))
-  `(if-not (clojure.spec/valid? ::oops.sdefs/obj-path ~path-sym)
-     (let [explanation# (clojure.spec/explain-data ::oops.sdefs/obj-path ~path-sym)]
+  `(if-not (clojure.spec/valid? :oops.sdefs/obj-path ~path-sym)
+     (let [explanation# (clojure.spec/explain-data :oops.sdefs/obj-path ~path-sym)]
        (report-runtime-error ~(runtime-message :invalid-path) {:path        ~path-sym
                                                                :explanation explanation#}))
      true))
 
 (defn gen-dynamic-selector-validation [selector-sym]
   (debug-assert (symbol? selector-sym))
-  `(if-not (clojure.spec/valid? ::oops.sdefs/obj-selector ~selector-sym)
-     (let [explanation# (clojure.spec/explain-data ::oops.sdefs/obj-selector ~selector-sym)]
+  `(if-not (clojure.spec/valid? :oops.sdefs/obj-selector ~selector-sym)
+     (let [explanation# (clojure.spec/explain-data :oops.sdefs/obj-selector ~selector-sym)]
        (report-runtime-error ~(runtime-message :invalid-selector) {:selector    ~selector-sym
                                                                    :explanation explanation#}))
      true))
