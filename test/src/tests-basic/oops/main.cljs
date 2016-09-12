@@ -98,6 +98,13 @@ ERROR: (\"Oops, Unexpected object value (boolean)\" {:obj false})"]
                 42
                 true
                 false))
+            (is (= (string/join "\n" @recorder) expected-warnings)))
+          ; make sure we don't print multiple errors on subsequent missing keys...
+          (let [recorder (atom [""])
+                expected-warnings "
+ERROR: (\"Oops, Unexpected object value (undefined)\" {:obj nil})"]
+            (with-console-recording recorder
+              (is (= (oget #js {:k1 #js {}} "k1" "k2" "k3") nil)))
             (is (= (string/join "\n" @recorder) expected-warnings)))))
       (testing "with {:error-reporting-mode false} object access validation should be elided"
         (with-runtime-config {:error-reporting false}
