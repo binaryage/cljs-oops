@@ -7,7 +7,7 @@
 
 ; --- path utils ------------------------------------------------------------------------------------------------------------
 
-(defn parse-selector-element [element-str arr]
+(defn parse-selector-element! [element-str arr]
   (if-not (empty? element-str)
     (case (first element-str)
       "?" (do
@@ -20,16 +20,16 @@
         (.push arr (get-dot-access))
         (.push arr element-str)))))
 
-(defn parse-selector-string [selector-str arr]
+(defn parse-selector-string! [selector-str arr]
   (let [elements-arr (.split selector-str #"\.")]                                                                             ; TODO: handle dot escaping somehow
     (loop [items (seq elements-arr)]
       (when items
-        (parse-selector-element (first items) arr)
+        (parse-selector-element! (first items) arr)
         (recur (next items))))))
 
 (defn coerce-key-dynamically! [key arr]
   (let [selector-str (name key)]
-    (parse-selector-string selector-str arr)))
+    (parse-selector-string! selector-str arr)))
 
 (defn collect-coerced-keys-into-array! [coll arr]
   (loop [items (seq coll)]                                                                                                    ; note: items is either a seq or nil
