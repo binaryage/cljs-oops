@@ -103,27 +103,35 @@
                  (cljs.core/aset ~obj-sym ~key ~new-prop-sym)                                                                 ; TODO: use gen-key-set
                  ~(gen-static-path-get new-prop-sym (rest path)))))))))
 
-(defn gen-dynamic-path-get [obj-sym path]
-  {:pre [(symbol? obj-sym)]}
-  (let [path-sym (gensym "path")]
+(defn gen-dynamic-path-get [initial-obj-sym path]
+  {:pre [(symbol? initial-obj-sym)]}
+  (let [path-sym (gensym "path")
+        len-sym (gensym "len")
+        i-sym (gensym "i")
+        obj-sym (gensym "obj")
+        mode-sym (gensym "mode")
+        key-sym (gensym "key")
+        next-obj-sym (gensym "next-obj")
+        new-prop-sym (gensym "new-prop")
+        next-i `(+ ~i-sym 2)]
     `(let [~path-sym ~path
-           len# (.-length ~path-sym)]
-       (loop [i# 0
-              obj# ~obj-sym]
-         (if (< i# len#)
-           (let [mode# (aget ~path-sym i#)
-                 key# (aget ~path-sym (inc i#))
-                 new-obj# (get-key-dynamically obj# key# mode#)]
-             (case mode#
-               ~dot-access (recur (+ i# 2) new-obj#)
-               ~soft-access (if (some? new-obj#)
-                              (recur (+ i# 2) new-obj#))
-               ~punch-access (if (some? new-obj#)
-                               (recur (+ i# 2) new-obj#)
-                               (let [new-prop# (oops.state/*punching-factory*)]
-                                 (cljs.core/aset obj# key# new-prop#)                                                         ; TODO: use gen-key-set
-                                 (recur (+ i# 2) new-prop#)))))
-           obj#)))))
+           ~len-sym (.-length ~path-sym)]
+       (loop [~i-sym 0
+              ~obj-sym ~initial-obj-sym]
+         (if (< ~i-sym ~len-sym)
+           (let [~mode-sym (aget ~path-sym ~i-sym)
+                 ~key-sym (aget ~path-sym (inc ~i-sym))
+                 ~next-obj-sym (get-key-dynamically ~obj-sym ~key-sym ~mode-sym)]
+             (case ~mode-sym
+               ~dot-access (recur ~next-i ~next-obj-sym)
+               ~soft-access (if (some? ~next-obj-sym)
+                              (recur ~next-i ~next-obj-sym))
+               ~punch-access (if (some? ~next-obj-sym)
+                               (recur ~next-i ~next-obj-sym)
+                               (let [~new-prop-sym (oops.state/*punching-factory*)]
+                                 (cljs.core/aset ~obj-sym ~key-sym ~new-prop-sym)                                             ; TODO: use gen-key-set
+                                 (recur ~next-i ~new-prop-sym)))))
+           ~obj-sym)))))
 
 (defn gen-dynamic-selector-get [obj selector-list]
   (report-if-needed! :dynamic-property-access)
