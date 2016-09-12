@@ -4,7 +4,8 @@
             [oops.messages :refer [runtime-message]]
             [oops.compiler :as compiler :refer [with-diagnostics-context! with-compilation-opts!]]
             [oops.constants :refer [dot-access soft-access punch-access get-dot-access get-soft-access get-punch-access]]
-            [oops.debug :refer [log]]))
+            [oops.debug :refer [log]]
+            [clojure.spec :as s]))
 
 ; -- helper code generators -------------------------------------------------------------------------------------------------
 
@@ -96,11 +97,33 @@
                ~(gen-static-path-get next-obj-sym (rest path))))
         2 `(let [~obj-sym ~obj
                  ~next-obj-sym ~(gen-instrumented-key-get obj-sym key mode)]
-             (if-not (some? ~next-obj-sym)
+             (if (some? ~next-obj-sym)
+               ~(gen-static-path-get next-obj-sym (rest path))
                (let [~new-prop-sym (oops.state/*punching-factory*)]
-                 (oset! ~obj-sym ~key ~new-prop-sym)
-                 ~(gen-static-path-get new-prop-sym (rest path)))
-               ~(gen-static-path-get next-obj-sym (rest path))))))))
+                 (cljs.core/aset ~obj-sym ~key ~new-prop-sym)                                                                 ; TODO: use gen-key-set
+                 ~(gen-static-path-get new-prop-sym (rest path)))))))))
+
+(defn gen-dynamic-path-get [obj-sym path]
+  {:pre [(symbol? obj-sym)]}
+  (let [path-sym (gensym "path")]
+    `(let [~path-sym ~path
+           len# (.-length ~path-sym)]
+       (loop [i# 0
+              obj# ~obj-sym]
+         (if (< i# len#)
+           (let [mode# (aget ~path-sym i#)
+                 key# (aget ~path-sym (inc i#))
+                 new-obj# (get-key-dynamically obj# key# mode#)]
+             (case mode#
+               ~dot-access (recur (+ i# 2) new-obj#)
+               ~soft-access (if (some? new-obj#)
+                              (recur (+ i# 2) new-obj#))
+               ~punch-access (if (some? new-obj#)
+                               (recur (+ i# 2) new-obj#)
+                               (let [new-prop# (oops.state/*punching-factory*)]
+                                 (cljs.core/aset obj# key# new-prop#)                                                         ; TODO: use gen-key-set
+                                 (recur (+ i# 2) new-prop#)))))
+           obj#)))))
 
 (defn gen-dynamic-selector-get [obj selector-list]
   (report-if-needed! :dynamic-property-access)
@@ -138,10 +161,6 @@
        ~body)
     body))
 
-(defn gen-dynamic-path-get [obj-sym path]
-  {:pre [(symbol? obj-sym)]}
-  `(reduce get-key-dynamically ~obj-sym ~path))                                                                               ; TODO: this could be rewritten into a raw loop (optimization)
-
 (defn gen-static-path-set [obj-sym path val]
   {:pre [(not (empty? path))
          (symbol? obj-sym)]}
@@ -162,13 +181,17 @@
   {:pre [(symbol? obj-sym)]}
   (let [path-sym (gensym "path")
         key-sym (gensym "key")
+        mode-sym (gensym "mode")
+        len-sym (gensym "len")
         parent-obj-path-sym (gensym "parent-obj-path")
         parent-obj-sym (gensym "parent-obj")]
     `(let [~path-sym ~path
-           ~parent-obj-path-sym (butlast ~path-sym)
-           ~key-sym (last ~path-sym)
+           ~len-sym (.-length ~path-sym)
+           ~parent-obj-path-sym (.slice ~path-sym 0 (- ~len-sym 2))
+           ~key-sym (aget ~path-sym (- ~len-sym 1))
+           ~mode-sym (aget ~path-sym (- ~len-sym 2))
            ~parent-obj-sym ~(gen-dynamic-path-get obj-sym parent-obj-path-sym)]
-       (set-key-dynamically ~parent-obj-sym ~key-sym ~val))))
+       (set-key-dynamically ~parent-obj-sym ~key-sym ~val ~mode-sym))))
 
 (defn gen-reported-message [msg]
   msg)
@@ -218,38 +241,41 @@
 (defmacro report-runtime-warning-impl [msg data]
   (gen-report-runtime-message :warning msg data))
 
-(defmacro coerce-key-dynamically-impl [key-sym]
-  {:pre [(symbol? key-sym)]}
-  `(name ~key-sym))
-
 (defmacro validate-object-dynamically-impl [obj-sym mode]
   {:pre [(symbol? obj-sym)]}
   (gen-dynamic-object-access-validation obj-sym mode))
 
+; TODO: check result with dynamic spec (in debug mode)
+; (s/valid? ::sdefs/obj-path %)
 (defmacro build-path-dynamically-impl [selector-sym]
   {:pre [(symbol? selector-sym)]}
-  (let [atomic-case `(cljs.core/array (coerce-key-dynamically ~selector-sym))
+  (let [atomic-case (let [path-sym (gensym "selector-path")]
+                      `(let [~path-sym (cljs.core/array)]
+                         (coerce-key-dynamically! ~selector-sym ~path-sym)
+                         ~path-sym))
         array-case selector-sym                                                                                               ; we assume native arrays are already paths
         collection-case (let [path-sym (gensym "selector-path")]
                           `(let [~path-sym (cljs.core/array)]
                              (collect-coerced-keys-into-array! ~selector-sym ~path-sym)
                              ~path-sym))]
-    `(cond
-       (or (string? ~selector-sym) (keyword? ~selector-sym)) ~atomic-case
-       ~(gen-is-tagged? selector-sym) ~collection-case
-       (cljs.core/array? ~selector-sym) ~array-case
-       :else ~collection-case)))
+    `(let [path# (cond
+                   (or (string? ~selector-sym) (keyword? ~selector-sym)) ~atomic-case
+                   ~(gen-is-tagged? selector-sym) ~collection-case
+                   (cljs.core/array? ~selector-sym) ~array-case
+                   :else ~collection-case)]
+       (assert (clojure.spec/valid? :oops.sdefs/obj-path path#))
+       path#)))
 
-(defmacro get-key-dynamically-impl [obj-sym key-sym]
+(defmacro get-key-dynamically-impl [obj-sym key-sym mode]
   {:pre [(symbol? obj-sym)
          (symbol? key-sym)]}
-  (gen-instrumented-key-get obj-sym key-sym :dot))
+  (gen-instrumented-key-get obj-sym key-sym mode))
 
-(defmacro set-key-dynamically-impl [obj-sym key-sym val-sym]
+(defmacro set-key-dynamically-impl [obj-sym key-sym val-sym mode]
   {:pre [(symbol? obj-sym)
          (symbol? key-sym)
          (symbol? val-sym)]}
-  (gen-instrumented-key-set obj-sym key-sym val-sym :dot))
+  (gen-instrumented-key-set obj-sym key-sym val-sym mode))
 
 (defmacro get-selector-dynamically-impl [obj-sym selector-sym]
   {:pre [(symbol? obj-sym)

@@ -45,6 +45,13 @@
         "?a" nil
         "?nested.nested-key1" "nk1"
         "?nested.?missing.?xxx" nil))
+    (testing "dynamic soft get"
+      (are [selector expected] (= (oget+ sample-obj selector) expected)
+        (identity ".?key") "val"
+        (identity ".?x.?y") nil
+        (identity "?a") nil
+        (identity "?nested.nested-key1") "nk1"
+        (identity "?nested.?missing.?xxx") nil))
     (when-none-mode
       (testing "invalid selectors"
         (are [input] (thrown-with-msg? js/Error #"Invalid selector" (oget+ sample-obj (make-selector-dynamically input)))
@@ -53,7 +60,7 @@
           0
           #js {}))
       (testing "dynamic get via js array (path)"
-        (is (= (oget+ sample-obj (make-selector-dynamically #js ["nested" "nested-key1"])) "nk1"))
+        (is (= (oget+ sample-obj (make-selector-dynamically #js [0 "nested" 0 "nested-key1"])) "nk1"))
         (is (thrown-with-msg? js/Error #"Invalid path" (oget+ sample-obj (make-selector-dynamically #js ["nested" :nested-key1])))))
       (testing "object access validation should throw by default"
         (are [o msg] (thrown-with-msg? js/Error msg (oget o "key"))

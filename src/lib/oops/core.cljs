@@ -1,7 +1,6 @@
 (ns oops.core
   (:require-macros [oops.core :refer [report-runtime-error-impl
                                       report-runtime-warning-impl
-                                      coerce-key-dynamically-impl
                                       validate-object-dynamically-impl
                                       build-path-dynamically-impl
                                       get-key-dynamically-impl
@@ -12,7 +11,8 @@
             [goog.object]
             [oops.sdefs]
             [oops.state]
-            [oops.config]))
+            [oops.config]
+            [oops.constants :refer-macros [get-dot-access get-soft-access get-punch-access]]))
 
 ; -- diagnostics reporting --------------------------------------------------------------------------------------------------
 
@@ -24,8 +24,29 @@
 
 ; -- runtime support for macros ---------------------------------------------------------------------------------------------
 
-(defn coerce-key-dynamically [key]
-  (coerce-key-dynamically-impl key))
+(defn parse-selector-element [element-str arr]
+  (if-not (empty? element-str)
+    (case (first element-str)
+      "?" (do
+            (.push arr (get-soft-access))
+            (.push arr (.substring element-str 1)))
+      "!" (do
+            (.push arr (get-punch-access))
+            (.push arr (.substring element-str 1)))
+      (do
+        (.push arr (get-dot-access))
+        (.push arr element-str)))))
+
+(defn parse-selector-string [selector-str arr]
+  (let [elements-arr (.split selector-str #"\.")]                                                                             ; TODO: handle dot escaping somehow
+    (loop [items (seq elements-arr)]
+      (when items
+        (parse-selector-element (first items) arr)
+        (recur (next items))))))
+
+(defn coerce-key-dynamically! [key arr]
+  (let [selector-str (name key)]
+    (parse-selector-string selector-str arr)))
 
 (defn collect-coerced-keys-into-array! [coll arr]
   (loop [items (seq coll)]                                                                                                    ; note: items is either a seq or nil
@@ -33,7 +54,7 @@
       (let [item (-first items)]
         (if (sequential? item)
           (collect-coerced-keys-into-array! item arr)
-          (.push arr (coerce-key-dynamically item)))
+          (coerce-key-dynamically! item arr))
         (recur (next items))))))
 
 (defn ^boolean validate-object-dynamically [obj mode]
@@ -42,11 +63,11 @@
 (defn build-path-dynamically [selector]
   (build-path-dynamically-impl selector))
 
-(defn get-key-dynamically [obj key]
-  (get-key-dynamically-impl obj key))
+(defn get-key-dynamically [obj key mode]
+  (get-key-dynamically-impl obj key mode))
 
-(defn set-key-dynamically [obj key val]
-  (set-key-dynamically-impl obj key val))
+(defn set-key-dynamically [obj key val mode]
+  (set-key-dynamically-impl obj key val mode))
 
 (defn get-selector-dynamically [obj selector]
   (get-selector-dynamically-impl obj selector))
