@@ -113,7 +113,7 @@
         next-obj-sym (gensym "next-obj")
         next-i `(+ ~i-sym 2)]
     `(let [~path-sym ~path
-           ~len-sym (.-length ~path-sym)]
+           ~len-sym (cljs.core/alength ~path-sym)]
        (loop [~i-sym 0
               ~obj-sym ~initial-obj-sym]
          (if (< ~i-sym ~len-sym)
@@ -190,7 +190,7 @@
         parent-obj-path-sym (gensym "parent-obj-path")
         parent-obj-sym (gensym "parent-obj")]
     `(let [~path-sym ~path
-           ~len-sym (.-length ~path-sym)
+           ~len-sym (cljs.core/alength ~path-sym)
            ~parent-obj-path-sym (.slice ~path-sym 0 (- ~len-sym 2))
            ~key-sym (aget ~path-sym (- ~len-sym 1))
            ~mode-sym (aget ~path-sym (- ~len-sym 2))
