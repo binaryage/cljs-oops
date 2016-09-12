@@ -9,6 +9,10 @@
             [oops.circus.config :as config])
   (:import (java.io File StringWriter)))
 
+(defn post-process-build-options [options]
+  (cond-> options
+          (not= :advanced (:optimizations options)) (assoc :elide-asserts false)))
+
 (defn build-options [main variant config & [overrides]]
   (assert main (str "main must be specified!"))
   (let [out (str (last (string/split main #"\.")) "-" variant)
@@ -20,7 +24,7 @@
                                 :output-to     (str "test/resources/_compiled/" out "/main.js")}
                                (if-not (empty? config)
                                  {:external-config {:oops/config config}}))]
-    (merge compiler-config overrides)))
+    (post-process-build-options (merge compiler-config overrides))))
 
 (defn extract-filename-from-source-path [source]
   (let [group (re-find #"\/([^/]*)\.cljs$" source)]

@@ -1,6 +1,6 @@
 // COMPILER CONFIG:
 //   arena/error_static_nil_object.cljs [dev]
-//   {:elide-asserts true,
+//   {:elide-asserts false,
 //    :external-config {:oops/config {:static-nil-object :error}},
 //    :main oops.arena.error-static-nil-object,
 //    :optimizations :whitespace,

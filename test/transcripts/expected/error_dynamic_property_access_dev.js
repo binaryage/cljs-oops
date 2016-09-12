@@ -1,6 +1,6 @@
 // COMPILER CONFIG:
 //   arena/error_dynamic_property_access.cljs [dev]
-//   {:elide-asserts true,
+//   {:elide-asserts false,
 //    :external-config {:oops/config {:dynamic-property-access :error}},
 //    :main oops.arena.error-dynamic-property-access,
 //    :optimizations :whitespace,
