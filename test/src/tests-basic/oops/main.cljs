@@ -59,10 +59,12 @@
           'sym
           identity
           0
-          #js {}))
+          #js {})))
+    (when-not-advanced-mode
       (testing "dynamic get via js array"
         (is (= (oget+ sample-obj (make-selector-dynamically #js ["nested" "nested-key1"])) "nk1"))
-        (is (= (oget+ sample-obj (make-selector-dynamically #js ["nested" :nested-key1])) "nk1")))
+        (is (= (oget+ sample-obj (make-selector-dynamically #js ["nested" :nested-key1])) "nk1"))))
+    (when-not-advanced-mode
       (testing "object access validation should throw by default"
         (are [o msg] (thrown-with-msg? js/Error msg (oget o "key"))
           nil #"Unexpected object value \(nil\)"
@@ -80,7 +82,8 @@
             "s"
             42
             true
-            false)))
+            false))))
+    (when-not-advanced-mode
       (testing "with {:error-reporting-mode :console} object access validation should report errors to console"
         (with-runtime-config {:error-reporting :console}
           (let [recorder (atom [""])
@@ -106,7 +109,8 @@ ERROR: (\"Oops, Unexpected object value (boolean)\" {:obj false})"]
 ERROR: (\"Oops, Unexpected object value (undefined)\" {:obj nil})"]
             (with-console-recording recorder
               (is (= (oget #js {:k1 #js {}} "k1" "k2" "k3") nil)))
-            (is (= (string/join "\n" @recorder) expected-warnings)))))
+            (is (= (string/join "\n" @recorder) expected-warnings))))))
+    (when-not-advanced-mode
       (testing "with {:error-reporting-mode false} object access validation should be elided"
         (with-runtime-config {:error-reporting false}
           (under-phantom
@@ -117,18 +121,18 @@ ERROR: (\"Oops, Unexpected object value (undefined)\" {:obj nil})"]
             "s"
             42
             true
-            false)))
-      (when-advanced-mode                                                                                                     ; advanced optimizations
-        (testing "object access validation should crash or silently fail in advanced mode (no diagnostics)"
-          (when-not-compiler-config {:key-get :goog}
-                                    (are [o msg] (thrown-with-msg? js/TypeError msg (oget o "key"))
-                                      nil #"null is not an object"
-                                      js/undefined #"undefined is not an object")
-                                    (are [o] (= (oget o "key") nil)
-                                      "s"
-                                      42
-                                      true
-                                      false)))))
+            false))))
+    (when-advanced-mode                                                                                                       ; advanced optimizations
+      (testing "object access validation should crash or silently fail in advanced mode (no diagnostics)"
+        (when-not-compiler-config {:key-get :goog}
+                                  (are [o msg] (thrown-with-msg? js/TypeError msg (oget o "key"))
+                                    nil #"null is not an object"
+                                    js/undefined #"undefined is not an object")
+                                  (are [o] (= (oget o "key") nil)
+                                    "s"
+                                    42
+                                    true
+                                    false))))
     (testing "static dot escaping"
       (let [o #js {".."     #js {".x." "."}
                    ".\\\\." "x"                                                                                               ; this is a cljs bug, it does java string escaping and then again when emitting javascript string
