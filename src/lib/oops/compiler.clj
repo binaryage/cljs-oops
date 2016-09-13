@@ -15,12 +15,12 @@
      ~@body))
 
 (defmacro with-compilation-opts! [opts & body]
-  `(binding [oops.state/*invoked-opts* (merge oops.state/*invoked-opts* ~opts)]
+  `(binding [oops.state/*invocation-opts* (merge oops.state/*invocation-opts* ~opts)]
      ~@body))
 
 (defmacro with-compiler-diagnostics-context! [form env & body]
-  `(binding [oops.state/*invoked-form* ~form
-             oops.state/*invoked-env* ~env]
+  `(binding [oops.state/*invocation-form* ~form
+             oops.state/*invocation-env* ~env]
      ~@body))
 
 (defmacro with-diagnostics-context! [form env & body]
@@ -29,13 +29,13 @@
        (oops.core/gen-runtime-diagnostics-context! ~form ~env ~@body))))
 
 (defn annotate-with-state [info]
-  (assoc info :form oops.state/*invoked-form*))
+  (assoc info :form oops.state/*invocation-form*))
 
 (defn warn! [type & [info]]
-  (assert state/*invoked-env* "oops.state/*invoked-env* must be set via with-diagnostics-context! first!")
-  (ana/warning type state/*invoked-env* (annotate-with-state info)))
+  (assert state/*invocation-env* "oops.state/*invocation-env* must be set via with-diagnostics-context! first!")
+  (ana/warning type state/*invocation-env* (annotate-with-state info)))
 
 (defn error! [type & [info]]
-  (assert state/*invoked-env* "oops.state/*invoked-env* must be set via with-diagnostics-context! first!")
+  (assert state/*invocation-env* "oops.state/*invocation-env* must be set via with-diagnostics-context! first!")
   (let [msg (ana/error-message type (annotate-with-state info))]
-    (throw (ana/error state/*invoked-env* msg))))
+    (throw (ana/error state/*invocation-env* msg))))

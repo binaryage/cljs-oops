@@ -5,6 +5,6 @@
 ;   1. compiler state (at compile time during macro expansion)
 ;   2. runtime state (in the browser)
 
-(def ^:dynamic *invoked-form* nil)
-(def ^:dynamic *invoked-env* nil)
-(def ^:dynamic *invoked-opts* nil)
+(def ^:dynamic *invocation-form* nil)
+(def ^:dynamic *invocation-env* nil)
+(def ^:dynamic *invocation-opts* nil)

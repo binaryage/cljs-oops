@@ -11,7 +11,7 @@
 ; -- helper code generators -------------------------------------------------------------------------------------------------
 
 (defn supress-reporting? [type]
-  (boolean (get-in oops.state/*invoked-opts* [:suppress-reporting type])))
+  (boolean (get-in oops.state/*invocation-opts* [:suppress-reporting type])))
 
 (defn report-if-needed! [type & [info]]
   (if (config/diagnostics?)
