@@ -14,6 +14,7 @@
             [oops.sdefs]
             [oops.state]
             [oops.config]
+            [oops.helpers]
             [oops.schema]))
 
 ; -- diagnostics reporting --------------------------------------------------------------------------------------------------

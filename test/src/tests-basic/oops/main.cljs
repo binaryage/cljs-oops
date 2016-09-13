@@ -70,7 +70,20 @@
           "s" #"Unexpected object value \(string\)"
           42 #"Unexpected object value \(number\)"
           true #"Unexpected object value \(boolean\)"
-          false #"Unexpected object value \(boolean\)")
+          false #"Unexpected object value \(boolean\)"
+          identity #"Unexpected object value \(function\)"
+          #inst "2000" #"Unexpected object value \(date-like\)"
+          StringBufferWriter #"Unexpected object value \(cljs type\)"
+          IAtom #"Unexpected object value \(function\)"                                                                       ; we cannot recofnigze protocols as of 1.9.229
+          [] #"Unexpected object value \(cljs instance\)"
+          :keyword #"Unexpected object value \(cljs instance\)"
+          (atom "X") #"Unexpected object value \(cljs instance\)")
+        (under-chrome
+          (are [o msg] (thrown-with-msg? js/Error msg (oget o "key"))
+            ; js/Symbol is not available under phantom and we cannot really test it even under Chrome due to CLJS-1631
+            ; TODO: uncomment this later
+            ; (js/Symbol "mysymbol") #"Unexpected object value \(non-object\)"
+            nil #"Unexpected object value \(nil\)"))
         (with-runtime-config {:error-reporting false}
           (under-phantom
             (are [o msg] (thrown-with-msg? js/TypeError msg (oget o "key"))

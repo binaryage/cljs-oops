@@ -41,10 +41,15 @@
      (cond
        (and (= ~mode-sym ~dot-access) (cljs.core/undefined? ~obj-sym)) ~(gen-object-access-validation-error obj-sym "undefined")
        (and (= ~mode-sym ~dot-access) (cljs.core/nil? ~obj-sym)) ~(gen-object-access-validation-error obj-sym "nil")
-       (cljs.core/boolean? ~obj-sym) ~(gen-object-access-validation-error obj-sym "boolean")
-       (cljs.core/number? ~obj-sym) ~(gen-object-access-validation-error obj-sym "number")
-       (cljs.core/string? ~obj-sym) ~(gen-object-access-validation-error obj-sym "string")
-       ; TODO: here we could possibly do additional checks
+       (goog/isBoolean ~obj-sym) ~(gen-object-access-validation-error obj-sym "boolean")
+       (goog/isNumber ~obj-sym) ~(gen-object-access-validation-error obj-sym "number")
+       (goog/isString ~obj-sym) ~(gen-object-access-validation-error obj-sym "string")
+       (not (goog/isObject ~obj-sym)) ~(gen-object-access-validation-error obj-sym "non-object")
+       (goog/isDateLike ~obj-sym) ~(gen-object-access-validation-error obj-sym "date-like")
+       (oops.helpers/cljs-type? ~obj-sym) ~(gen-object-access-validation-error obj-sym "cljs type")
+       (oops.helpers/cljs-instance? ~obj-sym) ~(gen-object-access-validation-error obj-sym "cljs instance")
+       (goog/isFunction ~obj-sym) ~(gen-object-access-validation-error obj-sym "function")
+       ; note: it makes sense to use arrays as target objects, selectors can use numeric indices
        :else true)
      true))
 
