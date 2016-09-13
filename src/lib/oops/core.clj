@@ -147,7 +147,7 @@
   (if (config/diagnostics?)
     `(cond
        (cljs.core/empty? ~path-sym)
-       (report-runtime-warning ~(runtime-message :dynamic-empty-selector-access) nil))))
+       (report-runtime-warning ~(runtime-message :empty-selector-access) nil))))
 
 (defn gen-checked-build-path [selector-sym]
   (debug-assert (symbol? selector-sym))

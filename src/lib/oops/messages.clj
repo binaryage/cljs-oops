@@ -22,7 +22,7 @@
 (defmethod runtime-message :invalid-selector [_type]
   (post-process-error-message "Invalid selector"))
 
-(defmethod runtime-message :dynamic-empty-selector-access [_type]
+(defmethod runtime-message :empty-selector-access [_type]
   (post-process-error-message (str "Accessing target object with empty selector")))
 
 ; -- compile-time error/warning messages (in hooked cljs compiler) ----------------------------------------------------------
