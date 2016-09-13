@@ -1,10 +1,8 @@
 (ns oops.main
   (:require [cljs.test :refer-macros [deftest testing is are run-tests use-fixtures]]
-            [clojure.string :as string]
             [oops.core :refer [oget oset! ocall! oapply! ocall oapply
                                oget+ oset!+ ocall!+ oapply!+ ocall+ oapply+]]
             [oops.config :refer [with-runtime-config with-child-factory]]
-            [oops.schema :as schema]
             [oops.tools
              :refer [with-captured-console]
              :refer-macros [init-test!
@@ -86,14 +84,7 @@
     (when-not-advanced-mode
       (testing "with {:error-reporting-mode :console} object access validation should report errors to console"
         (with-runtime-config {:error-reporting :console}
-          (let [recorder (atom [""])
-                expected-warnings "
-ERROR: (\"Oops, Unexpected object value (nil)\" {:obj nil})
-ERROR: (\"Oops, Unexpected object value (undefined)\" {:obj nil})
-ERROR: (\"Oops, Unexpected object value (string)\" {:obj \"s\"})
-ERROR: (\"Oops, Unexpected object value (number)\" {:obj 42})
-ERROR: (\"Oops, Unexpected object value (boolean)\" {:obj true})
-ERROR: (\"Oops, Unexpected object value (boolean)\" {:obj false})"]
+          (let [recorder (atom [])]
             (with-console-recording recorder
               (are [o] (= (oget o "key") nil)
                 nil
@@ -102,14 +93,17 @@ ERROR: (\"Oops, Unexpected object value (boolean)\" {:obj false})"]
                 42
                 true
                 false))
-            (is (= (string/join "\n" @recorder) expected-warnings)))
+            (is (= @recorder ["ERROR: (\"Oops, Unexpected object value (nil)\" {:obj nil})"
+                              "ERROR: (\"Oops, Unexpected object value (undefined)\" {:obj nil})"
+                              "ERROR: (\"Oops, Unexpected object value (string)\" {:obj \"s\"})"
+                              "ERROR: (\"Oops, Unexpected object value (number)\" {:obj 42})"
+                              "ERROR: (\"Oops, Unexpected object value (boolean)\" {:obj true})"
+                              "ERROR: (\"Oops, Unexpected object value (boolean)\" {:obj false})"])))
           ; make sure we don't print multiple errors on subsequent missing keys...
-          (let [recorder (atom [""])
-                expected-warnings "
-ERROR: (\"Oops, Unexpected object value (undefined)\" {:obj nil})"]
+          (let [recorder (atom [])]
             (with-console-recording recorder
               (is (= (oget #js {:k1 #js {}} "k1" "k2" "k3") nil)))
-            (is (= (string/join "\n" @recorder) expected-warnings))))))
+            (is (= @recorder ["ERROR: (\"Oops, Unexpected object value (undefined)\" {:obj nil})"]))))))
     (when-not-advanced-mode
       (testing "with {:error-reporting-mode false} object access validation should be elided"
         (with-runtime-config {:error-reporting false}
@@ -155,15 +149,14 @@ ERROR: (\"Oops, Unexpected object value (undefined)\" {:obj nil})"]
           "\\.\\\\." "x")))
     (when-not-advanced-mode
       (testing "dynamic empty selector access in oget"
-        (let [recorder (atom [""])]
+        (let [recorder (atom [])]
           (with-console-recording recorder
             (oget+ (js-obj) (identity nil))
             (oget+ (js-obj) (identity []))
             (oget+ (js-obj) (identity [[] []])))
-          (is (= (string/join "\n" @recorder) "
-WARN: (\"Oops, Accessing target object with empty selector\" nil)
-WARN: (\"Oops, Accessing target object with empty selector\" nil)
-WARN: (\"Oops, Accessing target object with empty selector\" nil)")))))
+          (is (= @recorder ["WARN: (\"Oops, Accessing target object with empty selector\" nil)"
+                            "WARN: (\"Oops, Accessing target object with empty selector\" nil)"
+                            "WARN: (\"Oops, Accessing target object with empty selector\" nil)"])))))
     (testing "oget corner cases"
       ; TODO
       )))
