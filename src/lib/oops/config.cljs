@@ -24,14 +24,20 @@
 
 ; -- icing ------------------------------------------------------------------------------------------------------------------
 
+(defn get-config-key [key & [config]]
+  (key (or config (get-current-runtime-config))))
+
 (defn get-error-reporting [& [config]]
-  (:error-reporting (or config (get-current-runtime-config))))
+  (get-config-key :error-reporting config))
 
 (defn get-warning-reporting [& [config]]
-  (:warning-reporting (or config (get-current-runtime-config))))
+  (get-config-key :warning-reporting config))
+
+(defn get-suppress-reporting [& [config]]
+  (get-config-key :suppress-reporting config))
 
 (defn get-child-factory [& [config]]
-  (:child-factory (or config (get-current-runtime-config))))
+  (get-config-key :child-factory config))
 
 (defn set-child-factory! [new-factory-fn]
   (update-current-runtime-config! {:child-factory new-factory-fn}))

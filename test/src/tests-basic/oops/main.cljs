@@ -4,7 +4,7 @@
                                oget+ oset!+ ocall!+ oapply!+ ocall+ oapply+]]
             [oops.config :refer [with-runtime-config with-child-factory]]
             [oops.tools
-             :refer [with-captured-console]
+             :refer [with-captured-console presume-runtime-config]
              :refer-macros [init-test!
                             runonce
                             when-advanced-mode when-not-advanced-mode
@@ -157,6 +157,16 @@
           (is (= @recorder ["WARN: (\"Oops, Accessing target object with empty selector\" nil)"
                             "WARN: (\"Oops, Accessing target object with empty selector\" nil)"
                             "WARN: (\"Oops, Accessing target object with empty selector\" nil)"])))))
+    (when-not-advanced-mode
+      (testing "dynamic empty selector access error with :empty-selector-access :error"
+        (presume-runtime-config {:error-reporting :throw})
+        (with-runtime-config {:empty-selector-access :error}
+          (is (thrown-with-msg? js/Error #"Accessing target object with empty selector" (oget+ (js-obj) (identity nil)))))))
+    (when-not-advanced-mode
+      (testing "dynamic empty selector access error with :empty-selector-access false"
+        (with-runtime-config {:empty-selector-access false}
+          (let [o (js-obj)]
+            (is o (oget+ o (identity nil)))))))
     (testing "oget corner cases"
       ; TODO
       )))

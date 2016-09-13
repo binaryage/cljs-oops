@@ -1,6 +1,7 @@
 (ns oops.core
   (:require-macros [oops.core :refer [report-runtime-error-impl
                                       report-runtime-warning-impl
+                                      report-if-needed-dynamically-impl
                                       punch-key-dynamically-impl
                                       validate-object-dynamically-impl
                                       build-path-dynamically-impl
@@ -22,6 +23,9 @@
 
 (defn ^:dynamic report-runtime-warning [msg data]
   (report-runtime-warning-impl msg data))
+
+(defn ^:dynnamic report-if-needed-dynamically [msg-id msg & [info]]
+  (report-if-needed-dynamically-impl msg-id msg info))
 
 ; -- runtime support for macros ---------------------------------------------------------------------------------------------
 

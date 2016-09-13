@@ -1,6 +1,8 @@
 (ns oops.tools
   (:require-macros [oops.tools])
-  (:require [devtools.core]))
+  (:require [cljs.test :refer-macros [deftest testing is are run-tests use-fixtures]]
+            [oops.config :as oops-config]
+            [devtools.core]))
 
 (defonce console-recorders (atom []))
 (defonce original-console-api (atom nil))
@@ -53,3 +55,7 @@
   (start-console-capture!)
   (f)
   (stop-console-capture!))
+
+(defn presume-runtime-config [config]
+  (let [runtime-config (select-keys (oops-config/get-current-runtime-config) (keys config))]
+    (is (= runtime-config config))))

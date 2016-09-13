@@ -21,13 +21,17 @@
         :error (compiler/error! type info)
         (false nil) nil))))
 
+(defn gen-report-if-needed [msg-id runtime-info & args]
+  (debug-assert (keyword? msg-id))
+  `(report-if-needed-dynamically ~msg-id ~(apply runtime-message msg-id args) ~runtime-info))
+
 (defn gen-selector-list [items]
   `(cljs.core/array ~@items))
 
 (defn gen-object-access-validation-error [obj-sym flavor]
   (debug-assert (symbol? obj-sym))
   `(do
-     (report-runtime-error ~(runtime-message :unexpected-object-value flavor) {:obj ~obj-sym})
+     ~(gen-report-if-needed :unexpected-object-value `{:obj ~obj-sym} flavor)
      false))
 
 (defn gen-dynamic-object-access-validation [obj-sym mode-sym]
@@ -129,11 +133,12 @@
 
 (defn gen-dynamic-selector-validation [selector-sym]
   (debug-assert (symbol? selector-sym))
-  `(if-not (clojure.spec/valid? :oops.sdefs/obj-selector ~selector-sym)
-     (let [explanation# (clojure.spec/explain-data :oops.sdefs/obj-selector ~selector-sym)]
-       (report-runtime-error ~(runtime-message :invalid-selector) {:selector    ~selector-sym
-                                                                   :explanation explanation#}))
-     true))
+  (let [explanation-sym (gensym "explanation")]
+    `(if-not (clojure.spec/valid? :oops.sdefs/obj-selector ~selector-sym)
+       (let [~explanation-sym (clojure.spec/explain-data :oops.sdefs/obj-selector ~selector-sym)]
+         ~(gen-report-if-needed :invalid-selector `{:selector    ~selector-sym
+                                                    :explanation ~explanation-sym}))
+       true)))
 
 (defn gen-dynamic-selector-validation-wrapper [selector-sym body]
   (debug-assert (symbol? selector-sym))
@@ -147,7 +152,7 @@
   (if (config/diagnostics?)
     `(cond
        (cljs.core/empty? ~path-sym)
-       (report-runtime-warning ~(runtime-message :empty-selector-access) nil))))
+       ~(gen-report-if-needed :empty-selector-access nil))))
 
 (defn gen-checked-build-path [selector-sym]
   (debug-assert (symbol? selector-sym))
@@ -229,6 +234,9 @@
     `(do
        ~@body)))
 
+(defn gen-supress-reporting? [msg-id]
+  `(contains? (oops.config/get-suppress-reporting) ~msg-id))
+
 ; -- helper macros ----------------------------------------------------------------------------------------------------------
 
 (defmacro report-runtime-error-impl [msg data]
@@ -236,6 +244,16 @@
 
 (defmacro report-runtime-warning-impl [msg data]
   (gen-report-runtime-message :warning msg data))
+
+(defmacro report-if-needed-dynamically-impl [msg-id msg-sym info-sym]
+  (debug-assert (symbol? msg-sym))
+  (debug-assert (symbol? info-sym))
+  (if (config/diagnostics?)
+    `(if-not ~(gen-supress-reporting? msg-id)
+       (case (oops.config/get-config-key ~msg-id)
+         :warn (report-runtime-warning ~msg-sym ~info-sym)
+         :error (report-runtime-error ~msg-sym ~info-sym)
+         (false nil) nil))))
 
 (defmacro validate-object-dynamically-impl [obj-sym mode]
   (debug-assert (symbol? obj-sym))

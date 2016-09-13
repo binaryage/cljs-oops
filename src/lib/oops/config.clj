@@ -3,22 +3,32 @@
             [oops.state]))
 
 (def default-config                                                                                                           ; falsy below means 'nil' or 'false'
-  {:diagnostics                  true                                                                                         ; #{true falsy}
-   :key-get                      :core                                                                                        ; #{:core :goog}
-   :key-set                      :core                                                                                        ; #{:core :goog}
+  {; -- compiler config -----------------------------------------------------------------------------------------------------
+   :diagnostics                     true                                                                                      ; #{true falsy}
+   :key-get                         :core                                                                                     ; #{:core :goog}
+   :key-set                         :core                                                                                     ; #{:core :goog}
 
    ; compile-time warnings/errors
-   :dynamic-property-access      :warn                                                                                        ; #{:error :warn falsy}
-   :static-nil-target-object     :warn
-   :static-empty-selector-access :warn
+   :dynamic-property-access         :warn                                                                                     ; #{:error :warn falsy}
+   :static-nil-target-object        :warn                                                                                     ; #{:error :warn falsy}
+   :static-empty-selector-access    :warn                                                                                     ; #{:error :warn falsy}
 
-   ; runtime config
-   :runtime-error-reporting      :throw                                                                                       ; #{:throw :console falsy}
-   :runtime-warning-reporting    :console                                                                                     ; #{:throw :console falsy}
-   :runtime-child-factory        :js-obj                                                                                      ; #{:js-obj :js-array}
+   ; -- runtime config ------------------------------------------------------------------------------------------------------
 
+   ; run-time warnings/errors
+   :runtime-unexpected-object-value :error                                                                                    ; #{:error :warn falsy}
+   :runtime-invalid-selector        :error                                                                                    ; #{:error :warn falsy}
+   :runtime-empty-selector-access   :warn                                                                                     ; #{:error :warn falsy}
+
+   ; reporting modes
+   :runtime-error-reporting         :throw                                                                                    ; #{:throw :console falsy}
+   :runtime-warning-reporting       :console                                                                                  ; #{:throw :console falsy}
+
+   :runtime-child-factory           :js-obj                                                                                   ; #{:js-obj :js-array}
+
+   ; -- development ---------------------------------------------------------------------------------------------------------
    ; enable debug if you want to debug/hack oops itself
-   :debug                        false                                                                                        ; #{true falsy}
+   :debug                           false                                                                                     ; #{true falsy}
    })
 
 (def advanced-mode-compiler-config-overrides
