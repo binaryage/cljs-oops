@@ -8,57 +8,96 @@
 //    :pseudo-names true}
 // ----------------------------------------------------------------------------------------------------------
 // COMPILER STDERR:
-//   WARNING: Oops, Unexpected dynamic property access at line 11 test/src/arena/oops/arena/warnings.cljs
-//   WARNING: Oops, Unexpected nil object at line 14 test/src/arena/oops/arena/warnings.cljs
+//   WARNING: Oops, Unexpected dynamic property access at line 15 test/src/arena/oops/arena/warnings.cljs
+//   WARNING: Oops, Unexpected nil target object at line 18 test/src/arena/oops/arena/warnings.cljs
+//   WARNING: Oops, Accessing target object with empty selector at line 21 test/src/arena/oops/arena/warnings.cljs
+//   WARNING: Oops, Accessing target object with empty selector at line 22 test/src/arena/oops/arena/warnings.cljs
+//   WARNING: Oops, Accessing target object with empty selector at line 23 test/src/arena/oops/arena/warnings.cljs
 // ----------------------------------------------------------------------------------------------------------
 
 // SNIPPET #1:
-//   (oget <JSValue#1> (identity "key"))
+//   => no warnings
+//   (let [o <JSValue#1>] (oget o "key"))
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-var _STAR_console_reporter_STAR_16 = oops.state._STAR_console_reporter_STAR_;
+var o_1 = {
+  "key": "val"
+};
+var _STAR_console_reporter_STAR_26 = oops.state._STAR_console_reporter_STAR_;
+oops.state._STAR_console_reporter_STAR_ = function() {
+  arguments[0].apply(console, Array.prototype.slice.call(arguments, 1))
+};
+try {
+  var obj_27 = o_1;
+  if (oops.core.validate_object_dynamically.call(null, obj_27, 0)) obj_27["key"];
+  else;
+} finally {
+  oops.state._STAR_console_reporter_STAR_ = _STAR_console_reporter_STAR_26
+}
+
+// SNIPPET #2:
+//   => dynamic property access
+//   (oget <JSValue#2> (identity "key"))
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+var _STAR_console_reporter_STAR_28 = oops.state._STAR_console_reporter_STAR_;
 oops.state._STAR_console_reporter_STAR_ = function() {
   arguments[0].apply(console, Array.prototype.slice.call(arguments, 1))
 };
 try {
   oops.core.get_selector_dynamically.call(null, {}, cljs.core.identity.call(null, "key"))
 } finally {
-  oops.state._STAR_console_reporter_STAR_ = _STAR_console_reporter_STAR_16
-}
-
-// SNIPPET #2:
-//   (oget nil "k1" "k2" "k3")
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-var _STAR_console_reporter_STAR_17 = oops.state._STAR_console_reporter_STAR_;
-oops.state._STAR_console_reporter_STAR_ = function() {
-  arguments[0].apply(console, Array.prototype.slice.call(arguments, 1))
-};
-try {
-  var obj_18 = null;
-  var obj_19 = oops.core.validate_object_dynamically.call(null, obj_18, 0) ? obj_18["k1"] : null;
-  var obj_20 = oops.core.validate_object_dynamically.call(null, obj_19, 0) ? obj_19["k2"] : null;
-  if (oops.core.validate_object_dynamically.call(null, obj_20, 0)) obj_20["k3"];
-  else;
-} finally {
-  oops.state._STAR_console_reporter_STAR_ = _STAR_console_reporter_STAR_17
+  oops.state._STAR_console_reporter_STAR_ = _STAR_console_reporter_STAR_28
 }
 
 // SNIPPET #3:
-//   (let [o <JSValue#2>] (oget o "key"))
+//   => static nil target object
+//   (oget nil "k1" "k2" "k3")
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-var o_11 = {
-  "key": "val"
-};
-var _STAR_console_reporter_STAR_21 = oops.state._STAR_console_reporter_STAR_;
+var _STAR_console_reporter_STAR_29 = oops.state._STAR_console_reporter_STAR_;
 oops.state._STAR_console_reporter_STAR_ = function() {
   arguments[0].apply(console, Array.prototype.slice.call(arguments, 1))
 };
 try {
-  var obj_22 = o_11;
-  if (oops.core.validate_object_dynamically.call(null, obj_22, 0)) obj_22["key"];
+  var obj_30 = null;
+  var obj_31 = oops.core.validate_object_dynamically.call(null, obj_30, 0) ? obj_30["k1"] : null;
+  var obj_32 = oops.core.validate_object_dynamically.call(null, obj_31, 0) ? obj_31["k2"] : null;
+  if (oops.core.validate_object_dynamically.call(null, obj_32, 0)) obj_32["k3"];
   else;
 } finally {
-  oops.state._STAR_console_reporter_STAR_ = _STAR_console_reporter_STAR_21
+  oops.state._STAR_console_reporter_STAR_ = _STAR_console_reporter_STAR_29
+}
+
+// SNIPPET #4:
+//   => static empty selector access in oget
+//   (oget (js-obj))
+//   (oget (js-obj []))
+//   (oget (js-obj [[] []]))
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+var _STAR_console_reporter_STAR_33 = oops.state._STAR_console_reporter_STAR_;
+oops.state._STAR_console_reporter_STAR_ = function() {
+  arguments[0].apply(console, Array.prototype.slice.call(arguments, 1))
+};
+try {} finally {
+  oops.state._STAR_console_reporter_STAR_ = _STAR_console_reporter_STAR_33
+}
+var _STAR_console_reporter_STAR_34 = oops.state._STAR_console_reporter_STAR_;
+oops.state._STAR_console_reporter_STAR_ = function() {
+  arguments[0].apply(console, Array.prototype.slice.call(arguments, 1))
+};
+try {
+  var obj35 = {}
+} finally {
+  oops.state._STAR_console_reporter_STAR_ = _STAR_console_reporter_STAR_34
+}
+var _STAR_console_reporter_STAR_36 = oops.state._STAR_console_reporter_STAR_;
+oops.state._STAR_console_reporter_STAR_ = function() {
+  arguments[0].apply(console, Array.prototype.slice.call(arguments, 1))
+};
+try {
+  var obj37 = {}
+} finally {
+  oops.state._STAR_console_reporter_STAR_ = _STAR_console_reporter_STAR_36
 };

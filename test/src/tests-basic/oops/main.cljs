@@ -9,7 +9,7 @@
              :refer [with-captured-console]
              :refer-macros [init-test!
                             runonce
-                            when-advanced-mode when-none-mode
+                            when-advanced-mode when-not-advanced-mode
                             under-phantom
                             under-chrome
                             if-phantom
@@ -53,7 +53,7 @@
         (identity "?a") nil
         (identity "?nested.nested-key1") "nk1"
         (identity "?nested.?missing.?xxx") nil))
-    (when-none-mode
+    (when-not-advanced-mode
       (testing "invalid selectors"
         (are [input] (thrown-with-msg? js/Error #"Invalid selector" (oget+ sample-obj (make-selector-dynamically input)))
           'sym
@@ -149,6 +149,17 @@ ERROR: (\"Oops, Unexpected object value (undefined)\" {:obj nil})"]
           "prop\\.1.k3\\..some" "val"
           "\\.\\..\\.x\\." "."
           "\\.\\\\." "x")))
+    (when-not-advanced-mode
+      (testing "dynamic empty selector access in oget"
+        (let [recorder (atom [""])]
+          (with-console-recording recorder
+            (oget+ (js-obj) (identity nil))
+            (oget+ (js-obj) (identity []))
+            (oget+ (js-obj) (identity [[] []])))
+          (is (= (string/join "\n" @recorder) "
+WARN: (\"Oops, Accessing target object with empty selector\" nil)
+WARN: (\"Oops, Accessing target object with empty selector\" nil)
+WARN: (\"Oops, Accessing target object with empty selector\" nil)")))))
     (testing "oget corner cases"
       ; TODO
       )))

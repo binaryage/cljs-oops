@@ -76,9 +76,9 @@
                                                    :output-dir      "test/resources/_compiled/basic_onone"
                                                    :asset-path      "_compiled/basic_onone"
                                                    :external-config {:devtools/config {:dont-detect-custom-formatters true}
-                                                                     :oops/config     {:debug                   true
-                                                                                       :dynamic-property-access false
-                                                                                       :static-nil-object       false}}
+                                                                     :oops/config     {:debug                    true
+                                                                                       :dynamic-property-access  false
+                                                                                       :static-nil-target-object false}}
                                                    :main            oops.runner
                                                    :optimizations   :none}
                                     :figwheel     true}}}}

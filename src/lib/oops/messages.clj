@@ -6,7 +6,8 @@
 (defn register-messages! [table]
   (assoc table
     :dynamic-property-access true
-    :static-nil-object true))
+    :static-nil-target-object true
+    :static-empty-selector-access true))
 
 (defn post-process-error-message [msg]
   (str "Oops, " msg))
@@ -21,10 +22,18 @@
 (defmethod runtime-message :invalid-selector [_type]
   (post-process-error-message "Invalid selector"))
 
+(defmethod runtime-message :dynamic-empty-selector-access [_type]
+  (post-process-error-message (str "Accessing target object with empty selector")))
+
 ; -- compile-time error/warning messages (in hooked cljs compiler) ----------------------------------------------------------
 
 (defmethod ana/error-message :dynamic-property-access [_type _info]
   (post-process-error-message (str "Unexpected dynamic property access")))
 
-(defmethod ana/error-message :static-nil-object [_type _info]
-  (post-process-error-message (str "Unexpected nil object")))
+(defmethod ana/error-message :static-nil-target-object [_type _info]
+  (post-process-error-message (str "Unexpected nil target object")))
+
+(defmethod ana/error-message :static-empty-selector-access [_type _info]
+  (post-process-error-message (str "Accessing target object with empty selector")))
+
+; WARNING: when adding a new method here, don't forget to update register-messages! as well

@@ -83,7 +83,7 @@
   (if (advanced-mode?)
     `(do ~@body)))
 
-(defmacro when-none-mode [& body]
+(defmacro when-not-advanced-mode [& body]
   (if-not (advanced-mode?)
     `(do ~@body)))
 

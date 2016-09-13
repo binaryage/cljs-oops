@@ -1,7 +1,7 @@
 // COMPILER CONFIG:
 //   arena/error_static_nil_object.cljs [dev]
 //   {:elide-asserts false,
-//    :external-config {:oops/config {:static-nil-object :error}},
+//    :external-config {:oops/config {:static-nil-target-object :error}},
 //    :main oops.arena.error-static-nil-object,
 //    :optimizations :whitespace,
 //    :output-dir
@@ -12,6 +12,6 @@
 // ----------------------------------------------------------------------------------------------------------
 // COMPILER STDERR:
 //   THROWN: clojure.lang.ExceptionInfo: failed compiling file:test/src/arena/oops/arena/error_static_nil_object.cljs
-//   Caused by: clojure.lang.ExceptionInfo: Oops, Unexpected nil object at line 8 test/src/arena/oops/arena/error_static_nil_object.cljs
+//   Caused by: clojure.lang.ExceptionInfo: Oops, Unexpected nil target object at line 8 test/src/arena/oops/arena/error_static_nil_object.cljs
 // ----------------------------------------------------------------------------------------------------------
 // NO GENERATED CODE
