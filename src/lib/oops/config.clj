@@ -19,6 +19,7 @@
    :runtime-unexpected-object-value :error                                                                                    ; #{:error :warn falsy}
    :runtime-invalid-selector        :error                                                                                    ; #{:error :warn falsy}
    :runtime-empty-selector-access   :warn                                                                                     ; #{:error :warn falsy}
+   :runtime-missing-object-key      :warn                                                                                     ; #{:error :warn falsy}
 
    ; reporting modes
    :runtime-error-reporting         :throw                                                                                    ; #{:throw :console falsy}

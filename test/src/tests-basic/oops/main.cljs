@@ -23,20 +23,22 @@
   (let [sample-obj #js {:key               "val"
                         "@#$%fancy key^&*" "fancy-val"
                         "nested"           #js {:nested-key1  "nk1"
-                                                "nested-key2" 2}}
-        make-selector-dynamically (fn [path] path)]
+                                                "nested-key2" 2}}]
     (testing "simple static get"
-      (are [key expected] (= (oget sample-obj key) expected)
-        "non-existent" nil
-        "key" "val"
-        "@#$%fancy key^&*" "fancy-val"
-        ["nested" "nested-key2"] 2))
+      (with-runtime-config {:missing-object-key false}
+        (are [key expected] (= (oget sample-obj key) expected)
+          "non-existent" nil
+          "key" "val"
+          "@#$%fancy key^&*" "fancy-val"
+          ["nested" "nested-key2"] 2)))
     (testing "simple dynamic get"
-      (is (= (oget+ sample-obj (make-selector-dynamically "key")) "val"))
-      (is (= (oget+ sample-obj (make-selector-dynamically "xxx")) nil))
-      (is (= (oget+ sample-obj (make-selector-dynamically "nested") "nested-key1") "nk1"))
-      (is (= (oget+ sample-obj (make-selector-dynamically ["nested" "nested-key1"])) "nk1"))
-      (is (= (oget+ sample-obj [(make-selector-dynamically "nested") "nested-key1"]) "nk1")))
+      (with-runtime-config {:missing-object-key false}
+        (are [dyn-selector expected] (= (oget+ sample-obj dyn-selector) expected)
+          (identity "key") "val"
+          (identity "xxx") nil
+          (list (identity "nested") "nested-key1") "nk1"
+          (identity ["nested" "nested-key1"]) "nk1"
+          [(identity "nested") "nested-key1"] "nk1")))
     (testing "static soft get"
       (are [selector expected] (= (oget sample-obj selector) expected)
         ".?key" "val"
@@ -53,15 +55,15 @@
         (identity "?nested.?missing.?xxx") nil))
     (when-not-advanced-mode
       (testing "invalid selectors"
-        (are [input] (thrown-with-msg? js/Error #"Invalid selector" (oget+ sample-obj (make-selector-dynamically input)))
+        (are [input] (thrown-with-msg? js/Error #"Invalid selector" (oget+ sample-obj (identity input)))
           'sym
           identity
           0
           #js {})))
     (when-not-advanced-mode
       (testing "dynamic get via js array"
-        (is (= (oget+ sample-obj (make-selector-dynamically #js ["nested" "nested-key1"])) "nk1"))
-        (is (= (oget+ sample-obj (make-selector-dynamically #js ["nested" :nested-key1])) "nk1"))))
+        (is (= (oget+ sample-obj (identity #js ["nested" "nested-key1"])) "nk1"))
+        (is (= (oget+ sample-obj (identity #js ["nested" :nested-key1])) "nk1"))))
     (when-not-advanced-mode
       (testing "object access validation should throw by default"
         (are [o msg] (thrown-with-msg? js/Error msg (oget o "key"))
@@ -85,13 +87,13 @@
             ; js/Symbol is not available under phantom and we cannot really test it even under Chrome due to CLJS-1631
             ; TODO: uncomment this later
             ; (js/Symbol "mysymbol") #"Unexpected object value \(non-object\)"
-            nil #"Unexpected object value \(nil\)"))
+            nil #"Unexpected object value \(nil\)"))))
+    (when-not-advanced-mode
+      (testing "with {:error-reporting-mode false} object access validation should be elided"
         (with-runtime-config {:error-reporting false}
-          (under-phantom
-            (are [o msg] (thrown-with-msg? js/TypeError msg (oget o "key"))
-              nil #"null is not an object"
-              js/undefined #"undefined is not an object"))
           (are [o] (= (oget o "key") nil)
+            nil
+            js/undefined
             "s"
             42
             true
@@ -122,20 +124,8 @@
           ; make sure we don't print multiple errors on subsequent missing keys...
           (let [recorder (atom [])]
             (with-console-recording recorder
-              (is (= (oget #js {:k1 #js {}} "k1" "k2" "k3") nil)))
-            (is (= @recorder ["ERROR: (\"Oops, Unexpected object value (undefined) on key path 'k1.k2'\" {:path \"k1.k2\", :flavor \"undefined\", :obj #js {:k1 #js {}}})"]))))))
-    (when-not-advanced-mode
-      (testing "with {:error-reporting-mode false} object access validation should be elided"
-        (with-runtime-config {:error-reporting false}
-          (under-phantom
-            (are [o msg] (thrown-with-msg? js/TypeError msg (oget o "key"))
-              nil #"null is not an object"
-              js/undefined #"undefined is not an object"))
-          (are [o] (= (oget o "key") nil)
-            "s"
-            42
-            true
-            false))))
+              (is (= (oget #js {:k1 #js {"k2" nil}} "k1" "k2" "k3") nil)))
+            (is (= @recorder ["ERROR: (\"Oops, Unexpected object value (nil) on key path 'k1.k2'\" {:path \"k1.k2\", :flavor \"nil\", :obj #js {:k1 #js {:k2 nil}}})"]))))))
     (when-advanced-mode                                                                                                       ; advanced optimizations
       (testing "object access validation should crash or silently fail in advanced mode (no diagnostics)"
         (when-not-compiler-config {:key-get :goog}
@@ -203,6 +193,31 @@
         (with-runtime-config {:empty-selector-access false}
           (let [o (js-obj)]
             (is o (oget+ o (identity nil)))))))
+    (when-not-advanced-mode
+      (testing "warning when accessing missing key"
+        (presume-runtime-config {:warning-reporting  :console
+                                 :missing-object-key :warn})
+        (let [recorder (atom [])]
+          (with-console-recording recorder
+            (let [o (js-obj "k1" (js-obj "k2" (js-obj)))]
+              (oget o "k1.k2.k3")
+              (oget+ o (identity "k1.k2.k3"))
+              (oget o "kx")
+              (oget o "k1" "kx")))
+          (is (= @recorder ["WARN: (\"Oops, Missing expected object key 'k3' on key path 'k1.k2.k3'\" {:path \"k1.k2.k3\", :key \"k3\", :obj #js {:k1 #js {:k2 #js {}}}})"
+                            "WARN: (\"Oops, Missing expected object key 'k3' on key path 'k1.k2.k3'\" {:path \"k1.k2.k3\", :key \"k3\", :obj #js {:k1 #js {:k2 #js {}}}})"
+                            "WARN: (\"Oops, Missing expected object key 'kx'\" {:path \"kx\", :key \"kx\", :obj #js {:k1 #js {:k2 #js {}}}})"
+                            "WARN: (\"Oops, Missing expected object key 'kx' on key path 'k1.kx'\" {:path \"k1.kx\", :key \"kx\", :obj #js {:k1 #js {:k2 #js {}}}})"])))))
+    (when-not-advanced-mode
+      (testing "accessing missing key with {:missing-object-key :error} "
+        (presume-runtime-config {:error-reporting :throw})
+        (with-runtime-config {:missing-object-key :error}
+          (let [o (js-obj "k1" (js-obj "k2" (js-obj)))]
+            (are [sel err] (thrown-with-msg? js/Error err (oget+ o sel))
+              "k1.k2.k3" #"Missing expected object key 'k3' on key path 'k1.k2.k3'"
+              (identity "k1.k2.k3") #"Missing expected object key 'k3' on key path 'k1.k2.k3'"
+              "kx" #"Missing expected object key 'kx'"
+              ["k1" "kx"] #"Missing expected object key 'kx' on key path 'k1.kx'")))))
     (testing "oget corner cases"
       ; TODO
       )))

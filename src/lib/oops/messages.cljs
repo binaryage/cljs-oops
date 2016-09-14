@@ -15,6 +15,12 @@
     (post-process-error-message (str "Unexpected object value (" flavor ")"
                                      (if-not (empty? path) (str " on key path '" path "'"))))))
 
+(defmethod runtime-message :missing-object-key [_type info]
+  (let [{:keys [key path]} info]
+    (post-process-error-message (str "Missing expected object key '" key "'"
+                                     (if-not (or (empty? path) (= path key))
+                                       (str " on key path '" path "'"))))))
+
 (defmethod runtime-message :invalid-selector [_type]
   (post-process-error-message "Invalid selector"))
 

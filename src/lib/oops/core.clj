@@ -31,28 +31,26 @@
   (debug-assert (symbol? obj-sym))
   `(do
      ~(gen-report-if-needed :unexpected-object-value `{:obj    (oops.state/get-current-obj)
-                                                       :flavor ~flavor
-                                                       :path   (oops.state/get-current-key-path-str)})
+                                                       :path   (oops.state/get-current-key-path-str)
+                                                       :flavor ~flavor})
      false))
 
 (defn gen-dynamic-object-access-validation [obj-sym mode-sym]
   (debug-assert (symbol? obj-sym))
   (debug-assert (symbol? mode-sym))
-  `(if (oops.config/get-error-reporting)
-     (cond
-       (and (= ~mode-sym ~dot-access) (cljs.core/undefined? ~obj-sym)) ~(gen-object-access-validation-error obj-sym "undefined")
-       (and (= ~mode-sym ~dot-access) (cljs.core/nil? ~obj-sym)) ~(gen-object-access-validation-error obj-sym "nil")
-       (goog/isBoolean ~obj-sym) ~(gen-object-access-validation-error obj-sym "boolean")
-       (goog/isNumber ~obj-sym) ~(gen-object-access-validation-error obj-sym "number")
-       (goog/isString ~obj-sym) ~(gen-object-access-validation-error obj-sym "string")
-       (not (goog/isObject ~obj-sym)) ~(gen-object-access-validation-error obj-sym "non-object")
-       (goog/isDateLike ~obj-sym) ~(gen-object-access-validation-error obj-sym "date-like")
-       (oops.helpers/cljs-type? ~obj-sym) ~(gen-object-access-validation-error obj-sym "cljs type")
-       (oops.helpers/cljs-instance? ~obj-sym) ~(gen-object-access-validation-error obj-sym "cljs instance")
-       (goog/isFunction ~obj-sym) ~(gen-object-access-validation-error obj-sym "function")
-       ; note: it makes sense to use arrays as target objects, selectors can use numeric indices
-       :else true)
-     true))
+  `(cond
+     (and (= ~mode-sym ~dot-access) (cljs.core/undefined? ~obj-sym)) ~(gen-object-access-validation-error obj-sym "undefined")
+     (and (= ~mode-sym ~dot-access) (cljs.core/nil? ~obj-sym)) ~(gen-object-access-validation-error obj-sym "nil")
+     (goog/isBoolean ~obj-sym) ~(gen-object-access-validation-error obj-sym "boolean")
+     (goog/isNumber ~obj-sym) ~(gen-object-access-validation-error obj-sym "number")
+     (goog/isString ~obj-sym) ~(gen-object-access-validation-error obj-sym "string")
+     (not (goog/isObject ~obj-sym)) ~(gen-object-access-validation-error obj-sym "non-object")
+     (goog/isDateLike ~obj-sym) ~(gen-object-access-validation-error obj-sym "date-like")
+     (oops.helpers/cljs-type? ~obj-sym) ~(gen-object-access-validation-error obj-sym "cljs type")
+     (oops.helpers/cljs-instance? ~obj-sym) ~(gen-object-access-validation-error obj-sym "cljs instance")
+     (goog/isFunction ~obj-sym) ~(gen-object-access-validation-error obj-sym "function")
+     ; note: it makes sense to use arrays as target objects, selectors can use numeric indices
+     :else true))
 
 (defn gen-key-get [obj key]
   (case (config/key-get-mode)
@@ -64,6 +62,19 @@
     :core `(cljs.core/aset ~obj ~key ~val)                                                                                    ; => `(~'js* "(~{}[~{}] = ~{})" ~obj ~key ~val)
     :goog `(goog.object/set ~obj ~key ~val)))
 
+(defn gen-checked-key-get [obj-sym mode key]
+  (debug-assert (symbol? obj-sym))
+  (let [key-get-code (gen-key-get obj-sym key)]
+    (if (config/diagnostics?)
+      `(do
+         (if (and (= ~mode ~dot-access)
+                  (not (goog.object/containsKey ~obj-sym ~key)))
+           ~(gen-report-if-needed :missing-object-key `{:obj  (oops.state/get-current-obj)
+                                                        :key  ~key
+                                                        :path (oops.state/get-current-key-path-str)}))
+         ~key-get-code)
+      key-get-code)))
+
 (defn gen-dynamic-object-access-validation-wrapper [obj-sym mode key body]
   (debug-assert (symbol? obj-sym))
   (if (config/diagnostics?)
@@ -74,7 +85,7 @@
 
 (defn gen-instrumented-key-get [obj-sym key mode]
   (debug-assert (symbol? obj-sym))
-  (gen-dynamic-object-access-validation-wrapper obj-sym mode key (gen-key-get obj-sym key)))
+  (gen-dynamic-object-access-validation-wrapper obj-sym mode key (gen-checked-key-get obj-sym mode key)))
 
 (defn gen-instrumented-key-set [obj-sym key val mode]
   (debug-assert (symbol? obj-sym))
