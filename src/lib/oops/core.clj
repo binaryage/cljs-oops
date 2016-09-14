@@ -237,6 +237,7 @@
 (defn gen-runtime-diagnostics-context! [_form _env obj & body]
   (if (config/diagnostics?)
     `(binding [oops.state/*console-reporter* ~(list 'js* console-reporter-fn-template)                                        ; it is imporant to keep this inline so we get proper call-site location and line number
+               oops.state/*error-reported?* false
                oops.state/*current-key-path* (cljs.core/array)
                oops.state/*current-obj* ~obj]
        ~@body)
@@ -252,12 +253,15 @@
             (not (goog.object/containsKey ~obj-sym ~key)))
      ~(gen-report-if-needed :missing-object-key `{:obj  (oops.state/get-current-obj)
                                                   :key  ~key
-                                                  :path (oops.state/get-current-key-path-str)})))
+                                                  :path (oops.state/get-current-key-path-str)})
+     true))
 
 ; -- helper macros ----------------------------------------------------------------------------------------------------------
 
 (defmacro report-runtime-error-impl [msg data]
-  (gen-report-runtime-message :error msg data))
+  `(when-not (oops.state/was-error-reported?)                                                                                 ; we want to print only first error for single invocation
+     (oops.state/mark-error-reported!)
+     ~(gen-report-runtime-message :error msg data)))
 
 (defmacro report-runtime-warning-impl [msg data]
   (gen-report-runtime-message :warning msg data))
@@ -280,8 +284,8 @@
   `(when ~(gen-dynamic-object-access-validation obj-sym mode-sym)
      (oops.state/add-key-to-current-path! ~key-sym)
      (if ~check-key?
-       ~(gen-check-key-access obj-sym mode-sym key-sym))
-     true))
+       ~(gen-check-key-access obj-sym mode-sym key-sym)
+       true)))
 
 (defmacro build-path-dynamically-impl [selector-sym]
   (debug-assert (symbol? selector-sym))

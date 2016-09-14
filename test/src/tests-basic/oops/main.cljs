@@ -195,29 +195,29 @@
             (is o (oget+ o (identity nil)))))))
     (when-not-advanced-mode
       (testing "warning when accessing missing key"
-        (presume-runtime-config {:warning-reporting  :console
-                                 :missing-object-key :warn})
-        (let [recorder (atom [])]
-          (with-console-recording recorder
-            (let [o (js-obj "k1" (js-obj "k2" (js-obj)))]
-              (oget o "k1.k2.k3")
-              (oget+ o (identity "k1.k2.k3"))
-              (oget o "kx")
-              (oget o "k1" "kx")))
-          (is (= @recorder ["WARN: (\"Oops, Missing expected object key 'k3' on key path 'k1.k2.k3'\" {:path \"k1.k2.k3\", :key \"k3\", :obj #js {:k1 #js {:k2 #js {}}}})"
-                            "WARN: (\"Oops, Missing expected object key 'k3' on key path 'k1.k2.k3'\" {:path \"k1.k2.k3\", :key \"k3\", :obj #js {:k1 #js {:k2 #js {}}}})"
-                            "WARN: (\"Oops, Missing expected object key 'kx'\" {:path \"kx\", :key \"kx\", :obj #js {:k1 #js {:k2 #js {}}}})"
-                            "WARN: (\"Oops, Missing expected object key 'kx' on key path 'k1.kx'\" {:path \"k1.kx\", :key \"kx\", :obj #js {:k1 #js {:k2 #js {}}}})"])))))
+        (presume-runtime-config {:warning-reporting :console})
+        (with-runtime-config {:missing-object-key :warn}
+          (let [recorder (atom [])]
+            (with-console-recording recorder
+              (let [o (js-obj "k1" (js-obj "k2" (js-obj)))]
+                (oget o "k1.k2.k3")
+                (oget+ o (identity "k1.k2.k3"))
+                (oget o "kx")
+                (oget o "k1" "kx")))
+            (is (= @recorder ["WARN: (\"Oops, Missing expected object key 'k3' on key path 'k1.k2.k3'\" {:path \"k1.k2.k3\", :key \"k3\", :obj #js {:k1 #js {:k2 #js {}}}})"
+                              "WARN: (\"Oops, Missing expected object key 'k3' on key path 'k1.k2.k3'\" {:path \"k1.k2.k3\", :key \"k3\", :obj #js {:k1 #js {:k2 #js {}}}})"
+                              "WARN: (\"Oops, Missing expected object key 'kx'\" {:path \"kx\", :key \"kx\", :obj #js {:k1 #js {:k2 #js {}}}})"
+                              "WARN: (\"Oops, Missing expected object key 'kx' on key path 'k1.kx'\" {:path \"k1.kx\", :key \"kx\", :obj #js {:k1 #js {:k2 #js {}}}})"]))))))
     (when-not-advanced-mode
       (testing "accessing missing key with {:missing-object-key :error} "
-        (presume-runtime-config {:error-reporting :throw})
-        (with-runtime-config {:missing-object-key :error}
-          (let [o (js-obj "k1" (js-obj "k2" (js-obj)))]
-            (are [sel err] (thrown-with-msg? js/Error err (oget+ o sel))
-              "k1.k2.k3" #"Missing expected object key 'k3' on key path 'k1.k2.k3'"
-              (identity "k1.k2.k3") #"Missing expected object key 'k3' on key path 'k1.k2.k3'"
-              "kx" #"Missing expected object key 'kx'"
-              ["k1" "kx"] #"Missing expected object key 'kx' on key path 'k1.kx'")))))
+        (presume-runtime-config {:error-reporting    :throw
+                                 :missing-object-key :error})
+        (let [o (js-obj "k1" (js-obj "k2" (js-obj)))]
+          (are [sel err] (thrown-with-msg? js/Error err (oget+ o sel))
+            "k1.k2.k3" #"Missing expected object key 'k3' on key path 'k1.k2.k3'"
+            (identity "k1.k2.k3") #"Missing expected object key 'k3' on key path 'k1.k2.k3'"
+            "kx" #"Missing expected object key 'kx'"
+            ["k1" "kx"] #"Missing expected object key 'kx' on key path 'k1.kx'"))))
     (testing "oget corner cases"
       ; TODO
       )))

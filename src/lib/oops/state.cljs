@@ -3,6 +3,7 @@
                    [oops.debug :refer [debug-assert]]))
 
 (def ^:dynamic *console-reporter*)
+(def ^:dynamic *error-reported?*)
 (def ^:dynamic *current-obj*)
 (def ^:dynamic *current-key-path*)
 
@@ -19,3 +20,11 @@
 (defn get-current-key-path-str []
   (debug-assert *current-key-path*)
   (.join *current-key-path* "."))
+
+(defn was-error-reported? []
+  (debug-assert (boolean? *error-reported?*))
+  *error-reported?*)
+
+(defn mark-error-reported! []
+  (debug-assert (boolean? *error-reported?*))
+  (set! *error-reported?* true))
