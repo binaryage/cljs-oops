@@ -74,7 +74,7 @@
           identity #"Unexpected object value \(function\)"
           #inst "2000" #"Unexpected object value \(date-like\)"
           StringBufferWriter #"Unexpected object value \(cljs type\)"
-          IAtom #"Unexpected object value \(function\)"                                                                       ; we cannot recofnigze protocols as of 1.9.229
+          IAtom #"Unexpected object value \(function\)"                                                                       ; we cannot recognize protocols as of 1.9.229
           [] #"Unexpected object value \(cljs instance\)"
           :keyword #"Unexpected object value \(cljs instance\)"
           (atom "X") #"Unexpected object value \(cljs instance\)")
@@ -160,6 +160,22 @@
           "prop\\.1.k3\\..some" "val"
           "\\.\\..\\.x\\." "."
           "\\.\\\\." "x")))
+    (testing "static specials escpaing"
+      (let [o #js {"?key"   "v"
+                   "nested" #js {"!k2" "v2"}}]
+        (are [key expected] (= (oget o key) expected)
+          "\\?key" "v"
+          ["nested" "\\!k2"] "v2"
+          "nested.\\!k2" "v2"
+          ["nested" ".\\!k2"] "v2")))
+    (testing "dynamic specials escpaing"
+      (let [o #js {"?key"   "v"
+                   "nested" #js {"!k2" "v2"}}]
+        (are [key expected] (= (oget o (identity key)) expected)
+          "\\?key" "v"
+          ["nested" "\\!k2"] "v2"
+          "nested.\\!k2" "v2"
+          ["nested" ".\\!k2"] "v2")))
     (when-not-advanced-mode
       (testing "dynamic empty selector access in oget"
         (let [recorder (atom [])]

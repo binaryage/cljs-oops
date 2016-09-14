@@ -8,11 +8,14 @@
 
 ; --- path utils ------------------------------------------------------------------------------------------------------------
 
+(defn unescape-specials [s]
+  (string/replace s #"^\\([?!])" "$1"))
+
 (defn parse-selector-element [element-str]
   (case (first element-str)
     \? [soft-access (.substring element-str 1)]
     \! [punch-access (.substring element-str 1)]
-    [dot-access element-str]))
+    [dot-access (unescape-specials element-str)]))
 
 (defn unescape-dots [s]
   (string/replace s #"\\\." "."))

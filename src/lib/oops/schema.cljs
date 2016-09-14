@@ -11,6 +11,9 @@
 (def re-all-escaped-dots (js/RegExp. "\\\\\\." "g"))
 (def re-all-escaped-dot-markers (js/RegExp. "####ESCAPED-DOT####" "g"))
 
+(defn unescape-specials [s]
+  (.replace s #"^\\([?!])" "$1"))
+
 (defn parse-selector-element! [element-str arr]
   (if-not (empty? element-str)
     (case (first element-str)
@@ -22,7 +25,7 @@
             (.push arr (.substring element-str 1)))
       (do
         (.push arr (get-dot-access))
-        (.push arr element-str)))))
+        (.push arr (unescape-specials element-str))))))
 
 (defn unescape-dots [s]
   (.replace s re-all-escaped-dot-markers "."))
