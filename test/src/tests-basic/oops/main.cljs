@@ -78,6 +78,8 @@
           [] #"Unexpected object value \(cljs instance\)"
           :keyword #"Unexpected object value \(cljs instance\)"
           (atom "X") #"Unexpected object value \(cljs instance\)")
+        (are [o msg] (thrown-with-msg? js/Error msg (oget (js-obj "k1" (js-obj "k2" o)) "k1" "k2" "k3"))
+          nil #"Unexpected object value \(nil\) on key path 'k1.k2'")
         (under-chrome
           (are [o msg] (thrown-with-msg? js/Error msg (oget o "key"))
             ; js/Symbol is not available under phantom and we cannot really test it even under Chrome due to CLJS-1631
@@ -106,17 +108,22 @@
                 42
                 true
                 false))
-            (is (= @recorder ["ERROR: (\"Oops, Unexpected object value (nil)\" {:obj nil})"
-                              "ERROR: (\"Oops, Unexpected object value (undefined)\" {:obj nil})"
-                              "ERROR: (\"Oops, Unexpected object value (string)\" {:obj \"s\"})"
-                              "ERROR: (\"Oops, Unexpected object value (number)\" {:obj 42})"
-                              "ERROR: (\"Oops, Unexpected object value (boolean)\" {:obj true})"
-                              "ERROR: (\"Oops, Unexpected object value (boolean)\" {:obj false})"])))
+            (is (= @recorder ["ERROR: (\"Oops, Unexpected object value (nil)\" {:path \"\", :flavor \"nil\", :obj nil})"
+                              "ERROR: (\"Oops, Unexpected object value (undefined)\" {:path \"\", :flavor \"undefined\", :obj nil})"
+                              "ERROR: (\"Oops, Unexpected object value (string)\" {:path \"\", :flavor \"string\", :obj \"s\"})"
+                              "ERROR: (\"Oops, Unexpected object value (number)\" {:path \"\", :flavor \"number\", :obj 42})"
+                              "ERROR: (\"Oops, Unexpected object value (boolean)\" {:path \"\", :flavor \"boolean\", :obj true})"
+                              "ERROR: (\"Oops, Unexpected object value (boolean)\" {:path \"\", :flavor \"boolean\", :obj false})"])))
+          (let [recorder (atom [])]
+            (with-console-recording recorder
+              (are [o] (= (oget (js-obj "k1" o) "k1" "k2") nil)
+                nil))
+            (is (= @recorder ["ERROR: (\"Oops, Unexpected object value (nil) on key path 'k1'\" {:path \"k1\", :flavor \"nil\", :obj #js {:k1 nil}})"])))
           ; make sure we don't print multiple errors on subsequent missing keys...
           (let [recorder (atom [])]
             (with-console-recording recorder
               (is (= (oget #js {:k1 #js {}} "k1" "k2" "k3") nil)))
-            (is (= @recorder ["ERROR: (\"Oops, Unexpected object value (undefined)\" {:obj nil})"]))))))
+            (is (= @recorder ["ERROR: (\"Oops, Unexpected object value (undefined) on key path 'k1.k2'\" {:path \"k1.k2\", :flavor \"undefined\", :obj #js {:k1 #js {}}})"]))))))
     (when-not-advanced-mode
       (testing "with {:error-reporting-mode false} object access validation should be elided"
         (with-runtime-config {:error-reporting false}

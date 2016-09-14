@@ -23,16 +23,24 @@
 var o_1 = {
   "key": "val"
 };
-var _STAR_console_reporter_STAR_26 = oops.state._STAR_console_reporter_STAR_;
+var _STAR_console_reporter_STAR_52 = oops.state._STAR_console_reporter_STAR_;
+var _STAR_current_key_path_STAR_53 = oops.state._STAR_current_key_path_STAR_;
+var _STAR_current_obj_STAR_54 = oops.state._STAR_current_obj_STAR_;
 oops.state._STAR_console_reporter_STAR_ = function() {
   arguments[0].apply(console, Array.prototype.slice.call(arguments, 1))
 };
+oops.state._STAR_current_key_path_STAR_ = [];
+oops.state._STAR_current_obj_STAR_ = o_1;
 try {
-  var obj_27 = o_1;
-  if (oops.core.validate_object_dynamically.call(null, obj_27, 0)) obj_27["key"];
-  else;
+  var obj_55 = o_1;
+  if (oops.core.validate_object_dynamically.call(null, obj_55, 0)) {
+    oops.state.add_key_to_current_path_BANG_.call(null, "key");
+    obj_55["key"]
+  } else;
 } finally {
-  oops.state._STAR_console_reporter_STAR_ = _STAR_console_reporter_STAR_26
+  oops.state._STAR_current_obj_STAR_ = _STAR_current_obj_STAR_54;
+  oops.state._STAR_current_key_path_STAR_ = _STAR_current_key_path_STAR_53;
+  oops.state._STAR_console_reporter_STAR_ = _STAR_console_reporter_STAR_52
 }
 
 // SNIPPET #2:
@@ -40,14 +48,20 @@ try {
 //   (oget <JSValue#2> (identity "key"))
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-var _STAR_console_reporter_STAR_28 = oops.state._STAR_console_reporter_STAR_;
+var _STAR_console_reporter_STAR_56 = oops.state._STAR_console_reporter_STAR_;
+var _STAR_current_key_path_STAR_57 = oops.state._STAR_current_key_path_STAR_;
+var _STAR_current_obj_STAR_58 = oops.state._STAR_current_obj_STAR_;
 oops.state._STAR_console_reporter_STAR_ = function() {
   arguments[0].apply(console, Array.prototype.slice.call(arguments, 1))
 };
+oops.state._STAR_current_key_path_STAR_ = [];
+oops.state._STAR_current_obj_STAR_ = {};
 try {
   oops.core.get_selector_dynamically.call(null, {}, cljs.core.identity.call(null, "key"))
 } finally {
-  oops.state._STAR_console_reporter_STAR_ = _STAR_console_reporter_STAR_28
+  oops.state._STAR_current_obj_STAR_ = _STAR_current_obj_STAR_58;
+  oops.state._STAR_current_key_path_STAR_ = _STAR_current_key_path_STAR_57;
+  oops.state._STAR_console_reporter_STAR_ = _STAR_console_reporter_STAR_56
 }
 
 // SNIPPET #3:
@@ -55,18 +69,33 @@ try {
 //   (oget nil "k1" "k2" "k3")
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-var _STAR_console_reporter_STAR_29 = oops.state._STAR_console_reporter_STAR_;
+var _STAR_console_reporter_STAR_59 = oops.state._STAR_console_reporter_STAR_;
+var _STAR_current_key_path_STAR_60 = oops.state._STAR_current_key_path_STAR_;
+var _STAR_current_obj_STAR_61 = oops.state._STAR_current_obj_STAR_;
 oops.state._STAR_console_reporter_STAR_ = function() {
   arguments[0].apply(console, Array.prototype.slice.call(arguments, 1))
 };
+oops.state._STAR_current_key_path_STAR_ = [];
+oops.state._STAR_current_obj_STAR_ = null;
 try {
-  var obj_30 = null;
-  var obj_31 = oops.core.validate_object_dynamically.call(null, obj_30, 0) ? obj_30["k1"] : null;
-  var obj_32 = oops.core.validate_object_dynamically.call(null, obj_31, 0) ? obj_31["k2"] : null;
-  if (oops.core.validate_object_dynamically.call(null, obj_32, 0)) obj_32["k3"];
-  else;
+  var obj_62 = null;
+  var obj_63 = oops.core.validate_object_dynamically.call(null, obj_62, 0) ? function() {
+    oops.state.add_key_to_current_path_BANG_.call(null, "k1");
+    return obj_62["k1"]
+  }() : null;
+  var obj_64 = oops.core.validate_object_dynamically.call(null, obj_63, 0) ? function() {
+    oops.state.add_key_to_current_path_BANG_.call(null, "k2");
+    return obj_63["k2"]
+  }() : null;
+  if (oops.core.validate_object_dynamically.call(null, obj_64, 0)) {
+    oops.state.add_key_to_current_path_BANG_.call(null,
+      "k3");
+    obj_64["k3"]
+  } else;
 } finally {
-  oops.state._STAR_console_reporter_STAR_ = _STAR_console_reporter_STAR_29
+  oops.state._STAR_current_obj_STAR_ = _STAR_current_obj_STAR_61;
+  oops.state._STAR_current_key_path_STAR_ = _STAR_current_key_path_STAR_60;
+  oops.state._STAR_console_reporter_STAR_ = _STAR_console_reporter_STAR_59
 }
 
 // SNIPPET #4:
@@ -76,28 +105,52 @@ try {
 //   (oget (js-obj [[] []]))
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-var _STAR_console_reporter_STAR_33 = oops.state._STAR_console_reporter_STAR_;
+var _STAR_console_reporter_STAR_65 = oops.state._STAR_console_reporter_STAR_;
+var _STAR_current_key_path_STAR_66 = oops.state._STAR_current_key_path_STAR_;
+var _STAR_current_obj_STAR_3523 = oops.state._STAR_current_obj_STAR_;
 oops.state._STAR_console_reporter_STAR_ = function() {
   arguments[0].apply(console, Array.prototype.slice.call(arguments, 1))
 };
+oops.state._STAR_current_key_path_STAR_ = [];
+oops.state._STAR_current_obj_STAR_ = {};
 try {} finally {
-  oops.state._STAR_console_reporter_STAR_ = _STAR_console_reporter_STAR_33
+  oops.state._STAR_current_obj_STAR_ = _STAR_current_obj_STAR_3523;
+  oops.state._STAR_current_key_path_STAR_ = _STAR_current_key_path_STAR_66;
+  oops.state._STAR_console_reporter_STAR_ = _STAR_console_reporter_STAR_65
 }
-var _STAR_console_reporter_STAR_34 = oops.state._STAR_console_reporter_STAR_;
+var _STAR_console_reporter_STAR_68 = oops.state._STAR_console_reporter_STAR_;
+var _STAR_current_key_path_STAR_69 = oops.state._STAR_current_key_path_STAR_;
+var _STAR_current_obj_STAR_70 = oops.state._STAR_current_obj_STAR_;
 oops.state._STAR_console_reporter_STAR_ = function() {
   arguments[0].apply(console, Array.prototype.slice.call(arguments, 1))
 };
+oops.state._STAR_current_key_path_STAR_ = [];
+oops.state._STAR_current_obj_STAR_ = function() {
+  var obj40 = {};
+  return obj40
+}();
 try {
-  var obj35 = {}
+  var obj71 = {}
 } finally {
-  oops.state._STAR_console_reporter_STAR_ = _STAR_console_reporter_STAR_34
+  oops.state._STAR_current_obj_STAR_ = _STAR_current_obj_STAR_70;
+  oops.state._STAR_current_key_path_STAR_ = _STAR_current_key_path_STAR_69;
+  oops.state._STAR_console_reporter_STAR_ = _STAR_console_reporter_STAR_68
 }
-var _STAR_console_reporter_STAR_36 = oops.state._STAR_console_reporter_STAR_;
+var _STAR_console_reporter_STAR_72 = oops.state._STAR_console_reporter_STAR_;
+var _STAR_current_key_path_STAR_73 = oops.state._STAR_current_key_path_STAR_;
+var _STAR_current_obj_STAR_74 = oops.state._STAR_current_obj_STAR_;
 oops.state._STAR_console_reporter_STAR_ = function() {
   arguments[0].apply(console, Array.prototype.slice.call(arguments, 1))
 };
+oops.state._STAR_current_key_path_STAR_ = [];
+oops.state._STAR_current_obj_STAR_ = function() {
+  var obj49 = {};
+  return obj49
+}();
 try {
-  var obj37 = {}
+  var obj75 = {}
 } finally {
-  oops.state._STAR_console_reporter_STAR_ = _STAR_console_reporter_STAR_36
+  oops.state._STAR_current_obj_STAR_ = _STAR_current_obj_STAR_74;
+  oops.state._STAR_current_key_path_STAR_ = _STAR_current_key_path_STAR_73;
+  oops.state._STAR_console_reporter_STAR_ = _STAR_console_reporter_STAR_72
 };

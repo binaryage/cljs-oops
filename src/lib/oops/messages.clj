@@ -12,19 +12,6 @@
 (defn post-process-error-message [msg]
   (str "Oops, " msg))
 
-; -- runtime error/warning messages -----------------------------------------------------------------------------------------
-
-(defmulti runtime-message (fn [type & _] type))
-
-(defmethod runtime-message :unexpected-object-value [_type flavor]
-  (post-process-error-message (str "Unexpected object value (" flavor ")")))
-
-(defmethod runtime-message :invalid-selector [_type]
-  (post-process-error-message "Invalid selector"))
-
-(defmethod runtime-message :empty-selector-access [_type]
-  (post-process-error-message (str "Accessing target object with empty selector")))
-
 ; -- compile-time error/warning messages (in hooked cljs compiler) ----------------------------------------------------------
 
 (defmethod ana/error-message :dynamic-property-access [_type _info]

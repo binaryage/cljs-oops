@@ -23,10 +23,10 @@
              oops.state/*invocation-env* ~env]
      ~@body))
 
-(defmacro with-diagnostics-context! [form env & body]
+(defmacro with-diagnostics-context! [form env obj & body]
   `(oops.compiler/with-hooked-compiler!
      (oops.compiler/with-compiler-diagnostics-context! ~form ~env
-       (oops.core/gen-runtime-diagnostics-context! ~form ~env ~@body))))
+       (oops.core/gen-runtime-diagnostics-context! ~form ~env ~obj ~@body))))
 
 (defn annotate-with-state [info]
   (assoc info :form oops.state/*invocation-form*))

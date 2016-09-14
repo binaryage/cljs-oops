@@ -14,6 +14,7 @@
             [oops.sdefs]
             [oops.state]
             [oops.config]
+            [oops.messages]
             [oops.helpers]
             [oops.schema]))
 
@@ -25,8 +26,8 @@
 (defn ^:dynamic report-runtime-warning [msg data]
   (report-runtime-warning-impl msg data))
 
-(defn ^:dynnamic report-if-needed-dynamically [msg-id msg & [info]]
-  (report-if-needed-dynamically-impl msg-id msg info))
+(defn ^:dynnamic report-if-needed-dynamically [msg-id & [info]]
+  (report-if-needed-dynamically-impl msg-id info))
 
 ; -- runtime support for macros ---------------------------------------------------------------------------------------------
 
