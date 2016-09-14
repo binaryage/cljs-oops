@@ -3,7 +3,7 @@
                                       report-runtime-warning-impl
                                       report-if-needed-dynamically-impl
                                       punch-key-dynamically-impl
-                                      validate-object-dynamically-impl
+                                      validate-object-access-dynamically-impl
                                       build-path-dynamically-impl
                                       get-key-dynamically-impl
                                       set-key-dynamically-impl
@@ -34,8 +34,8 @@
 (defn ^:dynamic punch-key-dynamically! [obj key]
   (punch-key-dynamically-impl obj key))
 
-(defn ^boolean validate-object-dynamically [obj mode]
-  (validate-object-dynamically-impl obj mode))
+(defn ^boolean validate-object-access-dynamically [obj mode key check-key?]
+  (validate-object-access-dynamically-impl obj mode  key check-key?))
 
 (defn build-path-dynamically [selector]
   (build-path-dynamically-impl selector))

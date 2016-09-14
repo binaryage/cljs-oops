@@ -60,34 +60,20 @@
     :core `(cljs.core/aset ~obj ~key ~val)                                                                                    ; => `(~'js* "(~{}[~{}] = ~{})" ~obj ~key ~val)
     :goog `(goog.object/set ~obj ~key ~val)))
 
-(defn gen-checked-key-get [obj-sym mode key]
-  (debug-assert (symbol? obj-sym))
-  (let [key-get-code (gen-key-get obj-sym key)]
-    (if (config/diagnostics?)
-      `(do
-         (if (and (= ~mode ~dot-access)
-                  (not (goog.object/containsKey ~obj-sym ~key)))
-           ~(gen-report-if-needed :missing-object-key `{:obj  (oops.state/get-current-obj)
-                                                        :key  ~key
-                                                        :path (oops.state/get-current-key-path-str)}))
-         ~key-get-code)
-      key-get-code)))
-
-(defn gen-dynamic-object-access-validation-wrapper [obj-sym mode key body]
+(defn gen-dynamic-object-access-validation-wrapper [obj-sym mode key check-key? body]
   (debug-assert (symbol? obj-sym))
   (if (config/diagnostics?)
-    `(when (validate-object-dynamically ~obj-sym ~mode)
-       (oops.state/add-key-to-current-path! ~key)
+    `(if (validate-object-access-dynamically ~obj-sym ~mode ~key ~check-key?)
        ~body)
     body))
 
 (defn gen-instrumented-key-get [obj-sym key mode]
   (debug-assert (symbol? obj-sym))
-  (gen-dynamic-object-access-validation-wrapper obj-sym mode key (gen-checked-key-get obj-sym mode key)))
+  (gen-dynamic-object-access-validation-wrapper obj-sym mode key true (gen-key-get obj-sym key)))
 
 (defn gen-instrumented-key-set [obj-sym key val mode]
   (debug-assert (symbol? obj-sym))
-  (gen-dynamic-object-access-validation-wrapper obj-sym mode key (gen-key-set obj-sym key val)))
+  (gen-dynamic-object-access-validation-wrapper obj-sym mode key false (gen-key-set obj-sym key val)))
 
 (defn gen-static-path-get [obj path]
   (if (empty? path)
@@ -254,6 +240,14 @@
 (defn gen-supress-reporting? [msg-id]
   `(contains? (oops.config/get-suppress-reporting) ~msg-id))
 
+(defn gen-check-key-access [obj-sym mode key]
+  (debug-assert (symbol? obj-sym))
+  `(if (and (= ~mode ~dot-access)
+            (not (goog.object/containsKey ~obj-sym ~key)))
+     ~(gen-report-if-needed :missing-object-key `{:obj  (oops.state/get-current-obj)
+                                                  :key  ~key
+                                                  :path (oops.state/get-current-key-path-str)})))
+
 ; -- helper macros ----------------------------------------------------------------------------------------------------------
 
 (defmacro report-runtime-error-impl [msg data]
@@ -273,9 +267,15 @@
            (false nil) nil))
        nil)))
 
-(defmacro validate-object-dynamically-impl [obj-sym mode]
+(defmacro validate-object-access-dynamically-impl [obj-sym mode-sym key-sym check-key?]
   (debug-assert (symbol? obj-sym))
-  (gen-dynamic-object-access-validation obj-sym mode))
+  (debug-assert (symbol? mode-sym))
+  (debug-assert (symbol? key-sym))
+  `(when ~(gen-dynamic-object-access-validation obj-sym mode-sym)
+     (oops.state/add-key-to-current-path! ~key-sym)
+     (if ~check-key?
+       ~(gen-check-key-access obj-sym mode-sym key-sym))
+     true))
 
 (defmacro build-path-dynamically-impl [selector-sym]
   (debug-assert (symbol? selector-sym))
