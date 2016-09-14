@@ -4,7 +4,7 @@
             [oops.config :as config]
             [oops.messages :refer [runtime-message]]
             [oops.compiler :as compiler :refer [gensym with-diagnostics-context! with-compilation-opts!]]
-            [oops.constants :refer [dot-access soft-access punch-access get-dot-access get-soft-access get-punch-access]]
+            [oops.constants :refer [dot-access soft-access punch-access]]
             [oops.debug :refer [log debug-assert]]
             [clojure.spec :as s]))
 
