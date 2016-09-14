@@ -29,11 +29,9 @@
 
 (defn gen-object-access-validation-error [obj-sym flavor]
   (debug-assert (symbol? obj-sym))
-  `(do
-     ~(gen-report-if-needed :unexpected-object-value `{:obj    (oops.state/get-current-obj)
-                                                       :path   (oops.state/get-current-key-path-str)
-                                                       :flavor ~flavor})
-     false))
+  (gen-report-if-needed :unexpected-object-value `{:obj    (oops.state/get-current-obj)
+                                                   :path   (oops.state/get-current-key-path-str)
+                                                   :flavor ~flavor}))
 
 (defn gen-dynamic-object-access-validation [obj-sym mode-sym]
   (debug-assert (symbol? obj-sym))
@@ -267,11 +265,13 @@
 (defmacro report-if-needed-dynamically-impl [msg-id info-sym]
   (debug-assert (symbol? info-sym))
   (if (config/diagnostics?)
-    `(if-not ~(gen-supress-reporting? msg-id)
-       (case (oops.config/get-config-key ~msg-id)
-         :warn (report-runtime-warning (oops.messages/runtime-message ~msg-id ~info-sym) ~info-sym)
-         :error (report-runtime-error (oops.messages/runtime-message ~msg-id ~info-sym) ~info-sym)
-         (false nil) nil))))
+    `(do
+       (if-not ~(gen-supress-reporting? msg-id)
+         (case (oops.config/get-config-key ~msg-id)
+           :warn (report-runtime-warning (oops.messages/runtime-message ~msg-id ~info-sym) ~info-sym)
+           :error (report-runtime-error (oops.messages/runtime-message ~msg-id ~info-sym) ~info-sym)
+           (false nil) nil))
+       nil)))
 
 (defmacro validate-object-dynamically-impl [obj-sym mode]
   (debug-assert (symbol? obj-sym))
