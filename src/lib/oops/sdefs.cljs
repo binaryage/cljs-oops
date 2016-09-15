@@ -1,6 +1,6 @@
 (ns oops.sdefs
   (:require-macros [oops.constants :refer [get-dot-access get-soft-access get-punch-access]]
-                   [oops.spec-helpers :refer [native-array-aware-*]])
+                   [oops.spec :refer [native-array-aware-*]])
   (:require [clojure.spec :as s]))
 
 ; --- specs -----------------------------------------------------------------------------------------------------------------

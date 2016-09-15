@@ -1,4 +1,4 @@
-(ns oops.spec-helpers)
+(ns oops.spec)
 
 ; clojurescript related question, I’m working on a library which uses clojure.spec to describe a data structure
 ; using `s/*`, the data structure can be used statically during compilation in macros, or during runtime in cljs.
