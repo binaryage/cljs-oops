@@ -2,10 +2,11 @@
   (:require [cljs.test :refer-macros [deftest testing is are run-tests use-fixtures]]
             [oops.core :refer [oget oset! ocall! oapply! ocall oapply
                                oget+ oset!+ ocall!+ oapply!+ ocall+ oapply+]]
-            [oops.config :refer [with-runtime-config with-child-factory]]
+            [oops.config :refer [with-runtime-config with-compiler-config with-child-factory]]
             [oops.tools
              :refer [with-captured-console presume-runtime-config]
              :refer-macros [init-test!
+                            presume-compiler-config
                             runonce
                             when-advanced-mode when-not-advanced-mode
                             under-phantom
@@ -275,6 +276,15 @@
       (is (= (oget (oset! sample-obj "n1" "n2" "val") "n1" "n2") "val"))
       (is (= (oget (oset! sample-obj ["n1" "n2"] "val") "n1" "n2") "val"))
       #_(is (= (oget (oset! sample-obj #js ["n1" "n2"] "val") "n1" "n2") "val"))))
+  (testing "non-strict punching"
+    (presume-compiler-config {:strict-punching true})
+    (with-compiler-config {:strict-punching false}
+      (let [sample-obj #js {"nested" #js {}}]
+        (are [selector] (= (oget+ (oset!+ sample-obj selector "val") selector) "val")
+          ".!nested.xxx"
+          "aaa"
+          ["!z1" "!z2" "z3"])
+        (is (= (js/JSON.stringify sample-obj) "{\"nested\":{\"xxx\":\"val\"},\"aaa\":\"val\",\"z1\":{\"z2\":{\"z3\":\"val\"}}}")))))
   (testing "oset corner cases"
     ; TODO
     ))
