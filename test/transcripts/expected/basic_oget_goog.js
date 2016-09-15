@@ -1,3 +1,5 @@
+// Clojure v1.8.0, ClojureScript v1.9.229
+// ----------------------------------------------------------------------------------------------------------
 // COMPILER CONFIG:
 //   arena/basic_oget.cljs [goog]
 //   {:elide-asserts true,

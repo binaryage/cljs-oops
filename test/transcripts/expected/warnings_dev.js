@@ -1,3 +1,5 @@
+// Clojure v1.8.0, ClojureScript v1.9.229
+// ----------------------------------------------------------------------------------------------------------
 // COMPILER CONFIG:
 //   arena/warnings.cljs [dev]
 //   {:elide-asserts false,

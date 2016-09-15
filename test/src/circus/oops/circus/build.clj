@@ -6,7 +6,8 @@
             [cljs.build.api :as compiler]
             [environ.core :refer [env]]
             [oops.circus.utils :refer :all]
-            [oops.circus.config :as config])
+            [oops.circus.config :as config]
+            [cljs.util :as cljs-util])
   (:import (java.io File StringWriter)))
 
 (defn post-process-build-options [options]
@@ -59,6 +60,10 @@
   [(make-build file "default")
    (make-build file "goog" (get-key-mode-options :goog))])
 
+(defn get-environment-info []
+  (str "Clojure v" (clojure-version) ", "
+       "ClojureScript v" (cljs-util/clojurescript-version)))
+
 ; -- transcripts ------------------------------------------------------------------------------------------------------------
 
 (defn get-transcript-path [kind build]
@@ -97,7 +102,8 @@
         actual-transcript-path (get-actual-transcript-path build)
         post-processed-code (post-process-code code)
         build-info (make-build-info build)
-        parts [(str "// COMPILER CONFIG:\n" (comment-out-text build-info "  "))
+        parts [(str "// " (get-environment-info))
+               (str "// COMPILER CONFIG:\n" (comment-out-text build-info "  "))
                (if-not (empty? out) (str "// COMPILER STDOUT:\n" (comment-out-text out "  ")))
                (if-not (empty? err) (str "// COMPILER STDERR:\n" (comment-out-text err "  ")))
                post-processed-code]
