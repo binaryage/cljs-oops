@@ -69,11 +69,13 @@
 
 (defn gen-instrumented-key-get [obj-sym key mode]
   (debug-assert (symbol? obj-sym))
-  (gen-dynamic-object-access-validation-wrapper obj-sym mode key true (gen-key-get obj-sym key)))
+  (gen-dynamic-object-access-validation-wrapper obj-sym mode key true
+    (gen-key-get obj-sym key)))
 
 (defn gen-instrumented-key-set [obj-sym key val mode]
   (debug-assert (symbol? obj-sym))
-  (gen-dynamic-object-access-validation-wrapper obj-sym mode key false (gen-key-set obj-sym key val)))
+  (gen-dynamic-object-access-validation-wrapper obj-sym mode key (config/strict-punching?)
+    (gen-key-set obj-sym key val)))
 
 (defn gen-static-path-get [obj path]
   (if (empty? path)
@@ -166,10 +168,10 @@
   (debug-assert (not (empty? path)))
   (debug-assert (symbol? obj-sym))
   (let [parent-obj-path (butlast path)
-        [_mode key] (last path)
+        [mode key] (last path)
         parent-obj-sym (gensym "parent-obj")]
     `(let [~parent-obj-sym ~(gen-static-path-get obj-sym parent-obj-path)]
-       ~(gen-instrumented-key-set parent-obj-sym key val dot-access))))
+       ~(gen-instrumented-key-set parent-obj-sym key val mode))))
 
 (defn gen-dynamic-selector-set [obj selector-list val]
   (report-if-needed! :dynamic-selector-usage)
@@ -245,9 +247,10 @@
 (defn gen-supress-reporting? [msg-id]
   `(contains? (oops.config/get-suppress-reporting) ~msg-id))
 
-(defn gen-check-key-access [obj-sym mode key]
+(defn gen-check-key-access [obj-sym mode-sym key]
   (debug-assert (symbol? obj-sym))
-  `(if (and (= ~mode ~dot-access)
+  (debug-assert (symbol? mode-sym))
+  `(if (and (= ~mode-sym ~dot-access)
             (not (goog.object/containsKey ~obj-sym ~key)))
      ~(gen-report-if-needed :missing-object-key `{:obj  (oops.state/get-current-target-object)
                                                   :key  ~key

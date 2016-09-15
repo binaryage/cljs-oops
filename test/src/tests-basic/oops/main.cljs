@@ -226,16 +226,16 @@
   (testing "static set"
     (let [sample-obj #js {"nested" #js {}}]
       (are [selector] (= (oget (oset! sample-obj selector "val") selector) "val")
-        "xxx"
-        ["yyy"]
-        ["nested" "y"])
+        "!xxx"
+        ["!yyy"]
+        ["nested" "!y"])
       (is (= (js/JSON.stringify sample-obj) "{\"nested\":{\"y\":\"val\"},\"xxx\":\"val\",\"yyy\":\"val\"}"))))
   (testing "dynamic selector set"
     (let [sample-obj #js {"nested" #js {}}
           dynamic-key-fn (fn [name] name)]
       (are [selector] (= (oget+ (oset!+ sample-obj selector "val") selector) "val")
-        (dynamic-key-fn "key")
-        [(dynamic-key-fn "nested") (dynamic-key-fn "key2")])
+        (dynamic-key-fn "!key")
+        [(dynamic-key-fn "!nested") (dynamic-key-fn "!key2")])
       (is (= (js/JSON.stringify sample-obj) "{\"nested\":{\"key2\":\"val\"},\"key\":\"val\"}"))))
   (testing "static punching set!"
     (let [sample-obj #js {"nested" #js {}}]
@@ -260,15 +260,15 @@
         (are [selector] (= (oget+ (oset!+ sample-obj selector "val") selector) "val")
           ".!nested.!xxx"
           "!aaa"
-          ["!z1" "!z2" "z3"])
+          ["!z1" "!z2" "!z3"])
         (is (= @counter "z1,z2")))))                                                                                          ; only z1 and z2 are punched
   (testing "punching set! with :js-array child-factory"
     (let [sample-obj #js {"nested" #js {}}]
       (with-child-factory :js-array
         (are [selector] (= (oget+ (oset!+ sample-obj selector "val") selector) "val")
-          ".!nested.!xxx.1"
+          ".!nested.!xxx.!1"
           "!aaa"
-          ["!z1" "!0" "3"])
+          ["!z1" "!0" "!3"])
         (is (= (js/JSON.stringify sample-obj) "{\"nested\":{\"xxx\":[null,\"val\"]},\"aaa\":\"val\",\"z1\":[[null,null,null,\"val\"]]}")))))
   (testing "flexible selector in oset!"
     (let [sample-obj #js {"n1" #js {"n2" #js {}}}]

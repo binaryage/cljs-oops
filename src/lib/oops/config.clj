@@ -7,6 +7,7 @@
    :diagnostics                     true                                                                                      ; #{true falsy}
    :key-get                         :core                                                                                     ; #{:core :goog}
    :key-set                         :core                                                                                     ; #{:core :goog}
+   :strict-punching                 true                                                                                      ; #{true falsy}
 
    ; compile-time warnings/errors
    :dynamic-selector-usage          :warn                                                                                     ; #{:error :warn falsy}
@@ -96,6 +97,10 @@
 (defn key-set-mode [& [config]]
   {:post [(contains? #{:core :goog} %)]}
   (get-config-key :key-set config))
+
+(defn strict-punching? [& [config]]
+  {:post [(contains? #{true false nil} %)]}
+  (get-config-key :strict-punching config))
 
 (defn debug? [& [config]]
   {:post [(contains? #{true false nil} %)]}
