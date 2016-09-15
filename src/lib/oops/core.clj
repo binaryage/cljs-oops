@@ -12,13 +12,16 @@
 (defn supress-reporting? [type]
   (boolean (get-in oops.state/*invocation-opts* [:suppress-reporting type])))
 
+(defn report! [type & [info]]
+  (case (config/get-config-key type)
+    :warn (compiler/warn! type info)
+    :error (compiler/error! type info)
+    (false nil) nil))
+
 (defn report-if-needed! [type & [info]]
   (if (config/diagnostics?)
     (if-not (supress-reporting? type)
-      (case (config/get-config-key type)
-        :warn (compiler/warn! type info)
-        :error (compiler/error! type info)
-        (false nil) nil))))
+      (report! type info))))
 
 (defn gen-report-if-needed [msg-id & [info]]
   (debug-assert (keyword? msg-id))
