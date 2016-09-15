@@ -5,7 +5,7 @@
             [oops.compiler :as compiler :refer [gensym with-diagnostics-context! with-compilation-opts!]]
             [oops.constants :refer [dot-access soft-access punch-access]]
             [oops.debug :refer [log debug-assert]]
-            [clojure.spec :as s]))
+            [oops.state :as state]))
 
 ; -- helper code generators -------------------------------------------------------------------------------------------------
 
@@ -22,6 +22,19 @@
   (if (config/diagnostics?)
     (if-not (supress-reporting? type)
       (report! type info))))
+
+(defn find-first-dynamic-selector [selector-list]
+  (first (remove schema/static-selector? selector-list)))
+
+(defn report-dynamic-selector-usage-if-needed! [selector-list]
+  (if (config/diagnostics?)
+    (if-not (supress-reporting? :dynamic-selector-usage)
+      (let [offending-selector (find-first-dynamic-selector selector-list)]
+        (debug-assert offending-selector)
+        (let [point-to-offending-selector (into {} (filter second (select-keys (meta offending-selector) [:line :column])))]
+          ; note that sometimes param meta could be missing, we don't alter state/*invocation-env* in that case
+          (binding [state/*invocation-env* (merge state/*invocation-env* point-to-offending-selector)]
+            (report! :dynamic-selector-usage)))))))
 
 (defn gen-report-if-needed [msg-id & [info]]
   (debug-assert (keyword? msg-id))
@@ -132,7 +145,7 @@
            ~obj-sym)))))
 
 (defn gen-dynamic-selector-get [obj selector-list]
-  (report-if-needed! :dynamic-selector-usage)
+  (report-dynamic-selector-usage-if-needed! selector-list)
   (debug-assert (pos? (count selector-list)) "empty selector list should take static path")
   (case (count selector-list)
     1 `(get-selector-dynamically ~obj ~(first selector-list))                                                                 ; we want to unwrap selector wrapped in oget (in this case)
@@ -177,7 +190,7 @@
        ~(gen-instrumented-key-set parent-obj-sym key val mode))))
 
 (defn gen-dynamic-selector-set [obj selector-list val]
-  (report-if-needed! :dynamic-selector-usage)
+  (report-dynamic-selector-usage-if-needed! selector-list)
   (debug-assert (pos? (count selector-list)) "empty selector list should take static path")
   (case (count selector-list)
     1 `(set-selector-dynamically ~obj ~(first selector-list) ~val)                                                            ; we want to unwrap selector wrapped in oset! (in this case)
