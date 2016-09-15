@@ -353,11 +353,11 @@
     (report-if-needed! :static-empty-selector-access))
   path)
 
-(defn gen-oget [obj & selector]
+(defn gen-oget [obj selector-list]
   (validate-object-statically obj)
-  (if-let [path (schema/selector->path selector)]
+  (if-let [path (schema/selector->path selector-list)]
     (gen-static-path-get obj (check-path! path))
-    (gen-dynamic-selector-get obj selector)))
+    (gen-dynamic-selector-get obj selector-list)))
 
 (defn gen-oset! [obj selector val]
   (validate-object-statically obj)
@@ -385,12 +385,12 @@
 
 (defmacro oget [obj & selector]
   (with-diagnostics-context! &form &env obj
-    (apply gen-oget obj selector)))
+    (gen-oget obj selector)))
 
 (defmacro oget+ [obj & selector]
   (with-diagnostics-context! &form &env obj
     (with-compilation-opts! {:suppress-reporting #{:dynamic-selector-usage}}
-      (apply gen-oget obj selector))))
+      (gen-oget obj selector))))
 
 (defmacro oset! [obj & selector+val]
   (with-diagnostics-context! &form &env obj
