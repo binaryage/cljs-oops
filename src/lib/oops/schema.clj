@@ -66,3 +66,6 @@
   (->> selector
        (s/conform ::sdefs/obj-selector)
        (build-selector-path)))
+
+(defn static-selector? [selector]
+  (s/valid? ::sdefs/obj-selector selector))
