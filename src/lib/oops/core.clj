@@ -369,7 +369,7 @@
           (gen-dynamic-selector-set obj-sym selector val))
        ~obj-sym)))
 
-(defn gen-ocall [obj selector & args]
+(defn gen-ocall [obj selector args]
   (validate-object-statically obj)
   (let [obj-sym (gensym "obj")]
     `(let [~obj-sym ~obj]
@@ -407,12 +407,12 @@
 
 (defmacro ocall [obj selector & args]
   (with-diagnostics-context! &form &env obj
-    (apply gen-ocall obj selector args)))
+    (gen-ocall obj selector args)))
 
 (defmacro ocall+ [obj selector & args]
   (with-diagnostics-context! &form &env
     (with-compilation-opts! {:suppress-reporting #{:dynamic-selector-usage}}
-      (apply gen-ocall obj selector args))))
+      (gen-ocall obj selector args))))
 
 (defmacro oapply [obj selector args]
   (with-diagnostics-context! &form &env obj
@@ -429,14 +429,14 @@
   "This macro is identical to ocall, use it if you want to express a side-effecting call."
   [obj selector & args]
   (with-diagnostics-context! &form &env obj
-    (apply gen-ocall obj selector args)))
+    (gen-ocall obj selector args)))
 
 (defmacro ocall!+
   "This macro is identical to ocall, use it if you want to express a side-effecting call."
   [obj selector & args]
   (with-diagnostics-context! &form &env obj
     (with-compilation-opts! {:suppress-reporting #{:dynamic-selector-usage}}
-      (apply gen-ocall obj selector args))))
+      (gen-ocall obj selector args))))
 
 (defmacro oapply!
   "This macro is identical to oapply, use it if you want to express a side-effecting call."
