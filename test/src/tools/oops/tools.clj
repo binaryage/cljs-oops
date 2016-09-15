@@ -150,3 +150,7 @@
     `(do
        ~(gen-marker snippet-str)
        ~@body)))
+
+(defmacro presume-compiler-config [config]
+  (let [compiler-config (select-keys (config/get-compiler-config) (keys config))]
+    `(cljs.test/is (= ~compiler-config ~config))))
