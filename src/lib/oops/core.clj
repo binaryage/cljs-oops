@@ -210,8 +210,8 @@
 
 (defn gen-console-method [kind]
   (case kind
-    :error `(.-error js/console)
-    :warning `(.-warn js/console)))
+    :error `(aget js/console "error")
+    :warning `(aget js/console "warn")))
 
 (defn gen-report-runtime-message [kind msg data]
   (debug-assert (contains? #{:error :warning} kind))
