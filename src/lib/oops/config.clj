@@ -60,12 +60,18 @@
 
 (defn ^:dynamic get-compiler-config []
   {:post [(map? %)]}                                                                                                          ; TODO: validate config using spec or bhauman's tooling
-  (merge (prepare-default-config) (read-project-config) (read-env-config) (get-adhoc-config-overrides)))
+  (merge (prepare-default-config)
+         (read-project-config)
+         (read-env-config)
+         (get-adhoc-config-overrides)))
 
-; -- public api--------------------------------------------------------------------------------------------------------------
+; -- compiler config access -------------------------------------------------------------------------------------------------
 
 (defn get-current-compiler-config []
   (get-compiler-config))                                                                                                      ; TODO: should we somehow cache this?
+
+(defn get-config-key [key & [config]]
+  (key (or config (get-current-compiler-config))))
 
 (defn get-runtime-config [& [config]]
   (let [* (fn [[key val]]
@@ -112,9 +118,6 @@
   (get-runtime-config config))
 
 ; -- icing ------------------------------------------------------------------------------------------------------------------
-
-(defn get-config-key [key & [config]]
-  (key (or config (get-current-compiler-config))))
 
 (defn diagnostics? [& [config]]
   {:post [(contains? #{true false nil} %)]}
