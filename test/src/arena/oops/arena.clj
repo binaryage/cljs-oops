@@ -8,7 +8,7 @@
     (gen-build-variants "dynamic_oget.cljs")
     [(make-build "warnings.cljs" "dev" {} {:optimizations :whitespace})
      (make-build "error_static_nil_object.cljs" "dev" {:static-nil-target-object :error} {:optimizations :whitespace})
-     (make-build "error_dynamic_property_access.cljs" "dev" {:dynamic-property-access :error} {:optimizations :whitespace})]))
+     (make-build "error_dynamic_selector_usage.cljs" "dev" {:dynamic-selector-usage :error} {:optimizations :whitespace})]))
 
 ; -- tests ------------------------------------------------------------------------------------------------------------------
 

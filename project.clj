@@ -77,7 +77,7 @@
                                                    :asset-path      "_compiled/basic_onone"
                                                    :external-config {:devtools/config {:dont-detect-custom-formatters true}
                                                                      :oops/config     {:debug                    true
-                                                                                       :dynamic-property-access  false
+                                                                                       :dynamic-selector-usage   false
                                                                                        :static-nil-target-object false}}
                                                    :main            oops.runner
                                                    :optimizations   :none}

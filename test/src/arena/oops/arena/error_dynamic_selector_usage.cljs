@@ -1,4 +1,4 @@
-(ns oops.arena.error-dynamic-property-access
+(ns oops.arena.error-dynamic-selector-usage
   (:require [oops.core :refer [oget]]
             [oops.tools :refer [init-arena-test! testing]]))
 

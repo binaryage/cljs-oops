@@ -9,7 +9,7 @@
    :key-set                         :core                                                                                     ; #{:core :goog}
 
    ; compile-time warnings/errors
-   :dynamic-property-access         :warn                                                                                     ; #{:error :warn falsy}
+   :dynamic-selector-usage          :warn                                                                                     ; #{:error :warn falsy}
    :static-nil-target-object        :warn                                                                                     ; #{:error :warn falsy}
    :static-empty-selector-access    :warn                                                                                     ; #{:error :warn falsy}
 

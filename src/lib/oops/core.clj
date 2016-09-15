@@ -127,7 +127,7 @@
            ~obj-sym)))))
 
 (defn gen-dynamic-selector-get [obj selector-list]
-  (report-if-needed! :dynamic-property-access)
+  (report-if-needed! :dynamic-selector-usage)
   (debug-assert (pos? (count selector-list)) "empty selector list should take static path")
   (case (count selector-list)
     1 `(get-selector-dynamically ~obj ~(first selector-list))                                                                 ; we want to unwrap selector wrapped in oget (in this case)
@@ -172,7 +172,7 @@
        ~(gen-instrumented-key-set parent-obj-sym key val dot-access))))
 
 (defn gen-dynamic-selector-set [obj selector-list val]
-  (report-if-needed! :dynamic-property-access)
+  (report-if-needed! :dynamic-selector-usage)
   (debug-assert (pos? (count selector-list)) "empty selector list should take static path")
   (case (count selector-list)
     1 `(set-selector-dynamically ~obj ~(first selector-list) ~val)                                                            ; we want to unwrap selector wrapped in oset! (in this case)
@@ -386,7 +386,7 @@
 
 (defmacro oget+ [obj & selector]
   (with-diagnostics-context! &form &env obj
-    (with-compilation-opts! {:suppress-reporting #{:dynamic-property-access}}
+    (with-compilation-opts! {:suppress-reporting #{:dynamic-selector-usage}}
       (apply gen-oget obj selector))))
 
 (defmacro oset! [obj & selector+val]
@@ -397,7 +397,7 @@
 
 (defmacro oset!+ [obj & selector+val]
   (with-diagnostics-context! &form &env obj
-    (with-compilation-opts! {:suppress-reporting #{:dynamic-property-access}}
+    (with-compilation-opts! {:suppress-reporting #{:dynamic-selector-usage}}
       (let [val (last selector+val)
             selector (butlast selector+val)]
         (gen-oset! obj selector val)))))
@@ -408,7 +408,7 @@
 
 (defmacro ocall+ [obj selector & args]
   (with-diagnostics-context! &form &env
-    (with-compilation-opts! {:suppress-reporting #{:dynamic-property-access}}
+    (with-compilation-opts! {:suppress-reporting #{:dynamic-selector-usage}}
       (apply gen-ocall obj selector args))))
 
 (defmacro oapply [obj selector args]
@@ -417,7 +417,7 @@
 
 (defmacro oapply+ [obj selector args]
   (with-diagnostics-context! &form &env obj
-    (with-compilation-opts! {:suppress-reporting #{:dynamic-property-access}}
+    (with-compilation-opts! {:suppress-reporting #{:dynamic-selector-usage}}
       (gen-oapply obj selector args))))
 
 ; -- convenience macros -----------------------------------------------------------------------------------------------------
@@ -432,7 +432,7 @@
   "This macro is identical to ocall, use it if you want to express a side-effecting call."
   [obj selector & args]
   (with-diagnostics-context! &form &env obj
-    (with-compilation-opts! {:suppress-reporting #{:dynamic-property-access}}
+    (with-compilation-opts! {:suppress-reporting #{:dynamic-selector-usage}}
       (apply gen-ocall obj selector args))))
 
 (defmacro oapply!
@@ -445,5 +445,5 @@
   "This macro is identical to oapply, use it if you want to express a side-effecting call."
   [obj selector args]
   (with-diagnostics-context! &form &env obj
-    (with-compilation-opts! {:suppress-reporting #{:dynamic-property-access}}
+    (with-compilation-opts! {:suppress-reporting #{:dynamic-selector-usage}}
       (gen-oapply obj selector args))))
