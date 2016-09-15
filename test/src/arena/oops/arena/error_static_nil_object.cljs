@@ -4,5 +4,5 @@
 
 (init-arena-test!)
 
-(testing
+(testing "static nil object"
   (oget nil "k1"))

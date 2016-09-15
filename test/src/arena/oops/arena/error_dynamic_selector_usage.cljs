@@ -4,5 +4,5 @@
 
 (init-arena-test!)
 
-(testing
+(testing "dynamic selector usage"
   (oget #js {} (identity "key")))

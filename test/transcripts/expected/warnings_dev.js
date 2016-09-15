@@ -18,8 +18,9 @@
 // ----------------------------------------------------------------------------------------------------------
 
 // SNIPPET #1:
-//   => no warnings
-//   (let [o <JSValue#1>] (oget o "key"))
+//   (testing "no warnings"
+//     (let [o #js {"key" "val"}]
+//       (oget o "key")))
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 var o_1 = {
@@ -38,8 +39,8 @@ try {
 }
 
 // SNIPPET #2:
-//   => dynamic property access
-//   (oget <JSValue#2> (identity "key"))
+//   (testing "dynamic property access"
+//     (oget #js {} (identity "key")))
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 var _STAR_runtime_state_STAR_30 = oops.state._STAR_runtime_state_STAR_;
@@ -53,8 +54,8 @@ try {
 }
 
 // SNIPPET #3:
-//   => static nil target object
-//   (oget nil "k1" "k2" "k3")
+//   (testing "static nil target object"
+//     (oget nil "k1" "k2" "k3"))
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 var _STAR_runtime_state_STAR_31 = oops.state._STAR_runtime_state_STAR_;
@@ -72,10 +73,10 @@ try {
 }
 
 // SNIPPET #4:
-//   => static empty selector access in oget
-//   (oget (js-obj))
-//   (oget (js-obj []))
-//   (oget (js-obj [[] []]))
+//   (testing "static empty selector access in oget"
+//     (oget (js-obj))
+//     (oget (js-obj []))
+//     (oget (js-obj [[] []])))
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 var _STAR_runtime_state_STAR_35 = oops.state._STAR_runtime_state_STAR_;

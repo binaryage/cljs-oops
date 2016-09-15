@@ -2,7 +2,9 @@
   (:require [environ.core :refer [env]]
             [clojure.pprint :refer [pprint]]
             [oops.config :as config]
-            [clojure.string :as string]))
+            [clojure.string :as string]
+            [clojure.java.io :as io]
+            [cuerdas.core :as cuerdas]))
 
 (defn pprint-code [v]
   (with-out-str
@@ -69,6 +71,25 @@
 (defn decode [s]
   (unhexify-str s))
 
+(defn fetch-arena-source [ns-name]
+  (let [file-name (str (namespace-munge (last (string/split ns-name #"\."))) ".cljs")
+        file (io/file "test/src/arena/oops/arena" file-name)]
+    (slurp file)))
+
+(defn extract-code-snippet [source start-line]
+  (->> (cuerdas/lines source)
+       (drop (dec start-line))
+       (take-while #(not (empty? %)))
+       (cuerdas/unlines)))
+
+(defn extrac-code-snippet-from-env [env]
+  (let [ns-name (str (get-in env [:ns :name]))
+        _ (assert ns-name)
+        line (get env :line)
+        _ (assert line)
+        source (fetch-arena-source ns-name)]
+    (extract-code-snippet source line)))
+
 ; -- macros -----------------------------------------------------------------------------------------------------------------
 
 (defmacro with-console-recording [recorder & body]
@@ -123,11 +144,9 @@
     `(defonce ~name {:value ~code
                      :code  ~code-string})))
 
-(defmacro testing [& body]
-  (let [title (if (string? (first body)) (str "=> " (first body) "\n"))
-        code (remove string? body)
-        comment (string/join (map pprint-code code))
-        snippet-str (str "SNIPPET:" (encode (str title comment)))]
+(defmacro testing [_title & body]
+  (let [code (extrac-code-snippet-from-env &env)
+        snippet-str (str "SNIPPET:" (encode code))]
     `(do
        ~(gen-marker snippet-str)
-       (do ~@code))))
+       ~@body)))

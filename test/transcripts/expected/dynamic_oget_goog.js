@@ -12,10 +12,10 @@
 // ----------------------------------------------------------------------------------------------------------
 
 // SNIPPET #1:
-//   => simple get
-//   (oget+ <JSValue#1> (return-this-key "key"))
-//   (oget+ <JSValue#2> (identity "key"))
-//   (oget+ <JSValue#3> (return-this-key-with-side-effect "key"))
+//   (testing "simple get"
+//     (oget+ #js {"key" "val"} (return-this-key "key"))
+//     (oget+ #js {"key" "val"} (identity "key"))
+//     (oget+ #js {"key" "val"} (return-this-key-with-side-effect "key")))
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 $oops$core$get_selector_dynamically$$({
@@ -30,8 +30,8 @@ $oops$core$get_selector_dynamically$$({
 }, "key");
 
 // SNIPPET #2:
-//   => simple miss
-//   (oget+ <JSValue#4> (return-this-key "xxx"))
+//   (testing "simple miss"
+//     (oget+ #js {"key" "val"} (return-this-key "xxx")))
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 $oops$core$get_selector_dynamically$$({
@@ -39,15 +39,10 @@ $oops$core$get_selector_dynamically$$({
 }, "xxx");
 
 // SNIPPET #3:
-//   => nested get
-//   (def o1 <JSValue#5>)
-//   (oget+ o1 (return-this-key "key") (return-this-key "nested"))
-//   (def o2 <JSValue#6>)
-//   (oget+ o2 [(return-this-key "key") (return-this-key "nested")])
-//   (def o3 <JSValue#7>)
-//   (oget+ o3 (return-this-key "key") [(return-this-key "nested")])
-//   (def o4 <JSValue#8>)
-//   (oget+ o4 <JSValue#9>)
+//   (testing "nested get"
+//     (def o1 #js {"key"    "val"
+//                  "nested" #js {"nested-key" "nested-val"}})
+//     (oget+ o1 (return-this-key "key") (return-this-key "nested"))
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 $oops$core$get_selector_dynamically$$({
