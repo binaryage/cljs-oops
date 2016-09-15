@@ -1,40 +1,7 @@
 (ns oops.config
   (:require [cljs.env]
-            [oops.state]))
-
-(def default-config                                                                                                           ; falsy below means 'nil' or 'false'
-  {; -- compiler config -----------------------------------------------------------------------------------------------------
-   :diagnostics                     true                                                                                      ; #{true falsy}
-   :key-get                         :core                                                                                     ; #{:core :goog}
-   :key-set                         :core                                                                                     ; #{:core :goog}
-   :strict-punching                 true                                                                                      ; #{true falsy}
-
-   ; compile-time warnings/errors
-   :dynamic-selector-usage          :warn                                                                                     ; #{:error :warn falsy}
-   :static-nil-target-object        :warn                                                                                     ; #{:error :warn falsy}
-   :static-empty-selector-access    :warn                                                                                     ; #{:error :warn falsy}
-
-   ; -- runtime config ------------------------------------------------------------------------------------------------------
-
-   ; run-time warnings/errors
-   :runtime-unexpected-object-value :error                                                                                    ; #{:error :warn falsy}
-   :runtime-invalid-selector        :error                                                                                    ; #{:error :warn falsy}
-   :runtime-missing-object-key      :error                                                                                    ; #{:error :warn falsy}
-   :runtime-empty-selector-access   :warn                                                                                     ; #{:error :warn falsy}
-
-   ; reporting modes
-   :runtime-error-reporting         :throw                                                                                    ; #{:throw :console falsy}
-   :runtime-warning-reporting       :console                                                                                  ; #{:throw :console falsy}
-
-   :runtime-child-factory           :js-obj                                                                                   ; #{:js-obj :js-array}
-
-   ; -- development ---------------------------------------------------------------------------------------------------------
-   ; enable debug if you want to debug/hack oops itself
-   :debug                           false                                                                                     ; #{true falsy}
-   })
-
-(def advanced-mode-compiler-config-overrides
-  {:diagnostics false})
+            [oops.state]
+            [oops.defaults :as defaults]))
 
 ; this is for testing, see with-compiler-config macro below
 (def adhoc-config-overrides (volatile! {}))
@@ -49,7 +16,7 @@
     (= (get-in @cljs.env/*compiler* [:options :optimizations]) :advanced)))
 
 (defn prepare-default-config []
-  (merge default-config (if (advanced-mode?) advanced-mode-compiler-config-overrides)))
+  (merge defaults/config (if (advanced-mode?) defaults/advanced-mode-config-overrides)))
 
 (defn read-project-config []
   (if cljs.env/*compiler*
