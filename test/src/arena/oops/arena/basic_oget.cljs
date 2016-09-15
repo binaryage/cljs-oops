@@ -1,34 +1,34 @@
 (ns oops.arena.basic-oget
   (:require [oops.core :refer [oget]]
-            [oops.tools :refer [init-arena-test! snippet]]))
+            [oops.tools :refer [init-arena-test! testing]]))
 
 (init-arena-test!)
 
 ; we are compiling under advanced mode
 ; all this code is expected to collapse to constant or get elided
 
-(snippet "simple get"
+(testing "simple get"
   (oget #js {"key" "val"} "key"))
 
-(snippet "simple miss"
+(testing "simple miss"
   (oget #js {"key" "val"} "xxx"))
 
-(snippet "simple get from refd-object"
+(testing "simple get from refd-object"
   (def o1 #js {"key"    "val"
                "nested" #js {"nested-key" "nested-val"}})
   (oget o1 "key"))
 
-(snippet "nested get"
+(testing "nested get"
   (def o2 #js {"key"    "val"
                "nested" #js {"nested-key" "nested-val"}})
   (oget o2 "nested" "nested-key"))
 
-(snippet "nested keyword selector"
+(testing "nested keyword selector"
   (def o3 #js {"key"    "val"
                "nested" #js {"nested-key" "nested-val"}})
   (oget o3 [:nested [:nested-key]]))
 
-(snippet "some edge cases"
+(testing "some edge cases"
   (oget nil)
   (def o4 nil)
   (oget o4)

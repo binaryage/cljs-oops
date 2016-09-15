@@ -123,7 +123,7 @@
     `(defonce ~name {:value ~code
                      :code  ~code-string})))
 
-(defmacro snippet [& body]
+(defmacro testing [& body]
   (let [title (if (string? (first body)) (str "=> " (first body) "\n"))
         code (remove string? body)
         comment (string/join (map pprint-code code))

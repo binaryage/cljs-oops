@@ -1,8 +1,8 @@
 (ns oops.arena.error-static-nil-object
   (:require [oops.core :refer [oget]]
-            [oops.tools :refer [init-arena-test! snippet]]))
+            [oops.tools :refer [init-arena-test! testing]]))
 
 (init-arena-test!)
 
-(snippet
+(testing
   (oget nil "k1"))

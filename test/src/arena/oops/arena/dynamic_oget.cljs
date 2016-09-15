@@ -1,6 +1,6 @@
 (ns oops.arena.dynamic-oget
   (:require [oops.core :refer [oget+]]
-            [oops.tools :refer [init-arena-test! snippet]]))
+            [oops.tools :refer [init-arena-test! testing]]))
 
 (init-arena-test!)
 
@@ -13,15 +13,15 @@
   (set! (.-x js/window) "dirty")
   name)
 
-(snippet "simple get"
+(testing "simple get"
   (oget+ #js {"key" "val"} (return-this-key "key"))
   (oget+ #js {"key" "val"} (identity "key"))
   (oget+ #js {"key" "val"} (return-this-key-with-side-effect "key")))
 
-(snippet "simple miss"
+(testing "simple miss"
   (oget+ #js {"key" "val"} (return-this-key "xxx")))
 
-(snippet "nested get"
+(testing "nested get"
   (def o1 #js {"key"    "val"
                "nested" #js {"nested-key" "nested-val"}})
   (oget+ o1 (return-this-key "key") (return-this-key "nested"))
