@@ -14,6 +14,6 @@
 // ----------------------------------------------------------------------------------------------------------
 // COMPILER STDERR:
 //   THROWN: clojure.lang.ExceptionInfo: failed compiling file:test/src/arena/oops/arena/error_dynamic_selector_usage.cljs
-//   Caused by: clojure.lang.ExceptionInfo: Oops, Unexpected dynamic selector usage at line 8 test/src/arena/oops/arena/error_dynamic_selector_usage.cljs
+//   Caused by: clojure.lang.ExceptionInfo: Oops, Unexpected dynamic selector usage (consider using oget+) at line 8 test/src/arena/oops/arena/error_dynamic_selector_usage.cljs
 // ----------------------------------------------------------------------------------------------------------
 // NO GENERATED CODE
