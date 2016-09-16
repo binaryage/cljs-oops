@@ -38,6 +38,10 @@
   :profiles {:nuke-aliases
              {:aliases ^:replace {}}
 
+             :clojure18
+             {:dependencies [[org.clojure/clojure "1.8.0" :scope "provided"]
+                             [clojure-future-spec "1.9.0-alpha11" :scope "provided"]]}
+
              :cooper
              {:plugins [[lein-cooper "1.2.2"]]}
 
@@ -132,6 +136,7 @@
   :aliases {"test"                 ["do"
                                     ["clean"]
                                     ["shell" "scripts/run-tests.sh"]]
+            "run-all-tests"        ["shell" "scripts/run-all-tests.sh"]
             "dev-functional-tests" ["shell" "scripts/dev-functional-tests.sh"]
             "run-functional-tests" ["do"
                                     ["clean"]
