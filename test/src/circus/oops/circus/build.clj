@@ -60,7 +60,7 @@
        (pprint-str (into (sorted-map) (:options build)))))
 
 (defn make-build-variants [file]
-  [(make-build file "default")
+  [(make-build file "core" (get-key-mode-options :core))
    (make-build file "goog" (get-key-mode-options :goog))])
 
 (defn get-environment-info []

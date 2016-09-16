@@ -1,12 +1,13 @@
 // Clojure v1.8.0, ClojureScript v1.9.229
 // ----------------------------------------------------------------------------------------------------------
 // COMPILER CONFIG:
-//   arena/basic_oget.cljs [default]
+//   arena/basic_oget.cljs [core]
 //   {:elide-asserts true,
+//    :external-config {:oops/config {:key-set :core, :key-get :core}},
 //    :main oops.arena.basic-oget,
 //    :optimizations :advanced,
-//    :output-dir "test/resources/_compiled/basic-oget-default/_workdir",
-//    :output-to "test/resources/_compiled/basic-oget-default/main.js",
+//    :output-dir "test/resources/_compiled/basic-oget-core/_workdir",
+//    :output-to "test/resources/_compiled/basic-oget-core/main.js",
 //    :pseudo-names true}
 // ----------------------------------------------------------------------------------------------------------
 
