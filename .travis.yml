@@ -8,7 +8,7 @@ before_script:
   # update lein to latest, https://github.com/technomancy/leiningen/issues/2014#issuecomment-153829977
   - yes y | sudo lein upgrade
   # install nodejs for npm, which is needed for js-beautify
-  - curl -sL https://deb.nodesource.com/setup_6.x | sudo -E bash -
+  - curl -sL https://deb.nodesource.com/setup_5.x | sudo -E bash -
   - sudo apt-get install -y nodejs colordiff
   - sudo npm install -g js-beautify
   # install phantomjs
