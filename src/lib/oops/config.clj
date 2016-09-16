@@ -1,6 +1,8 @@
 (ns oops.config
   (:require [cljs.env]
+            [clojure.spec :as s]
             [oops.state]
+            [oops.helpers :as helpers]
             [oops.defaults :as defaults]))
 
 ; this is for testing, see with-compiler-config macro below
@@ -25,17 +27,38 @@
 (defn read-env-config []
   {})                                                                                                                         ; TODO: write a library for this
 
+(def last-printed-config-explanation-str (volatile! nil))
+
+(defn print-invalid-config-warning [explanation-str config-str]
+  (let [indent (count "WARNING: ")]
+    (println "WARNING: Detected problems in oops config:")
+    (println (helpers/indent-text explanation-str (+ 2 (count "WARNING: "))))
+    (println (helpers/indent-text (with-out-str
+                                    (println "When validating:")
+                                    (println (helpers/indent-text config-str 2))) indent))
+    (println)))
+
+(defn validate-config-and-report-problems-if-needed! [config]
+  (if-not (:skip-config-validation config)
+    (if-not (s/valid? ::config config)
+      (let [explanation-str (s/explain-str ::config config)]
+        (when-not (= @last-printed-config-explanation-str explanation-str)
+          (vreset! last-printed-config-explanation-str explanation-str)
+          (binding [*out* *err*]
+            (print-invalid-config-warning explanation-str (helpers/pprint-code-str config))))))))
+
 (defn ^:dynamic get-compiler-config []
-  {:post [(map? %)]}                                                                                                          ; TODO: validate config using spec or bhauman's tooling
-  (merge (prepare-default-config)
-         (read-project-config)
-         (read-env-config)
-         (get-adhoc-config-overrides)))
+  (let [config (merge (prepare-default-config)
+                      (read-project-config)
+                      (read-env-config)
+                      (get-adhoc-config-overrides))]
+    (validate-config-and-report-problems-if-needed! config)
+    config))
 
 ; -- compiler config access -------------------------------------------------------------------------------------------------
 
 (defn get-current-compiler-config []
-  (get-compiler-config))                                                                                                      ; TODO: should we somehow cache this?
+  (get-compiler-config))                                                                                                      ; TODO: should we somehow cache this?, the problem is that (read-project-config) might change between calls
 
 (defn get-config-key [key & [config]]
   (key (or config (get-current-compiler-config))))
