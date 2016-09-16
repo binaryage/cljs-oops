@@ -8,8 +8,7 @@
   :scm {:name "git"
         :url  "https://github.com/binaryage/cljs-oops"}
 
-  :dependencies [[org.clojure/clojure "1.8.0" :scope "provided"]
-                 [clojure-future-spec "1.9.0-alpha11" :scope "provided"]
+  :dependencies [[org.clojure/clojure "1.9.0-alpha12" :scope "provided"]
                  [org.clojure/clojurescript "1.9.229" :scope "provided"]
 
                  [binaryage/devtools "0.8.1" :scope "test"]
@@ -24,7 +23,7 @@
   :clean-targets ^{:protect false} ["target"
                                     "test/resources/_compiled"]
 
-  :plugins [[lein-cljsbuild "1.1.3"]
+  :plugins [[lein-cljsbuild "1.1.4"]
             [lein-shell "0.5.0"]
             [lein-figwheel "0.5.7"]]
 

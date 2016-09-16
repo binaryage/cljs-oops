@@ -1,9 +1,9 @@
-// Clojure v1.8.0, ClojureScript v1.9.229
+// Clojure v1.9.0-alpha12, ClojureScript v1.9.229
 // ----------------------------------------------------------------------------------------------------------
 // COMPILER CONFIG:
 //   arena/error_static_nil_object.cljs [dev]
 //   {:elide-asserts false,
-//    :external-config {:oops/config {:static-nil-target-object :error}},
+//    :external-config #:oops{:config {:static-nil-target-object :error}},
 //    :main oops.arena.error-static-nil-object,
 //    :optimizations :whitespace,
 //    :output-dir

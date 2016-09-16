@@ -1,9 +1,9 @@
-// Clojure v1.8.0, ClojureScript v1.9.229
+// Clojure v1.9.0-alpha12, ClojureScript v1.9.229
 // ----------------------------------------------------------------------------------------------------------
 // COMPILER CONFIG:
 //   arena/error_dynamic_selector_usage.cljs [dev]
 //   {:elide-asserts false,
-//    :external-config {:oops/config {:dynamic-selector-usage :error}},
+//    :external-config #:oops{:config {:dynamic-selector-usage :error}},
 //    :main oops.arena.error-dynamic-selector-usage,
 //    :optimizations :whitespace,
 //    :output-dir
