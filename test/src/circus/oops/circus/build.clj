@@ -10,6 +10,9 @@
             [cljs.util :as cljs-util])
   (:import (java.io File StringWriter)))
 
+(def section-separator
+  "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+
 (defn post-process-build-options [options]
   (cond-> options
           (not= :advanced (:optimizations options)) (assoc :elide-asserts false)))
@@ -122,15 +125,13 @@
           actual-transcript (silent-slurp actual-path)]
       (when-not (= actual-transcript expected-transcript)
         (println)
-        (println "-----------------------------------------------------------------------------------------------------")
+        (println section-separator)
         (println (str "! actual transcript differs for '" (get-build-name build) "' build:"))
-        (println)
         (println (str "> cat " actual-path))
         (println (dim-text actual-transcript))
-        (println)
-        (println "-----------------------------------------------------------------------------------------------------")
+        (println section-separator)
         (println (produce-diff expected-path actual-path))
-        (println "-----------------------------------------------------------------------------------------------------")
+        (println section-separator)
         (println)
         (do-report {:type     :fail
                     :message  (str "Build '" (get-build-name build) "' failed to match expected transcript.")
