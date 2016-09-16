@@ -59,7 +59,7 @@
   (str (get-build-name build) "\n"
        (pprint-str (into (sorted-map) (:options build)))))
 
-(defn gen-build-variants [file]
+(defn make-build-variants [file]
   [(make-build file "default")
    (make-build file "goog" (get-key-mode-options :goog))])
 
