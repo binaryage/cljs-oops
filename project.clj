@@ -38,6 +38,18 @@
   :profiles {:nuke-aliases
              {:aliases ^:replace {}}
 
+             :lib
+             ^{:pom-scope :provided}                                                                                          ; ! to overcome default jar/pom behaviour, our :dependencies replacement would be ignored for some reason
+             [:nuke-aliases
+              {:dependencies   ~(let [project (->> "project.clj"
+                                                slurp read-string (drop 3) (apply hash-map))
+                                      test-dep? #(->> % (drop 2) (apply hash-map) :scope (= "test"))
+                                      non-test-deps (remove test-dep? (:dependencies project))]
+                                  (with-meta (vec non-test-deps) {:replace true}))                                            ; so ugly!
+               :source-paths   ^:replace ["src/lib"]
+               :resource-paths ^:replace []
+               :test-paths     ^:replace []}]
+
              :clojure18
              {:dependencies [[org.clojure/clojure "1.8.0" :scope "provided"]
                              [clojure-future-spec "1.9.0-alpha11" :scope "provided"]]}
@@ -129,9 +141,7 @@
              {:cooper {"server"     ["scripts/launch-fixtures-server.sh"]
                        "figwheel"   ["lein" "fig-basic-onone"]
                        "repl-agent" ["scripts/launch-repl-with-agent.sh"]
-                       "browser"    ["scripts/launch-test-browser.sh"]}}
-             }
-
+                       "browser"    ["scripts/launch-test-browser.sh"]}}}
 
   :aliases {"test"                 ["do"
                                     ["clean"]
@@ -157,10 +167,12 @@
             "auto-test"            ["do"
                                     ["clean"]
                                     ["auto-build-tests"]]
+            "install"              ["shell" "scripts/local-install.sh"]
+            "jar"                  ["shell" "scripts/prepare-jar.sh"]
+            "deploy"               ["shell" "scripts/deploy-clojars.sh"]
             "release"              ["do"
-                                    "shell" "scripts/check-versions.sh,"
-                                    "clean,"
-                                    "test,"
-                                    "jar,"
-                                    "shell" "scripts/check-release.sh,"
-                                    "deploy" "clojars"]})
+                                    ["clean"]
+                                    ["shell" "scripts/check-versions.sh"]
+                                    ["shell" "scripts/prepare-jar.sh"]
+                                    ["shell" "scripts/check-release.sh"]
+                                    ["shell" "scripts/deploy-clojars.sh"]]})
