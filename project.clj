@@ -167,7 +167,9 @@
             "auto-test"            ["do"
                                     ["clean"]
                                     ["auto-build-tests"]]
-            "install"              ["shell" "scripts/local-install.sh"]
+            "install"              ["do"
+                                    ["shell" "scripts/prepare-jar.sh"]
+                                    ["shell" "scripts/local-install.sh"]]
             "jar"                  ["shell" "scripts/prepare-jar.sh"]
             "deploy"               ["shell" "scripts/deploy-clojars.sh"]
             "release"              ["do"
