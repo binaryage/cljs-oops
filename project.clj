@@ -82,7 +82,7 @@
                                                    :main            oops.runner
                                                    :optimizations   :none}
                                     :figwheel     true}}}}
-             :testing-basic-oadvanced
+             :testing-basic-oadvanced-core
              {:cljsbuild {:builds {:basic-oadvanced
                                    {:source-paths ["src/lib"
                                                    "test/src/runner"
@@ -92,7 +92,9 @@
                                                    :output-dir      "test/resources/_compiled/basic_oadvanced"
                                                    :asset-path      "_compiled/basic_oadvanced"
                                                    :elide-asserts   true
-                                                   :external-config {:oops/config {:debug true}}
+                                                   :external-config {:oops/config {:debug   true
+                                                                                   :key-get :core
+                                                                                   :key-set :core}}
                                                    :main            oops.runner
                                                    :optimizations   :advanced}}}}}
              :testing-basic-oadvanced-goog
@@ -140,11 +142,11 @@
                                     ["shell" "scripts/run-circus-tests.sh"]]
             "build-tests"          ["do"
                                     ["with-profile" "+testing-basic-onone" "cljsbuild" "once" "basic-onone"]
-                                    ["with-profile" "+testing-basic-oadvanced" "cljsbuild" "once" "basic-oadvanced"]
+                                    ["with-profile" "+testing-basic-oadvanced-core" "cljsbuild" "once" "basic-oadvanced"]
                                     ["with-profile" "+testing-basic-oadvanced-goog" "cljsbuild" "once" "basic-oadvanced-goog"]]
             "auto-build-tests"     ["do"
                                     ["with-profile" "+testing-basic-onone,+auto-testing" "cljsbuild" "once" "basic-onone"]
-                                    ["with-profile" "+testing-basic-oadvanced,+auto-testing" "cljsbuild" "once" "basic-oadvanced"]
+                                    ["with-profile" "+testing-basic-oadvanced-core,+auto-testing" "cljsbuild" "once" "basic-oadvanced"]
                                     ["with-profile" "+testing-basic-oadvanced-goog,+auto-testing" "cljsbuild" "once" "basic-oadvanced-goog"]]
             "fig-basic-onone"      ["with-profile" "+testing-basic-onone,+dirac,+figwheel" "figwheel"]
             "auto-basic-onone"     ["with-profile" "+testing-basic-onone,+auto-testing" "cljsbuild" "auto" "basic-onone"]
