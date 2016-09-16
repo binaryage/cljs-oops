@@ -19,6 +19,9 @@
       (catch Throwable e
         (clansi/style (str "! " (.getMessage e)) :red)))))
 
+(defn dim-text [text]
+  (clansi/style text :black))                                                                                                 ; black on black background should be displayed as gray
+
 (defn get-canonical-line [line]
   (string/trimr line))
 

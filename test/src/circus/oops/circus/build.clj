@@ -126,7 +126,7 @@
         (println (str "! actual transcript differs for '" (get-build-name build) "' build:"))
         (println)
         (println (str "> cat " actual-path))
-        (println actual-transcript)
+        (println (dim-text actual-transcript))
         (println)
         (println "-----------------------------------------------------------------------------------------------------")
         (println (produce-diff expected-path actual-path))
