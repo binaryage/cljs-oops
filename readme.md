@@ -50,7 +50,10 @@ Require macros in your namespaces via `oops.core` ClojureScript namespace:
 (oset! (js-obj) :mood "a happy camper")
 ```
 
-Pretty standard stuff. If in doubts, look at the [sample project][13].
+Please be aware that oops uses [clojure.spec][14] which is available since Clojure 1.9.
+If you cannot upgrade to Clojure 1.9 yet, you may stick with Clojure 1.8 and add [backported version of clojure.spec][15].
+
+Otherwise pretty standard stuff. If in doubts, look at the [sample project][13].
 
 ### Motivation 
 
@@ -205,3 +208,5 @@ See example in [cljs-oops-sample][11] project.
 [11]: https://github.com/binaryage/cljs-oops/blob/master/src/lib/oops/config.clj
 [12]: https://github.com/binaryage/cljs-oops-sample/blob/932fc322ff5ab1cb26e48c136b63d24c8c5c1615/project.clj#L43
 [13]: https://github.com/binaryage/cljs-oops-sample
+[14]: http://clojure.org/guides/spec
+[15]: https://github.com/tonsky/clojure-future-spec
