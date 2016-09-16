@@ -5,8 +5,8 @@
 (def config                                                                                                                   ; falsy below means 'nil' or 'false'
   {; -- compiler config -----------------------------------------------------------------------------------------------------
    :diagnostics                     true                                                                                      ; #{true falsy}
-   :key-get                         :core                                                                                     ; #{:core :goog}
-   :key-set                         :core                                                                                     ; #{:core :goog}
+   :key-get                         :goog                                                                                     ; #{:core :goog}
+   :key-set                         :goog                                                                                     ; #{:core :goog}
    :strict-punching                 true                                                                                      ; #{true falsy}
 
    ; compile-time warnings/errors

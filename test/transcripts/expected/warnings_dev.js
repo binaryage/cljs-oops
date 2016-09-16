@@ -32,7 +32,7 @@ oops.state._STAR_runtime_state_STAR_ = oops.state.prepare_state.call(null, funct
 }, o_1);
 try {
   var obj_29 = o_1;
-  if (oops.core.validate_object_access_dynamically.call(null, obj_29, 0, "key", true)) obj_29["key"];
+  if (oops.core.validate_object_access_dynamically.call(null, obj_29, 0, "key", true)) goog.object.get(obj_29, "key");
   else;
 } finally {
   oops.state._STAR_runtime_state_STAR_ = _STAR_runtime_state_STAR_28
@@ -64,9 +64,9 @@ oops.state._STAR_runtime_state_STAR_ = oops.state.prepare_state.call(null, funct
 }, null);
 try {
   var obj_32 = null;
-  var obj_33 = oops.core.validate_object_access_dynamically.call(null, obj_32, 0, "k1", true) ? obj_32["k1"] : null;
-  var obj_34 = oops.core.validate_object_access_dynamically.call(null, obj_33, 0, "k2", true) ? obj_33["k2"] : null;
-  if (oops.core.validate_object_access_dynamically.call(null, obj_34, 0, "k3", true)) obj_34["k3"];
+  var obj_33 = oops.core.validate_object_access_dynamically.call(null, obj_32, 0, "k1", true) ? goog.object.get(obj_32, "k1") : null;
+  var obj_34 = oops.core.validate_object_access_dynamically.call(null, obj_33, 0, "k2", true) ? goog.object.get(obj_33, "k2") : null;
+  if (oops.core.validate_object_access_dynamically.call(null, obj_34, 0, "k3", true)) goog.object.get(obj_34, "k3");
   else;
 } finally {
   oops.state._STAR_runtime_state_STAR_ = _STAR_runtime_state_STAR_31
