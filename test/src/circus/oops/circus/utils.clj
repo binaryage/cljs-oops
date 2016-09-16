@@ -15,7 +15,7 @@
       (let [result (apply shell/sh "colordiff" (concat options-args paths-args))]
         (if-not (empty? (:err result))
           (clansi/style (str "! " (:err result)) :red)
-          (:out result)))
+          (cuerdas/rtrim (:out result))))
       (catch Throwable e
         (clansi/style (str "! " (.getMessage e)) :red)))))
 
