@@ -90,7 +90,7 @@ multi-megabyte one-line Javascript files ;)
  if it is outdated/incomplete without doing a full code-review. And the worst part is that "someone" is very often you.
  
 3. Incomplete (or outdated) extern files provide no feedback. Except that you suddenly discover that a new build is broken again and 
- you are back to "[psedo-names][8] fishing".
+ you are back to "[pseudo-names][8] fishing".
  
 4. Externs have to be configured. Paths must be specified. Externs are not co-located with the code they are describing.
 It is not always clear where individual externs are coming from. Some "default" externs for standard browser/DOM APIs are baked-in 
