@@ -167,6 +167,7 @@
             "auto-test"            ["do"
                                     ["clean"]
                                     ["auto-build-tests"]]
+            "toc"                  ["shell" "scripts/generate-toc.sh"]
             "install"              ["do"
                                     ["shell" "scripts/prepare-jar.sh"]
                                     ["shell" "scripts/local-install.sh"]]
