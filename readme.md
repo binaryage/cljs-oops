@@ -203,8 +203,8 @@ See example in [cljs-oops-sample][12] project.
 
 #### Isn't accessing properties by string names slower?
 
-> Well, only if the strings are computed dynamically at runtime. In case of strings literals Javascript parser can see them
-  and there should be no reason to treat them differently than dot operator properties. But you don't have to worry about this. 
+> Well, only if the strings are computed dynamically at runtime. In case of string literals Javascript parser can see them
+  and there should be no reason to treat them differently than dot properties. But you don't have to worry about this. 
   Google Closure compiler rewrites string literals to dot property access whenever possible.
 
 [1]: http://cljs.github.io/api/syntax/dot
