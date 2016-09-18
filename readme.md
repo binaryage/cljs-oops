@@ -197,7 +197,7 @@ I believe oops has sensible defaults and there should be no need to tweak it und
 Anyways, look at possible configuration options in [defaults.clj][11].
 
 As you can see you can provide your own config overrides in ClojureScript compiler options map via `:external-config > :oops/config`.
-See example in [cljs-oops-sample][11] project.
+See example in [cljs-oops-sample][12] project.
 
 ### FAQ
 
