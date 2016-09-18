@@ -1,4 +1,4 @@
-(defproject binaryage/oops "0.1.0"
+(defproject binaryage/oops "0.1.1-SNAPSHOT"
   :description "ClojureScript macros for convenient Javascript object access."
   :url "https://github.com/binaryage/cljs-oops"
   :license {:name         "MIT License"
