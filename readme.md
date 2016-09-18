@@ -5,6 +5,15 @@
 [![Travis](https://img.shields.io/travis/binaryage/cljs-oops.svg)](https://travis-ci.org/binaryage/cljs-oops) 
 [![Sample Project](https://img.shields.io/badge/project-example-ff69b4.svg)](https://github.com/binaryage/cljs-oops-sample)
 
+This is a ClojureScript micro-library providing a few essential macros for operating with native Javascript objects.
+
+**TOC** 
+| **[Object operations](#object-operations)** 
+| **[Installation](#installation)**
+| **[Motivation](#motivation)**
+| **[Benefits](#benefits)**
+| **[FAQ](#faq)**
+
 ```
 Boss: "Ship it!"
 You:  "Let me compile it with :advanced optimizations..."
@@ -14,8 +23,6 @@ You:  "Oops! It just broke! And I don't know why."
 Boss: "Don't tell me that a random person on the Internet was wrong again."
 You:  (sad face) "Yep, they provided slightly outdated externs!"
 ```
-
-This is a ClojureScript micro-library providing a few essential macros for operating with native Javascript objects.
 
 ### Object operations 
 
@@ -178,13 +185,13 @@ To silence this warnings use "plus" version of `oget` like this:
 
 This way you express explicit consent with dynamic selector code-path.
 
-#### Be safe during development
+#### Play it safe during development
 
 By default, oops generates diagnostics code and does pretty intensive safe-checking in non-advanced builds.
 As you can see on the screenshots above you might get compile-time or run-time warnings and errors when unexpected things happen,
 like accessing missing keys or traversing non-objects.
 
-#### Produce efficient bare-bone code in :advanced builds
+#### Produce efficient barebone code in :advanced builds
 
 By default, all diagnostics code is elided in :advanced builds and oops produces code similar to hand-written `aget` usage
 (without any safety-checks).
