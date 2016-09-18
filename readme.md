@@ -186,7 +186,7 @@ like accessing missing keys or traversing non-objects.
 
 #### Produce efficient bare-bone code in :advanced builds
 
-By default, all diagnostics code is elided in :advanced builds and oops produces code similar hand-written `aget` usage
+By default, all diagnostics code is elided in :advanced builds and oops produces code similar to hand-written `aget` usage
 (without any safety-checks).
 
 You can inspect our test [compilation transcripts][10] to see what code is generated in different compiler modes.
@@ -194,7 +194,7 @@ You can inspect our test [compilation transcripts][10] to see what code is gener
 #### Tailor oops behaviour
 
 I believe oops has sensible defaults and there should be no need to tweak it under normal circumstances.
-Anyways, look at possible configuration options in [config.clj][11].
+Anyways, look at possible configuration options in [defaults.clj][11].
 
 As you can see you can provide your own config overrides in ClojureScript compiler options map via `:external-config > :oops/config`.
 See example in [cljs-oops-sample][11] project.
@@ -217,7 +217,7 @@ See example in [cljs-oops-sample][11] project.
 [8]: https://github.com/clojure/clojurescript/wiki/Compiler-Options#pseudo-names
 [9]: https://github.com/binaryage/cljs-oops/blob/master/src/lib/oops/sdefs.clj
 [10]: https://github.com/binaryage/cljs-oops/tree/master/test/transcripts/expected
-[11]: https://github.com/binaryage/cljs-oops/blob/master/src/lib/oops/config.clj
+[11]: https://github.com/binaryage/cljs-oops/blob/master/src/lib/oops/defaults.clj
 [12]: https://github.com/binaryage/cljs-oops-sample/blob/932fc322ff5ab1cb26e48c136b63d24c8c5c1615/project.clj#L43
 [13]: https://github.com/binaryage/cljs-oops-sample
 [14]: http://clojure.org/guides/spec
