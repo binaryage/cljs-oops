@@ -125,19 +125,24 @@
           ; make sure we don't print multiple errors on subsequent missing keys...
           (let [recorder (atom [])]
             (with-console-recording recorder
-              (is (= (oget #js {:k1 #js {"k2" nil}} "k1" "k2" "k3") nil)))
+              (is (= (oget #js {:k1 #js {"k2" nil}} "k1" "k2" "k3" "k4") nil)))
             (is (= @recorder ["ERROR: (\"Oops, Unexpected object value (nil) on key path 'k1.k2'\" {:path \"k1.k2\", :flavor \"nil\", :obj #js {:k1 #js {:k2 nil}}})"]))))))
     (when-advanced-mode                                                                                                       ; advanced optimizations
       (testing "object access validation should crash or silently fail in advanced mode (no diagnostics)"
         (when-not-compiler-config {:key-get :goog}
-                                  (are [o msg] (thrown-with-msg? js/TypeError msg (oget o "key"))
-                                    nil #"null is not an object"
-                                    js/undefined #"undefined is not an object")
-                                  (are [o] (= (oget o "key") nil)
-                                    "s"
-                                    42
-                                    true
-                                    false))))
+          (under-phantom
+            (are [o msg] (thrown-with-msg? js/TypeError msg (oget o "key"))
+              nil #"null is not an object"
+              js/undefined #"undefined is not an object"))
+          (under-chrome
+            (are [o msg] (thrown-with-msg? js/TypeError msg (oget o "key"))
+              nil #"Cannot read property 'key' of null"
+              js/undefined #"Cannot read property 'key' of undefined"))
+          (are [o] (= (oget o "key") nil)
+            "s"
+            42
+            true
+            false))))
     (testing "static dot escaping"
       (let [o #js {".."     #js {".x." "."}
                    ".\\\\." "x"                                                                                               ; this is a cljs bug, it does java string escaping and then again when emitting javascript string
