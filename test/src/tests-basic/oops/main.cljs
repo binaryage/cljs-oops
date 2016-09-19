@@ -305,13 +305,42 @@
       (is (= @counter 1))
       (is (= (ocall! sample-obj "return-fn" 1) '(1)))
       (is (= (ocall! sample-obj "return-fn") nil))
-      (is (= (ocall! sample-obj "return-fn" 1 2 3) '(1 2 3)))
+      (is (= (ocall! sample-obj ["return-fn" []] 1 2 3) '(1 2 3)))
       (ocall! sample-obj "add-fn" 1)
       (is (= @counter 2))
       (ocall! sample-obj "add-fn" 1 2 3 4)
       (is (= @counter 3))
       (ocall! sample-obj "add*-fn" 1 2 3 4)
-      (is (= @counter 13)))))
+      (is (= @counter 13))))
+  (testing "test errors when ocalling non-functions"
+    (when-not-advanced-mode
+      (presume-compiler-config {:runtime-expected-function-value :error})
+      (with-runtime-config {:error-reporting :console}
+        (let [sample-obj #js {"nil-fn" nil
+                              "non-fn" 1}
+              recorder (atom [])]
+          (with-console-recording recorder
+            ; static/dynamic case
+            (ocall sample-obj "missing-fn")
+            (ocall+ sample-obj (identity "missing-fn"))
+            (ocall sample-obj "nil-fn")
+            (ocall+ sample-obj (identity "nil-fn"))
+            (ocall sample-obj "non-fn")
+            (ocall+ sample-obj (identity "non-fn"))
+            (ocall sample-obj "?missing-fn2")                                                                                 ; should be silent
+            (ocall+ sample-obj (identity "?missing-fn2"))
+            (ocall sample-obj "?nil-fn")                                                                                      ; should be silent as well
+            (ocall+ sample-obj (identity "?nil-fn"))
+            (ocall sample-obj "?non-fn")                                                                                      ; should not be silent
+            (ocall+ sample-obj (identity "?non-fn")))
+          (is (= @recorder ["ERROR: (\"Oops, Missing expected object key 'missing-fn'\" {:path \"missing-fn\", :key \"missing-fn\", :obj #js {:nil-fn nil, :non-fn 1}})"
+                            "ERROR: (\"Oops, Missing expected object key 'missing-fn'\" {:path \"missing-fn\", :key \"missing-fn\", :obj #js {:nil-fn nil, :non-fn 1}})"
+                            "ERROR: (\"Oops, Expected a function on key path 'nil-fn', got <null> instead\" {:path \"nil-fn\", :soft? false, :fn nil, :obj #js {:nil-fn nil, :non-fn 1}})"
+                            "ERROR: (\"Oops, Expected a function on key path 'nil-fn', got <null> instead\" {:path \"nil-fn\", :soft? false, :fn nil, :obj #js {:nil-fn nil, :non-fn 1}})"
+                            "ERROR: (\"Oops, Expected a function on key path 'non-fn', got <number> instead\" {:path \"non-fn\", :soft? false, :fn 1, :obj #js {:nil-fn nil, :non-fn 1}})"
+                            "ERROR: (\"Oops, Expected a function on key path 'non-fn', got <number> instead\" {:path \"non-fn\", :soft? false, :fn 1, :obj #js {:nil-fn nil, :non-fn 1}})"
+                            "ERROR: (\"Oops, Expected a function or nil on key path 'non-fn', got <number> instead\" {:path \"non-fn\", :soft? true, :fn 1, :obj #js {:nil-fn nil, :non-fn 1}})"
+                            "ERROR: (\"Oops, Expected a function or nil on key path 'non-fn', got <number> instead\" {:path \"non-fn\", :soft? true, :fn 1, :obj #js {:nil-fn nil, :non-fn 1}})"])))))))
 
 (deftest test-oapply
   (testing "simple invocation via apply"
