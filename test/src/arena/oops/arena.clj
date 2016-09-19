@@ -1,10 +1,14 @@
 (ns oops.arena
   (:require [clojure.test :refer :all]
-            [oops.circus.build :refer [make-build-variants make-build exercise-builds!]]))
+            [oops.circus.build :refer [get-key-mode-options make-build exercise-builds!]]))
+
+(defn make-build-variants [file]
+  [(make-build file "core" (get-key-mode-options :core))
+   (make-build file "goog" (get-key-mode-options :goog))])
 
 (def all-builds
   (concat
-    (make-build-variants "basic_oget.cljs")
+    (make-build-variants "static_oget.cljs")
     (make-build-variants "dynamic_oget.cljs")
     [(make-build "exercise_oget.cljs" "dev" {} {:optimizations :whitespace})
      (make-build "exercise_oset.cljs" "dev" {} {:optimizations :whitespace})

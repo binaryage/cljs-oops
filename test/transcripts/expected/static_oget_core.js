@@ -1,13 +1,13 @@
 // Clojure v1.9.0-alpha12, ClojureScript v1.9.229
 // ----------------------------------------------------------------------------------------------------------
 // COMPILER CONFIG:
-//   arena/basic_oget.cljs [goog]
+//   arena/static_oget.cljs [core]
 //   {:elide-asserts true,
-//    :external-config #:oops{:config {:key-set :goog, :key-get :goog}},
-//    :main oops.arena.basic-oget,
+//    :external-config #:oops{:config {:key-set :core, :key-get :core}},
+//    :main oops.arena.static-oget,
 //    :optimizations :advanced,
-//    :output-dir "test/resources/_compiled/basic-oget-goog/_workdir",
-//    :output-to "test/resources/_compiled/basic-oget-goog/main.js",
+//    :output-dir "test/resources/_compiled/static-oget-core/_workdir",
+//    :output-to "test/resources/_compiled/static-oget-core/main.js",
 //    :pseudo-names true}
 // ----------------------------------------------------------------------------------------------------------
 
@@ -16,10 +16,16 @@
 //     (oget #js {"key" "val"} "key"))
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+"val";
+
 // SNIPPET #2:
 //   (testing "simple miss"
 //     (oget #js {"key" "val"} "xxx"))
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+({
+  key: "val"
+}).xxx;
 
 // SNIPPET #3:
 //   (testing "simple get from refd-object"
@@ -28,12 +34,16 @@
 //     (oget o1 "key"))
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+"val";
+
 // SNIPPET #4:
 //   (testing "nested get"
 //     (def o2 #js {"key"    "val"
 //                  "nested" #js {"nested-key" "nested-val"}})
 //     (oget o2 "nested" "nested-key"))
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+"nested-val";
 
 // SNIPPET #5:
 //   (testing "nested keyword selector"
@@ -42,6 +52,8 @@
 //     (oget o3 [:nested [:nested-key]]))
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+"nested-val";
+
 // SNIPPET #6:
 //   (testing "some edge cases"
 //     (oget nil)
@@ -49,3 +61,5 @@
 //     (oget o4)
 //     (oget o4 :a :b :c))
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+null.a.b.c;

@@ -59,10 +59,6 @@
   (str (get-build-name build) "\n"
        (pprint-str (into (sorted-map) (:options build)))))
 
-(defn make-build-variants [file]
-  [(make-build file "core" (get-key-mode-options :core))
-   (make-build file "goog" (get-key-mode-options :goog))])
-
 (defn get-environment-info []
   (str "Clojure v" (clojure-version) ", "
        "ClojureScript v" (cljs-util/clojurescript-version)))
