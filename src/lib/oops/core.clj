@@ -273,6 +273,13 @@
                                                   :path (oops.state/get-current-key-path-str)})
      true))
 
+(defn gen-dynamic-fn-call-validation-wrapper [fn-sym body]
+  (debug-assert (symbol? fn-sym))
+  (if (config/diagnostics?)
+    `(if (validate-fn-call-dynamically ~fn-sym (oops.state/get-last-access-modifier))                                         ; we rely on previous oget to record last access modifier of the selector
+       ~body)
+    body))
+
 ; -- helper macros ----------------------------------------------------------------------------------------------------------
 
 (defmacro report-runtime-error-impl [msg data]
@@ -300,9 +307,20 @@
   (debug-assert (symbol? key-sym))
   `(when ~(gen-dynamic-object-access-validation obj-sym mode-sym)
      (oops.state/add-key-to-current-path! ~key-sym)
+     (oops.state/set-last-access-modifier! ~mode-sym)
      (if ~check-key?
        ~(gen-check-key-access obj-sym mode-sym key-sym)
        true)))
+
+(defmacro validate-fn-call-dynamically-impl [fn-sym mode-sym]
+  (debug-assert (symbol? fn-sym))
+  (debug-assert (symbol? mode-sym))
+  `(cond
+     (and (= ~mode-sym ~soft-access) (nil? ~fn-sym)) true
+     (goog/isFunction ~fn-sym) true
+     :else ~(gen-report-if-needed :expected-function `{:obj   (oops.state/get-current-target-object)
+                                                       :path  (oops.state/get-current-key-path-str)
+                                                       :soft? (= ~mode-sym ~soft-access)})))
 
 (defmacro build-path-dynamically-impl [selector-sym]
   (debug-assert (symbol? selector-sym))
@@ -385,59 +403,75 @@
           (gen-dynamic-selector-set obj-sym selector-list val))
        ~obj-sym)))
 
-(defn gen-ocall [obj selector args]
+(defn gen-ocall [obj selector-list args]
   (validate-object-statically obj)
-  (let [obj-sym (gensym "obj")]
-    `(let [~obj-sym ~obj]
-       (.call ~(gen-oget obj-sym [selector]) ~obj-sym ~@args))))                                                              ; TODO: implement safety-checks here
+  (let [obj-sym (gensym "obj")
+        fn-sym (gensym "fn")
+        action `(if-not (nil? ~fn-sym)
+                  (.call ~fn-sym ~obj-sym ~@args))]
+    `(let [~obj-sym ~obj
+           ~fn-sym ~(gen-oget obj-sym selector-list)]
+       ~(gen-dynamic-fn-call-validation-wrapper fn-sym action))))
 
-(defn gen-oapply [obj selector args]
+(defn gen-oapply [obj selector-list args]
   (validate-object-statically obj)
-  (let [obj-sym (gensym "obj")]
-    `(let [~obj-sym ~obj]
-       (.apply ~(gen-oget obj-sym [selector]) ~obj-sym (into-array ~args)))))                                                 ; TODO: implement safety-checks here
+  (let [obj-sym (gensym "obj")
+        fn-sym (gensym "fn")
+        action `(if-not (nil? ~fn-sym)
+                  (.apply ~fn-sym ~obj-sym (into-array ~args)))]
+    `(let [~obj-sym ~obj
+           ~fn-sym ~(gen-oget obj-sym selector-list)]
+       ~(gen-dynamic-fn-call-validation-wrapper fn-sym action))))
 
 ; -- public macros ----------------------------------------------------------------------------------------------------------
 
 (defmacro oget [obj & selector]
   (with-diagnostics-context! &form &env obj
-    (gen-oget obj selector)))
+    (let [selector-list selector]
+      (gen-oget obj selector-list))))
 
 (defmacro oget+ [obj & selector]
   (with-diagnostics-context! &form &env obj
     (with-compilation-opts! {:suppress-reporting #{:dynamic-selector-usage}}
-      (gen-oget obj selector))))
+      (let [selector-list selector]
+        (gen-oget obj selector-list)))))
 
 (defmacro oset! [obj & selector+val]
   (with-diagnostics-context! &form &env obj
-    (let [val (last selector+val)
-          selector (butlast selector+val)]
-      (gen-oset! obj selector val))))
+    (let [selector-list (butlast selector+val)
+          val (last selector+val)]
+      (gen-oset! obj selector-list val))))
 
 (defmacro oset!+ [obj & selector+val]
   (with-diagnostics-context! &form &env obj
     (with-compilation-opts! {:suppress-reporting #{:dynamic-selector-usage}}
-      (let [val (last selector+val)
-            selector (butlast selector+val)]
-        (gen-oset! obj selector val)))))
+      (let [selector-list (butlast selector+val)
+            val (last selector+val)]
+        (gen-oset! obj selector-list val)))))
 
 (defmacro ocall [obj selector & args]
   (with-diagnostics-context! &form &env obj
-    (gen-ocall obj selector args)))
+    (let [selector-list [selector]]
+      (gen-ocall obj selector-list args))))
 
 (defmacro ocall+ [obj selector & args]
   (with-diagnostics-context! &form &env obj
     (with-compilation-opts! {:suppress-reporting #{:dynamic-selector-usage}}
-      (gen-ocall obj selector args))))
+      (let [selector-list [selector]]
+        (gen-ocall obj selector-list args)))))
 
-(defmacro oapply [obj selector args]
+(defmacro oapply [obj & selector+args]
   (with-diagnostics-context! &form &env obj
-    (gen-oapply obj selector args)))
+    (let [selector-list (butlast selector+args)
+          args (last selector+args)]
+      (gen-oapply obj selector-list args))))
 
-(defmacro oapply+ [obj selector args]
+(defmacro oapply+ [obj & selector+args]
   (with-diagnostics-context! &form &env obj
     (with-compilation-opts! {:suppress-reporting #{:dynamic-selector-usage}}
-      (gen-oapply obj selector args))))
+      (let [selector-list (butlast selector+args)
+            args (last selector+args)]
+        (gen-oapply obj selector-list args)))))
 
 ; -- convenience macros -----------------------------------------------------------------------------------------------------
 
@@ -445,24 +479,30 @@
   "This macro is identical to ocall, use it if you want to express a side-effecting call."
   [obj selector & args]
   (with-diagnostics-context! &form &env obj
-    (gen-ocall obj selector args)))
+    (let [selector-list [selector]]
+      (gen-ocall obj selector-list args))))
 
 (defmacro ocall!+
   "This macro is identical to ocall, use it if you want to express a side-effecting call."
   [obj selector & args]
   (with-diagnostics-context! &form &env obj
     (with-compilation-opts! {:suppress-reporting #{:dynamic-selector-usage}}
-      (gen-ocall obj selector args))))
+      (let [selector-list [selector]]
+        (gen-ocall obj selector-list args)))))
 
 (defmacro oapply!
   "This macro is identical to oapply, use it if you want to express a side-effecting call."
-  [obj selector args]
+  [obj & selector+args]
   (with-diagnostics-context! &form &env obj
-    (gen-oapply obj selector args)))
+    (let [selector-list (butlast selector+args)
+          args (last selector+args)]
+      (gen-oapply obj selector-list args))))
 
 (defmacro oapply!+
   "This macro is identical to oapply, use it if you want to express a side-effecting call."
-  [obj selector args]
+  [obj & selector+args]
   (with-diagnostics-context! &form &env obj
     (with-compilation-opts! {:suppress-reporting #{:dynamic-selector-usage}}
-      (gen-oapply obj selector args))))
+      (let [selector-list (butlast selector+args)
+            args (last selector+args)]
+        (gen-oapply obj selector-list args)))))

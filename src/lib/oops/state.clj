@@ -22,3 +22,6 @@
 
 (defmacro state-current-target-object-idx []
   3)
+
+(defmacro state-last-access-modifier-idx []
+  4)

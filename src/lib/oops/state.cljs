@@ -2,8 +2,10 @@
   (:require-macros [oops.state :refer [state-console-reporter-idx
                                        state-error-reported?-idx
                                        state-current-key-path-idx
-                                       state-current-target-object-idx]]
-                   [oops.debug :refer [debug-assert]]))
+                                       state-current-target-object-idx
+                                       state-last-access-modifier-idx]]
+                   [oops.debug :refer [debug-assert]]
+                   [oops.constants :refer [get-dot-access]]))
 
 (def ^:dynamic *runtime-state*)
 
@@ -12,11 +14,12 @@
 (debug-assert (= (state-error-reported?-idx) 1))
 (debug-assert (= (state-current-key-path-idx) 2))
 (debug-assert (= (state-current-target-object-idx) 3))
+(debug-assert (= (state-last-access-modifier-idx) 4))
 
 ; -- helpers ----------------------------------------------------------------------------------------------------------------
 
 (defn prepare-state [console-reporter target-object]
-  (array console-reporter false (array) target-object))
+  (array console-reporter false (array) target-object (get-dot-access)))
 
 (defn get-console-reporter []
   (debug-assert *runtime-state*)
@@ -46,6 +49,14 @@
 (defn get-current-key-path-str []
   (debug-assert *runtime-state*)
   (.join (get-current-key-path) "."))
+
+(defn get-last-access-modifier []
+  (debug-assert *runtime-state*)
+  (aget *runtime-state* (state-last-access-modifier-idx)))
+
+(defn set-last-access-modifier! [mode]
+  (debug-assert *runtime-state*)
+  (aset *runtime-state* (state-last-access-modifier-idx) mode))
 
 (defn ^boolean was-error-reported? []
   (debug-assert *runtime-state*)

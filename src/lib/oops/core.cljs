@@ -4,6 +4,7 @@
                                       report-if-needed-dynamically-impl
                                       punch-key-dynamically-impl
                                       validate-object-access-dynamically-impl
+                                      validate-fn-call-dynamically-impl
                                       build-path-dynamically-impl
                                       get-key-dynamically-impl
                                       set-key-dynamically-impl
@@ -36,6 +37,9 @@
 
 (defn ^boolean validate-object-access-dynamically [obj mode key check-key?]
   (validate-object-access-dynamically-impl obj mode  key check-key?))
+
+(defn ^boolean validate-fn-call-dynamically [fn mode]
+  (validate-fn-call-dynamically-impl fn mode))
 
 (defn build-path-dynamically [selector]
   (build-path-dynamically-impl selector))

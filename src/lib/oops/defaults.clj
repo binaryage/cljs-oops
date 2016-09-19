@@ -20,6 +20,7 @@
 
    ; run-time warnings/errors
    :runtime-unexpected-object-value :error                                                                                    ; #{:error :warn falsy}
+   :runtime-expected-function-value :error                                                                                    ; #{:error :warn falsy}
    :runtime-invalid-selector        :error                                                                                    ; #{:error :warn falsy}
    :runtime-missing-object-key      :error                                                                                    ; #{:error :warn falsy}
    :runtime-empty-selector-access   :warn                                                                                     ; #{:error :warn falsy}
@@ -65,6 +66,7 @@
 (s/def ::config/static-empty-selector-access ::config/message)
 
 (s/def ::config/runtime-unexpected-object-value ::config/message)
+(s/def ::config/runtime-expected-function-value ::config/message)
 (s/def ::config/runtime-invalid-selector ::config/message)
 (s/def ::config/runtime-missing-object-key ::config/message)
 (s/def ::config/runtime-empty-selector-access ::config/message)
