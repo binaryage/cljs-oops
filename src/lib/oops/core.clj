@@ -5,7 +5,8 @@
             [oops.compiler :as compiler :refer [gensym with-diagnostics-context! with-compilation-opts!]]
             [oops.constants :refer [dot-access soft-access punch-access]]
             [oops.debug :refer [log debug-assert]]
-            [oops.state :as state]))
+            [oops.state :as state]
+            [clojure.spec :as s]))
 
 ; -- helper code generators -------------------------------------------------------------------------------------------------
 
@@ -508,3 +509,45 @@
       (let [selector-list (butlast selector+args)
             args (last selector+args)]
         (gen-oapply obj selector-list args)))))
+
+; -- specs for our macro apis -----------------------------------------------------------------------------------------------
+;
+; This is not much useful because we cannot reason about macro args much,
+; but I include it because it is catching some edge cases
+; and there is a room for possible further refinements.
+; Additionally we do ad-hoc validations inside our macros.
+
+(def oget-api (s/fspec :args (s/cat :obj any?
+                                    :selector (s/* any?))
+                       :ret any?))
+
+(def oset-api (s/fspec :args (s/cat :obj any?
+                                    :selector (s/+ any?)
+                                    :val any?)
+                       :ret any?))
+
+(def ocall-api (s/fspec :args (s/cat :obj any?
+                                     :selector any?
+                                     :args (s/* any?))
+                        :ret any?))
+
+(def oapply-api (s/fspec :args (s/cat :obj any?
+                                      :selector (s/+ any?)
+                                      :args any?)
+                         :ret any?))
+
+(s/def oget oget-api)
+(s/def oget+ oget-api)
+
+(s/def oset! oset-api)
+(s/def oset!+ oset-api)
+
+(s/def ocall ocall-api)
+(s/def ocall+ ocall-api)
+(s/def ocall! ocall-api)
+(s/def ocall!+ ocall-api)
+
+(s/def oapply oapply-api)
+(s/def oapply+ oapply-api)
+(s/def oapply! oapply-api)
+(s/def oapply!+ oapply-api)
