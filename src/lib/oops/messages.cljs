@@ -16,10 +16,11 @@
                                      (if-not (empty? path) (str " on key path '" path "'"))))))
 
 (defmethod runtime-message :expected-function-value [_type info]
-  (let [{:keys [soft? path]} info]
-    (post-process-error-message (str "Expected function"
+  (let [{:keys [soft? path fn]} info]
+    (post-process-error-message (str "Expected a function"
                                      (if soft? (str " or nil"))
-                                     (if-not (empty? path) (str " on key path '" path "'"))))))
+                                     (if-not (empty? path) (str " on key path '" path "'"))
+                                     ", got <" (goog/typeOf fn) "> instead"))))
 
 (defmethod runtime-message :missing-object-key [_type info]
   (let [{:keys [key path]} info]

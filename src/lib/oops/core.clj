@@ -318,9 +318,10 @@
   `(cond
      (and (= ~mode-sym ~soft-access) (nil? ~fn-sym)) true
      (goog/isFunction ~fn-sym) true
-     :else ~(gen-report-if-needed :expected-function `{:obj   (oops.state/get-current-target-object)
-                                                       :path  (oops.state/get-current-key-path-str)
-                                                       :soft? (= ~mode-sym ~soft-access)})))
+     :else ~(gen-report-if-needed :expected-function-value `{:obj   (oops.state/get-current-target-object)
+                                                             :path  (oops.state/get-current-key-path-str)
+                                                             :fn    ~fn-sym
+                                                             :soft? (= ~mode-sym ~soft-access)})))
 
 (defmacro build-path-dynamically-impl [selector-sym]
   (debug-assert (symbol? selector-sym))
