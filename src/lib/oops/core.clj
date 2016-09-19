@@ -375,14 +375,14 @@
     (gen-static-path-get obj (check-path! path))
     (gen-dynamic-selector-get obj selector-list)))
 
-(defn gen-oset! [obj selector val]
+(defn gen-oset! [obj selector-list val]
   (validate-object-statically obj)
   (let [obj-sym (gensym "obj")
-        path (schema/selector->path selector)]
+        path (schema/selector->path selector-list)]
     `(let [~obj-sym ~obj]
        ~(if path
           (gen-static-path-set obj-sym (check-path! path) val)
-          (gen-dynamic-selector-set obj-sym selector val))
+          (gen-dynamic-selector-set obj-sym selector-list val))
        ~obj-sym)))
 
 (defn gen-ocall [obj selector args]
