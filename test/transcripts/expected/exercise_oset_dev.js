@@ -24,11 +24,10 @@ try {
   var parent_obj_19 = function() {
     var obj_7 = obj_18;
     var next_obj_8 = oops.core.validate_object_access_dynamically.call(null, obj_7, 2, "k1", true) ? goog.object.get(obj_7, "k1") : null;
-    if (cljs.core.some_QMARK_.call(null, next_obj_8)) return next_obj_8;
+    if (!(next_obj_8 == null)) return next_obj_8;
     else return oops.core.punch_key_dynamically_BANG_.call(null, obj_7, "k1")
   }();
-  if (oops.core.validate_object_access_dynamically.call(null, parent_obj_19, 2, "k2", true)) goog.object.set(parent_obj_19,
-    "k2", "val");
+  if (oops.core.validate_object_access_dynamically.call(null, parent_obj_19, 2, "k2", true)) goog.object.set(parent_obj_19, "k2", "val");
   else;
 } finally {
   oops.state._STAR_runtime_state_STAR_ = _STAR_runtime_state_STAR_17

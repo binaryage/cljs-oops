@@ -23,10 +23,10 @@ try {
   var obj_16 = window;
   var obj_17 = oops.core.validate_object_access_dynamically.call(null, obj_16, 0, "k1", true) ? goog.object.get(obj_16, "k1") : null;
   var next_obj_18 = oops.core.validate_object_access_dynamically.call(null, obj_17, 1, "k2", true) ? goog.object.get(obj_17, "k2") : null;
-  if (cljs.core.some_QMARK_.call(null, next_obj_18)) {
+  if (!(next_obj_18 == null)) {
     var obj_19 = next_obj_18;
-    if (oops.core.validate_object_access_dynamically.call(null, obj_19,
-        0, "k3", true)) goog.object.get(obj_19, "k3");
+    if (oops.core.validate_object_access_dynamically.call(null, obj_19, 0, "k3", true)) goog.object.get(obj_19,
+      "k3");
     else;
   } else;
 } finally {

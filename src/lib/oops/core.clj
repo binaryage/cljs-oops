@@ -110,11 +110,11 @@
              ~(gen-static-path-get (gen-instrumented-key-get obj-sym key mode) (rest path)))
         1 `(let [~obj-sym ~obj
                  ~next-obj-sym ~(gen-instrumented-key-get obj-sym key mode)]
-             (if (some? ~next-obj-sym)
+             (if-not (nil? ~next-obj-sym)
                ~(gen-static-path-get next-obj-sym (rest path))))
         2 `(let [~obj-sym ~obj
                  ~next-obj-sym ~(gen-instrumented-key-get obj-sym key mode)]
-             (if (some? ~next-obj-sym)
+             (if-not (nil? ~next-obj-sym)
                ~(gen-static-path-get next-obj-sym (rest path))
                ~(gen-static-path-get `(punch-key-dynamically! ~obj-sym ~key) (rest path))))))))
 
@@ -138,9 +138,9 @@
                  ~next-obj-sym (get-key-dynamically ~obj-sym ~key-sym ~mode-sym)]
              (case ~mode-sym
                ~dot-access (recur ~next-i ~next-obj-sym)
-               ~soft-access (if (some? ~next-obj-sym)
+               ~soft-access (if-not (nil? ~next-obj-sym)
                               (recur ~next-i ~next-obj-sym))
-               ~punch-access (if (some? ~next-obj-sym)
+               ~punch-access (if-not (nil? ~next-obj-sym)
                                (recur ~next-i ~next-obj-sym)
                                (recur ~next-i (punch-key-dynamically! ~obj-sym ~key-sym)))))
            ~obj-sym)))))
