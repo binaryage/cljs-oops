@@ -6,7 +6,11 @@
   (concat
     (make-build-variants "basic_oget.cljs")
     (make-build-variants "dynamic_oget.cljs")
-    [(make-build "warnings.cljs" "dev" {} {:optimizations :whitespace})
+    [(make-build "exercise_oget.cljs" "dev" {} {:optimizations :whitespace})
+     (make-build "exercise_oset.cljs" "dev" {} {:optimizations :whitespace})
+     (make-build "exercise_ocall.cljs" "dev" {} {:optimizations :whitespace})
+     (make-build "exercise_oapply.cljs" "dev" {} {:optimizations :whitespace})
+     (make-build "warnings.cljs" "dev" {} {:optimizations :whitespace})
      (make-build "error_static_nil_object.cljs" "dev" {:static-nil-target-object :error} {:optimizations :whitespace})
      (make-build "error_dynamic_selector_usage.cljs" "dev" {:dynamic-selector-usage :error} {:optimizations :whitespace})]))
 
