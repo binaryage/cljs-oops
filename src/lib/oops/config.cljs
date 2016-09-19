@@ -27,6 +27,9 @@
 (defn get-config-key [key & [config]]
   (key (or config (get-current-runtime-config))))
 
+(defn ^boolean has-config-key? [key & [config]]
+  (not= ::not-found (get (or config (get-current-runtime-config)) key ::not-found)))
+
 (defn get-error-reporting [& [config]]
   (get-config-key :error-reporting config))
 

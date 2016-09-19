@@ -294,6 +294,7 @@
   (debug-assert (symbol? info-sym))
   (if (config/diagnostics?)
     `(do
+       (debug-assert (oops.config/has-config-key? ~msg-id) (str "runtime config has missing key: " ~msg-id))
        (if-not ~(gen-supress-reporting? msg-id)
          (case (oops.config/get-config-key ~msg-id)
            :warn (report-runtime-warning (oops.messages/runtime-message ~msg-id ~info-sym) ~info-sym)
