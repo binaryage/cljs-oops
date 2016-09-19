@@ -389,13 +389,13 @@
   (validate-object-statically obj)
   (let [obj-sym (gensym "obj")]
     `(let [~obj-sym ~obj]
-       (.call ~(gen-oget obj-sym selector) ~obj-sym ~@args))))
+       (.call ~(gen-oget obj-sym [selector]) ~obj-sym ~@args))))                                                              ; TODO: implement safety-checks here
 
 (defn gen-oapply [obj selector args]
   (validate-object-statically obj)
   (let [obj-sym (gensym "obj")]
     `(let [~obj-sym ~obj]
-       (.apply ~(gen-oget obj-sym selector) ~obj-sym (into-array ~args)))))
+       (.apply ~(gen-oget obj-sym [selector]) ~obj-sym (into-array ~args)))))                                                 ; TODO: implement safety-checks here
 
 ; -- public macros ----------------------------------------------------------------------------------------------------------
 
