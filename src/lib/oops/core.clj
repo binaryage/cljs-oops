@@ -426,7 +426,7 @@
     (gen-ocall obj selector args)))
 
 (defmacro ocall+ [obj selector & args]
-  (with-diagnostics-context! &form &env
+  (with-diagnostics-context! &form &env obj
     (with-compilation-opts! {:suppress-reporting #{:dynamic-selector-usage}}
       (gen-ocall obj selector args))))
 
