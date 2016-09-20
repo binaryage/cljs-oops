@@ -543,24 +543,26 @@
 ; and there is a room for possible further refinements.
 ; Additionally we do ad-hoc validations inside our macros.
 
-(def oget-api (s/fspec :args (s/cat :obj any?
-                                    :selector (s/* any?))
-                       :ret any?))
+(defn anything? [_] true)
 
-(def oset-api (s/fspec :args (s/cat :obj any?
-                                    :selector (s/+ any?)
-                                    :val any?)
-                       :ret any?))
+(def oget-api (s/fspec :args (s/cat :obj anything?
+                                    :selector (s/* anything?))
+                       :ret anything?))
 
-(def ocall-api (s/fspec :args (s/cat :obj any?
-                                     :selector any?
-                                     :args (s/* any?))
-                        :ret any?))
+(def oset-api (s/fspec :args (s/cat :obj anything?
+                                    :selector (s/+ anything?)
+                                    :val anything?)
+                       :ret anything?))
 
-(def oapply-api (s/fspec :args (s/cat :obj any?
-                                      :selector (s/+ any?)
+(def ocall-api (s/fspec :args (s/cat :obj anything?
+                                     :selector anything?
+                                     :args (s/* anything?))
+                        :ret anything?))
+
+(def oapply-api (s/fspec :args (s/cat :obj anything?
+                                      :selector (s/+ anything?)
                                       :args sequential?)
-                         :ret any?))
+                         :ret anything?))
 
 (s/def oget oget-api)
 (s/def oget+ oget-api)
