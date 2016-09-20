@@ -5,35 +5,36 @@
 
 (def config                                                                                                                   ; falsy below means 'nil' or 'false'
   {; -- compiler config -----------------------------------------------------------------------------------------------------
-   :diagnostics                     true                                                                                      ; #{true falsy}
-   :key-get                         :goog                                                                                     ; #{:core :goog}
-   :key-set                         :goog                                                                                     ; #{:core :goog}
-   :strict-punching                 true                                                                                      ; #{true falsy}
-   :skip-config-validation          false                                                                                     ; #{true falsy}
+   :diagnostics                                true                                                                           ; #{true falsy}
+   :key-get                                    :goog                                                                          ; #{:core :goog}
+   :key-set                                    :goog                                                                          ; #{:core :goog}
+   :strict-punching                            true                                                                           ; #{true falsy}
+   :skip-config-validation                     false                                                                          ; #{true falsy}
 
    ; compile-time warnings/errors
-   :dynamic-selector-usage          :warn                                                                                     ; #{:error :warn falsy}
-   :static-nil-target-object        :warn                                                                                     ; #{:error :warn falsy}
-   :static-empty-selector-access    :warn                                                                                     ; #{:error :warn falsy}
+   :dynamic-selector-usage                     :warn                                                                          ; #{:error :warn falsy}
+   :static-nil-target-object                   :warn                                                                          ; #{:error :warn falsy}
+   :static-empty-selector-access               :warn                                                                          ; #{:error :warn falsy}
 
    ; -- runtime config ------------------------------------------------------------------------------------------------------
 
    ; run-time warnings/errors
-   :runtime-unexpected-object-value :error                                                                                    ; #{:error :warn falsy}
-   :runtime-expected-function-value :error                                                                                    ; #{:error :warn falsy}
-   :runtime-invalid-selector        :error                                                                                    ; #{:error :warn falsy}
-   :runtime-missing-object-key      :error                                                                                    ; #{:error :warn falsy}
-   :runtime-empty-selector-access   :warn                                                                                     ; #{:error :warn falsy}
+   :runtime-unexpected-object-value            :error                                                                         ; #{:error :warn falsy}
+   :runtime-expected-function-value            :error                                                                         ; #{:error :warn falsy}
+   :runtime-invalid-selector                   :error                                                                         ; #{:error :warn falsy}
+   :runtime-missing-object-key                 :error                                                                         ; #{:error :warn falsy}
+   :runtime-empty-selector-access              :warn                                                                          ; #{:error :warn falsy}
 
    ; reporting modes
-   :runtime-error-reporting         :throw                                                                                    ; #{:throw :console falsy}
-   :runtime-warning-reporting       :console                                                                                  ; #{:throw :console falsy}
+   :runtime-error-reporting                    :throw                                                                         ; #{:throw :console falsy}
+   :runtime-warning-reporting                  :console                                                                       ; #{:throw :console falsy}
 
-   :runtime-child-factory           :js-obj                                                                                   ; #{:js-obj :js-array}
+   :runtime-throw-errors-from-macro-call-sites true                                                                           ; #{true falsy}
+   :runtime-child-factory                      :js-obj                                                                        ; #{:js-obj :js-array}
 
    ; -- development ---------------------------------------------------------------------------------------------------------
    ; enable debug if you want to debug/hack oops itself
-   :debug                           false                                                                                     ; #{true falsy}
+   :debug                                      false                                                                          ; #{true falsy}
    })
 
 (def advanced-mode-config-overrides
@@ -74,6 +75,7 @@
 (s/def ::config/runtime-error-reporting ::config/reporting)
 (s/def ::config/runtime-warning-reporting ::config/reporting)
 
+(s/def ::config/runtime-throw-errors-from-macro-call-sites ::config/boolish)
 (s/def ::config/runtime-child-factory ::config/child-factory)
 
 (s/def ::config/debug ::config/boolish)
@@ -95,5 +97,6 @@
                    ::config/runtime-empty-selector-access
                    ::config/runtime-error-reporting
                    ::config/runtime-warning-reporting
+                   ::config/runtime-throw-errors-from-macro-call-sites
                    ::config/runtime-child-factory
                    ::config/debug]))

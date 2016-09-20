@@ -7,7 +7,8 @@
                                        state-last-access-modifier-idx]]
                    [oops.debug :refer [debug-assert]]
                    [oops.constants :refer [get-dot-access]])
-  (:require [oops.helpers :refer [repurpose-error]]))
+  (:require [oops.helpers :refer [repurpose-error]]
+            [oops.config :as config]))
 
 (def ^:dynamic *runtime-state*)
 
@@ -86,4 +87,6 @@
   (aset *runtime-state* (state-error-reported?-idx) true))
 
 (defn prepare-error-from-call-site [msg data]
-  (repurpose-error (get-call-site-error) msg data))
+  (if (config/throw-errors-from-macro-call-sites?)
+    (repurpose-error (get-call-site-error) msg data)
+    (js/Error. msg)))                                                                                                         ; this is a fail-safe option for people with repurpose-error-related troubles, we don't attach data in this case

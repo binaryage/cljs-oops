@@ -462,7 +462,8 @@
 (deftest test-runtime-errors
   (under-chrome
     (testing "runtime errors should be thrown from call-site locations"
-      (presume-runtime-config {:error-reporting :throw})
+      (presume-runtime-config {:error-reporting                    :throw
+                               :throw-errors-from-macro-call-sites true})
       (with-runtime-config {:empty-selector-access :error}
         (let [cause-error! (fn []
                              (try
@@ -472,4 +473,6 @@
               extract-top-stack-location (fn [e]
                                            ; first line is the error message itself
                                            (second (string/split-lines (.-stack e))))]
-          (is (some? (re-find #"raise_error_BANG_" (extract-top-stack-location (cause-error!))))))))))
+          (is (some? (re-find #"raise_error_BANG_" (extract-top-stack-location (cause-error!)))))
+          (with-runtime-config {:throw-errors-from-macro-call-sites false}
+            (is (nil? (re-find #"raise_error_BANG_" (extract-top-stack-location (cause-error!)))))))))))

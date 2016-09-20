@@ -44,3 +44,6 @@
 
 (defn set-child-factory! [new-factory-fn]
   (update-current-runtime-config! {:child-factory new-factory-fn}))
+
+(defn ^boolean throw-errors-from-macro-call-sites? [& [config]]
+  (true? (get-config-key :throw-errors-from-macro-call-sites config)))
