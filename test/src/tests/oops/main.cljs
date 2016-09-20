@@ -390,101 +390,60 @@
 
 (deftest test-param-evaluation
   (testing "obj param must evaluate only once"
-    (let [counter (atom 0)
-          get-obj (fn []
-                    (swap! counter inc)
-                    (js-obj "k1" nil
-                            "f" identity))]
-      (oget (get-obj) "?k1" "?k2")
-      (is (= @counter 1))
-      (oget+ (get-obj) (identity "?k1") "?k2")
-      (is (= @counter 2))
-      (oset! (get-obj) "!kx" true)
-      (is (= @counter 3))
-      (oset!+ (get-obj) (identity "!ky") true)
-      (is (= @counter 4))
-      (ocall (get-obj) "f")
-      (is (= @counter 5))
-      (ocall! (get-obj) "f")
-      (is (= @counter 6))
-      (ocall+ (get-obj) (identity "f"))
-      (is (= @counter 7))
-      (ocall!+ (get-obj) (identity "f"))
-      (is (= @counter 8))
-      (oapply (get-obj) "f" [])
-      (is (= @counter 9))
-      (oapply! (get-obj) "f" [])
-      (is (= @counter 10))
-      (oapply+ (get-obj) (identity "f") [])
-      (is (= @counter 11))
-      (oapply!+ (get-obj) (identity "f") [])
-      (is (= @counter 12))))
+    (with-runtime-config {:suppress-reporting #{:dynamic-selector-usage}}
+      (let [counter (atom 0)
+            get-obj (fn [] (swap! counter inc) (js-obj "k1" nil "f" identity))]
+        (are [code call-count] (do (reset! counter 0) code (= @counter call-count))
+          (oget (get-obj) "?k1" "?k2") 1
+          (oget+ (get-obj) (identity "?k1") "?k2") 1
+          (oset! (get-obj) "!kx" true) 1
+          (oset!+ (get-obj) (identity "!ky") true) 1
+          (ocall (get-obj) "f") 1
+          (ocall! (get-obj) "f") 1
+          (ocall+ (get-obj) (identity "f")) 1
+          (ocall!+ (get-obj) (identity "f")) 1
+          (oapply (get-obj) "f" []) 1
+          (oapply! (get-obj) "f" []) 1
+          (oapply+ (get-obj) (identity "f") []) 1
+          (oapply!+ (get-obj) (identity "f") []) 1))))
   (testing "selector must evaluate only once"
     (with-runtime-config {:suppress-reporting #{:dynamic-selector-usage}}
       (let [counter (atom 0)
-            o (js-obj "k1" nil
-                      "f" identity)
-            get-sel (fn [x]
-                      (swap! counter inc)
-                      x)]
-        (oget o (get-sel "?k1") "?k2")
-        (is (= @counter 1))
-        (oget+ o (get-sel "?k1") "?k2")
-        (is (= @counter 2))
-        (oset! o (get-sel "!kx") true)
-        (is (= @counter 3))
-        (oset!+ o (get-sel "!ky") true)
-        (is (= @counter 4))
-        (ocall o (get-sel "f"))
-        (is (= @counter 5))
-        (ocall! o (get-sel "f"))
-        (is (= @counter 6))
-        (ocall+ o (get-sel "f"))
-        (is (= @counter 7))
-        (ocall!+ o (get-sel "f"))
-        (is (= @counter 8))
-        (oapply o (get-sel "f") [])
-        (is (= @counter 9))
-        (oapply! o (get-sel "f") [])
-        (is (= @counter 10))
-        (oapply+ o (get-sel "f") [])
-        (is (= @counter 11))
-        (oapply!+ o (get-sel "f") [])
-        (is (= @counter 12)))))
+            o (js-obj "k1" nil "f" identity)
+            get-sel (fn [x] (swap! counter inc) x)]
+        (are [code call-count] (do (reset! counter 0) code (= @counter call-count))
+          (oget o (get-sel "?k1") "?k2") 1
+          (oget+ o (get-sel "?k1") "?k2") 1
+          (oset! o (get-sel "!kx") true) 1
+          (oset!+ o (get-sel "!ky") true) 1
+          (ocall o (get-sel "f")) 1
+          (ocall! o (get-sel "f")) 1
+          (ocall+ o (get-sel "f")) 1
+          (ocall!+ o (get-sel "f")) 1
+          (oapply o (get-sel "f") []) 1
+          (oapply! o (get-sel "f") []) 1
+          (oapply+ o (get-sel "f") []) 1
+          (oapply!+ o (get-sel "f") []) 1))))
   (testing "val must evaluate only once"
     (with-runtime-config {:suppress-reporting #{:dynamic-selector-usage}}
       (let [counter (atom 0)
             o (js-obj)
-            get-val (fn [x]
-                      (swap! counter inc)
-                      x)]
-        (oset! o "!kx" (get-val true))
-        (is (= @counter 1))
-        (oset!+ o "!ky" (get-val true))
-        (is (= @counter 2)))))
+            get-val (fn [x] (swap! counter inc) x)]
+        (are [code call-count] (do (reset! counter 0) code (= @counter call-count))
+          (oset! o "!kx" (get-val true)) 1
+          (oset!+ o "!ky" (get-val true)) 1))))
   (testing "args must evaluate only once"
     (with-runtime-config {:suppress-reporting #{:dynamic-selector-usage}}
       (let [counter (atom 0)
-            o (js-obj "k1" nil
-                      "f" identity)
-            get-arg (fn [x]
-                      (swap! counter inc)
-                      x)]
-        (ocall o "f" (get-arg 1) (get-arg 2))
-        (is (= @counter 2))
-        (ocall! o "f" (get-arg 1))
-        (is (= @counter 3))
-        (ocall+ o "f" (get-arg 1))
-        (is (= @counter 4))
-        (ocall!+ o "f" (get-arg 1))
-        (is (= @counter 5))
-        (oapply o "f" (get-arg [1 2 3]))
-        (is (= @counter 6))
-        (oapply o "f" [(get-arg 1) (get-arg 2)])
-        (is (= @counter 8))
-        (oapply! o "f" [(get-arg 1)])
-        (is (= @counter 9))
-        (oapply+ o "f" [(get-arg 1)])
-        (is (= @counter 10))
-        (oapply!+ o "f" [(get-arg 1)])
-        (is (= @counter 11))))))
+            o (js-obj "k1" nil "f" identity)
+            get-arg (fn [x] (swap! counter inc) x)]
+        (are [code call-count] (do (reset! counter 0) code (= @counter call-count))
+          (ocall o "f" (get-arg 1) (get-arg 2)) 2
+          (ocall! o "f" (get-arg 1)) 1
+          (ocall+ o "f" (get-arg 1)) 1
+          (ocall!+ o "f" (get-arg 1)) 1
+          (oapply o "f" (get-arg [1 2 3])) 1
+          (oapply o "f" [(get-arg 1) (get-arg 2)]) 2
+          (oapply! o "f" [(get-arg 1)]) 1
+          (oapply+ o "f" [(get-arg 1)]) 1
+          (oapply!+ o "f" [(get-arg 1)]) 1)))))
