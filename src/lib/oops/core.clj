@@ -95,11 +95,11 @@
   (gen-dynamic-object-access-validation-wrapper obj-sym mode key (config/strict-punching?)
     (gen-key-set obj-sym key val)))
 
-(defn gen-static-path-get [obj path]
+(defn gen-static-path-get [obj-sym path]
+  (debug-assert (symbol? obj-sym))
   (if (empty? path)
-    obj
+    obj-sym
     (let [[mode key] (first path)
-          obj-sym (gensym "obj")
           next-obj-sym (gensym "next-obj")]
       (debug-assert (string? key))
       ; http://stackoverflow.com/questions/32300269/make-vars-constant-for-use-in-case-statements-in-clojure
@@ -107,17 +107,17 @@
       (debug-assert (= soft-access 1))
       (debug-assert (= punch-access 2))
       (case mode
-        0 `(let [~obj-sym ~obj]
-             ~(gen-static-path-get (gen-instrumented-key-get obj-sym key mode) (rest path)))
-        1 `(let [~obj-sym ~obj
-                 ~next-obj-sym ~(gen-instrumented-key-get obj-sym key mode)]
+        0 `(let [~next-obj-sym ~(gen-instrumented-key-get obj-sym key mode)]
+             ~(gen-static-path-get next-obj-sym (rest path)))
+        1 `(let [~next-obj-sym ~(gen-instrumented-key-get obj-sym key mode)]
              (if-not (nil? ~next-obj-sym)
                ~(gen-static-path-get next-obj-sym (rest path))))
-        2 `(let [~obj-sym ~obj
-                 ~next-obj-sym ~(gen-instrumented-key-get obj-sym key mode)]
-             (if-not (nil? ~next-obj-sym)
-               ~(gen-static-path-get next-obj-sym (rest path))
-               ~(gen-static-path-get `(punch-key-dynamically! ~obj-sym ~key) (rest path))))))))
+        2 (let [ensured-obj-sym (gensym "ensured-obj")]
+            `(let [~next-obj-sym ~(gen-instrumented-key-get obj-sym key mode)
+                   ~ensured-obj-sym (if (nil? ~next-obj-sym)
+                                      (punch-key-dynamically! ~obj-sym ~key)
+                                      ~next-obj-sym)]
+               ~(gen-static-path-get ensured-obj-sym (rest path))))))))
 
 (defn gen-dynamic-path-get [initial-obj-sym path]
   (debug-assert (symbol? initial-obj-sym))

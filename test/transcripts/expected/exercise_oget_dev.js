@@ -15,23 +15,19 @@
 //     (oget js/window "k1" ["?k2" "k3"]))
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-var target_obj_21 = window;
-var _STAR_runtime_state_STAR_22 = oops.state._STAR_runtime_state_STAR_;
+var target_obj_19 = window;
+var _STAR_runtime_state_STAR_20 = oops.state._STAR_runtime_state_STAR_;
 oops.state._STAR_runtime_state_STAR_ = oops.state.prepare_state.call(null, function() {
   arguments[0].apply(console, Array.prototype.slice.call(arguments, 1))
-}, target_obj_21);
+}, target_obj_19);
 try {
-  var obj_23 = target_obj_21;
-  var obj_24 = oops.core.validate_object_access_dynamically.call(null, obj_23, 0, "k1", true) ? goog.object.get(obj_23, "k1") : null;
-  var next_obj_25 = oops.core.validate_object_access_dynamically.call(null, obj_24, 1, "k2", true) ? goog.object.get(obj_24, "k2") : null;
-  if (!(next_obj_25 == null)) {
-    var obj_26 = next_obj_25;
-    if (oops.core.validate_object_access_dynamically.call(null, obj_26, 0, "k3",
-        true)) goog.object.get(obj_26, "k3");
-    else;
-  } else;
+  var next_obj_21 = oops.core.validate_object_access_dynamically.call(null, target_obj_19, 0, "k1", true) ? goog.object.get(target_obj_19, "k1") : null;
+  var next_obj_22 = oops.core.validate_object_access_dynamically.call(null, next_obj_21, 1, "k2", true) ? goog.object.get(next_obj_21, "k2") : null;
+  if (!(next_obj_22 == null)) var next_obj_23 = oops.core.validate_object_access_dynamically.call(null, next_obj_22, 0, "k3", true) ? goog.object.get(next_obj_22,
+    "k3") : null;
+  else;
 } finally {
-  oops.state._STAR_runtime_state_STAR_ = _STAR_runtime_state_STAR_22
+  oops.state._STAR_runtime_state_STAR_ = _STAR_runtime_state_STAR_20
 }
 
 // SNIPPET #2:
@@ -39,15 +35,15 @@ try {
 //     (oget+ js/window (identity "k1.?k2.k3")))
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-var target_obj_27 = window;
-var _STAR_runtime_state_STAR_28 = oops.state._STAR_runtime_state_STAR_;
+var target_obj_24 = window;
+var _STAR_runtime_state_STAR_25 = oops.state._STAR_runtime_state_STAR_;
 oops.state._STAR_runtime_state_STAR_ = oops.state.prepare_state.call(null, function() {
   arguments[0].apply(console, Array.prototype.slice.call(arguments, 1))
-}, target_obj_27);
+}, target_obj_24);
 try {
-  oops.core.get_selector_dynamically.call(null, target_obj_27, cljs.core.identity.call(null, "k1.?k2.k3"))
+  oops.core.get_selector_dynamically.call(null, target_obj_24, cljs.core.identity.call(null, "k1.?k2.k3"))
 } finally {
-  oops.state._STAR_runtime_state_STAR_ = _STAR_runtime_state_STAR_28
+  oops.state._STAR_runtime_state_STAR_ = _STAR_runtime_state_STAR_25
 }
 
 // SNIPPET #3:
@@ -55,13 +51,13 @@ try {
 //     (oget+ js/window (macro-identity "k1.?k2.k3")))
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-var target_obj_29 = window;
-var _STAR_runtime_state_STAR_30 = oops.state._STAR_runtime_state_STAR_;
+var target_obj_26 = window;
+var _STAR_runtime_state_STAR_27 = oops.state._STAR_runtime_state_STAR_;
 oops.state._STAR_runtime_state_STAR_ = oops.state.prepare_state.call(null, function() {
   arguments[0].apply(console, Array.prototype.slice.call(arguments, 1))
-}, target_obj_29);
+}, target_obj_26);
 try {
-  oops.core.get_selector_dynamically.call(null, target_obj_29, "k1.?k2.k3")
+  oops.core.get_selector_dynamically.call(null, target_obj_26, "k1.?k2.k3")
 } finally {
-  oops.state._STAR_runtime_state_STAR_ = _STAR_runtime_state_STAR_30
+  oops.state._STAR_runtime_state_STAR_ = _STAR_runtime_state_STAR_27
 };

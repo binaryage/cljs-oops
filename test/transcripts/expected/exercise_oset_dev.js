@@ -22,16 +22,15 @@ oops.state._STAR_runtime_state_STAR_ = oops.state.prepare_state.call(null, funct
 }, target_obj_17);
 try {
   var parent_obj_19 = function() {
-    var obj_7 = target_obj_17;
-    var next_obj_8 = oops.core.validate_object_access_dynamically.call(null, obj_7, 2, "k1", true) ? goog.object.get(obj_7, "k1") : null;
-    if (!(next_obj_8 == null)) return next_obj_8;
-    else return oops.core.punch_key_dynamically_BANG_.call(null, obj_7, "k1")
+    var next_obj_7 = oops.core.validate_object_access_dynamically.call(null, target_obj_17, 2, "k1", true) ? goog.object.get(target_obj_17, "k1") : null;
+    var ensured_obj_8 = next_obj_7 == null ? oops.core.punch_key_dynamically_BANG_.call(null, target_obj_17, "k1") : next_obj_7;
+    return ensured_obj_8
   }();
-  if (oops.core.validate_object_access_dynamically.call(null, parent_obj_19, 2, "k2", true)) goog.object.set(parent_obj_19, "k2", "val");
+  if (oops.core.validate_object_access_dynamically.call(null, parent_obj_19, 2, "k2", true)) goog.object.set(parent_obj_19, "k2",
+    "val");
   else;
 } finally {
-  oops.state._STAR_runtime_state_STAR_ =
-    _STAR_runtime_state_STAR_18
+  oops.state._STAR_runtime_state_STAR_ = _STAR_runtime_state_STAR_18
 }
 
 // SNIPPET #2:

@@ -22,9 +22,8 @@ oops.state._STAR_runtime_state_STAR_ = oops.state.prepare_state.call(null, funct
 }, target_obj_20);
 try {
   var fn_22 = function() {
-    var obj_7 = target_obj_20;
-    if (oops.core.validate_object_access_dynamically.call(null, obj_7, 0, "method", true)) return goog.object.get(obj_7, "method");
-    else return null
+    var next_obj_7 = oops.core.validate_object_access_dynamically.call(null, target_obj_20, 0, "method", true) ? goog.object.get(target_obj_20, "method") : null;
+    return next_obj_7
   }();
   if (oops.core.validate_fn_call_dynamically.call(null, fn_22, oops.state.get_last_access_modifier.call(null)))
     if (!(fn_22 == null)) fn_22.apply(target_obj_20, oops.helpers.to_native_array.call(null, new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, ["p1", "p2"], null)));
