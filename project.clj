@@ -68,7 +68,7 @@
                              "test/src/circus"
                              "test/src/arena"
                              "test/src/tools"
-                             "test/src/tests-basic"]
+                             "test/src/tests"]
               :repl-options {:port             8230
                              :nrepl-middleware [dirac.nrepl/middleware]
                              :init             (do
@@ -86,7 +86,7 @@
                                    {:source-paths ["src/lib"
                                                    "test/src/runner"
                                                    "test/src/tools"
-                                                   "test/src/tests-basic"]
+                                                   "test/src/tests"]
                                     :compiler     {:output-to       "test/resources/_compiled/basic_onone/main.js"
                                                    :output-dir      "test/resources/_compiled/basic_onone"
                                                    :asset-path      "_compiled/basic_onone"
@@ -102,7 +102,7 @@
                                    {:source-paths ["src/lib"
                                                    "test/src/runner"
                                                    "test/src/tools"
-                                                   "test/src/tests-basic"]
+                                                   "test/src/tests"]
                                     :compiler     {:output-to       "test/resources/_compiled/basic_oadvanced_core/main.js"
                                                    :output-dir      "test/resources/_compiled/basic_oadvanced_core"
                                                    :asset-path      "_compiled/basic_oadvanced_core"
@@ -117,7 +117,7 @@
                                    {:source-paths ["src/lib"
                                                    "test/src/runner"
                                                    "test/src/tools"
-                                                   "test/src/tests-basic"]
+                                                   "test/src/tests"]
                                     :compiler     {:output-to       "test/resources/_compiled/basic_oadvanced_goog/main.js"
                                                    :output-dir      "test/resources/_compiled/basic_oadvanced_goog"
                                                    :asset-path      "_compiled/basic_oadvanced_goog"
