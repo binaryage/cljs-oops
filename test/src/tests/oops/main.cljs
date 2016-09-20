@@ -450,4 +450,15 @@
         (oapply+ o (get-sel "f") [])
         (is (= @counter 11))
         (oapply!+ o (get-sel "f") [])
-        (is (= @counter 12))))))
+        (is (= @counter 12)))))
+  (testing "val must evaluate only once"
+    (with-runtime-config {:suppress-reporting #{:dynamic-selector-usage}}
+      (let [counter (atom 0)
+            o (js-obj)
+            get-val (fn [x]
+                      (swap! counter inc)
+                      x)]
+        (oset! o "!kx" (get-val true))
+        (is (= @counter 1))
+        (oset!+ o "!ky" (get-val true))
+        (is (= @counter 2))))))
