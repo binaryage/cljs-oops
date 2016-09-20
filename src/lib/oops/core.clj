@@ -63,7 +63,8 @@
      (goog/isDateLike ~obj-sym) ~(gen-object-access-validation-error obj-sym "date-like")
      (oops.helpers/cljs-type? ~obj-sym) ~(gen-object-access-validation-error obj-sym "cljs type")
      (oops.helpers/cljs-instance? ~obj-sym) ~(gen-object-access-validation-error obj-sym "cljs instance")
-     (goog/isFunction ~obj-sym) ~(gen-object-access-validation-error obj-sym "function")
+     ; note: constructors are functions and sometimes it is handy to oget some stuff from them
+     ; (goog/isFunction ~obj-sym) ~(gen-object-access-validation-error obj-sym "function")
      ; note: it makes sense to use arrays as target objects, selectors can use numeric indices
      :else true))
 

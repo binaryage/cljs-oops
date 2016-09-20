@@ -74,10 +74,8 @@
           42 #"Unexpected object value \(number\)"
           true #"Unexpected object value \(boolean\)"
           false #"Unexpected object value \(boolean\)"
-          identity #"Unexpected object value \(function\)"
           #inst "2000" #"Unexpected object value \(date-like\)"
           StringBufferWriter #"Unexpected object value \(cljs type\)"
-          IAtom #"Unexpected object value \(function\)"                                                                       ; we cannot recognize protocols as of 1.9.229
           [] #"Unexpected object value \(cljs instance\)"
           :keyword #"Unexpected object value \(cljs instance\)"
           (atom "X") #"Unexpected object value \(cljs instance\)")
