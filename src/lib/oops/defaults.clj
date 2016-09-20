@@ -85,6 +85,7 @@
                    ::config/key-get
                    ::config/key-set
                    ::config/strict-punching
+                   ::config/skip-config-validation
                    ::config/dynamic-selector-usage
                    ::config/static-nil-target-object
                    ::config/static-empty-selector-access
