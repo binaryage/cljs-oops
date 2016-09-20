@@ -129,11 +129,11 @@
       (testing "object access validation should crash or silently fail in advanced mode (no diagnostics)"
         (when-not-compiler-config {:key-get :goog}
           (under-phantom
-            (are [o msg] (thrown-with-msg? js/TypeError msg (oget o "key"))
+            (are [o msg] (thrown-with-msg? js/TypeError msg (.log js/console (oget o "key")))                                 ; we have to log it otherwise closure could remove it as dead code
               nil #"null is not an object"
               js/undefined #"undefined is not an object"))
           (under-chrome
-            (are [o msg] (thrown-with-msg? js/TypeError msg (oget o "key"))
+            (are [o msg] (thrown-with-msg? js/TypeError msg (.log js/console (oget o "key")))                                 ; we have to log it otherwise closure could remove it as dead code
               nil #"Cannot read property 'key' of null"
               js/undefined #"Cannot read property 'key' of undefined"))
           (are [o] (= (oget o "key") nil)
