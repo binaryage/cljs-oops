@@ -28,9 +28,9 @@ var o_1 = {
 };
 var target_obj_36 = o_1;
 var _STAR_runtime_state_STAR_37 = oops.state._STAR_runtime_state_STAR_;
-oops.state._STAR_runtime_state_STAR_ = oops.state.prepare_state.call(null, function() {
+oops.state._STAR_runtime_state_STAR_ = oops.state.prepare_state.call(null, target_obj_36, new Error, function() {
   arguments[0].apply(console, Array.prototype.slice.call(arguments, 1))
-}, target_obj_36);
+});
 try {
   var next_obj_38 = oops.core.validate_object_access_dynamically.call(null, target_obj_36, 0, "key", true) ? goog.object.get(target_obj_36, "key") : null
 } finally {
@@ -44,9 +44,9 @@ try {
 
 var target_obj_39 = {};
 var _STAR_runtime_state_STAR_40 = oops.state._STAR_runtime_state_STAR_;
-oops.state._STAR_runtime_state_STAR_ = oops.state.prepare_state.call(null, function() {
+oops.state._STAR_runtime_state_STAR_ = oops.state.prepare_state.call(null, target_obj_39, new Error, function() {
   arguments[0].apply(console, Array.prototype.slice.call(arguments, 1))
-}, target_obj_39);
+});
 try {
   oops.core.get_selector_dynamically.call(null, target_obj_39, cljs.core.identity.call(null, "key"))
 } finally {
@@ -60,9 +60,9 @@ try {
 
 var target_obj_41 = null;
 var _STAR_runtime_state_STAR_42 = oops.state._STAR_runtime_state_STAR_;
-oops.state._STAR_runtime_state_STAR_ = oops.state.prepare_state.call(null, function() {
+oops.state._STAR_runtime_state_STAR_ = oops.state.prepare_state.call(null, target_obj_41, new Error, function() {
   arguments[0].apply(console, Array.prototype.slice.call(arguments, 1))
-}, target_obj_41);
+});
 try {
   var next_obj_43 = oops.core.validate_object_access_dynamically.call(null, target_obj_41, 0, "k1", true) ? goog.object.get(target_obj_41, "k1") : null;
   var next_obj_44 = oops.core.validate_object_access_dynamically.call(null, next_obj_43, 0, "k2", true) ? goog.object.get(next_obj_43, "k2") : null;
@@ -81,9 +81,9 @@ try {
 
 var target_obj_46 = {};
 var _STAR_runtime_state_STAR_47 = oops.state._STAR_runtime_state_STAR_;
-oops.state._STAR_runtime_state_STAR_ = oops.state.prepare_state.call(null, function() {
+oops.state._STAR_runtime_state_STAR_ = oops.state.prepare_state.call(null, target_obj_46, new Error, function() {
   arguments[0].apply(console, Array.prototype.slice.call(arguments, 1))
-}, target_obj_46);
+});
 try {} finally {
   oops.state._STAR_runtime_state_STAR_ = _STAR_runtime_state_STAR_47
 }
@@ -92,9 +92,9 @@ var target_obj_48 = function() {
   return obj28
 }();
 var _STAR_runtime_state_STAR_49 = oops.state._STAR_runtime_state_STAR_;
-oops.state._STAR_runtime_state_STAR_ = oops.state.prepare_state.call(null, function() {
+oops.state._STAR_runtime_state_STAR_ = oops.state.prepare_state.call(null, target_obj_48, new Error, function() {
   arguments[0].apply(console, Array.prototype.slice.call(arguments, 1))
-}, target_obj_48);
+});
 try {} finally {
   oops.state._STAR_runtime_state_STAR_ = _STAR_runtime_state_STAR_49
 }
@@ -103,9 +103,9 @@ var target_obj_50 = function() {
   return obj33
 }();
 var _STAR_runtime_state_STAR_51 = oops.state._STAR_runtime_state_STAR_;
-oops.state._STAR_runtime_state_STAR_ = oops.state.prepare_state.call(null, function() {
+oops.state._STAR_runtime_state_STAR_ = oops.state.prepare_state.call(null, target_obj_50, new Error, function() {
   arguments[0].apply(console, Array.prototype.slice.call(arguments, 1))
-}, target_obj_50);
+});
 try {} finally {
   oops.state._STAR_runtime_state_STAR_ = _STAR_runtime_state_STAR_51
 };

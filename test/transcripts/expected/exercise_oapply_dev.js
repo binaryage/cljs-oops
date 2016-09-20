@@ -17,9 +17,9 @@
 
 var target_obj_20 = window;
 var _STAR_runtime_state_STAR_21 = oops.state._STAR_runtime_state_STAR_;
-oops.state._STAR_runtime_state_STAR_ = oops.state.prepare_state.call(null, function() {
+oops.state._STAR_runtime_state_STAR_ = oops.state.prepare_state.call(null, target_obj_20, new Error, function() {
   arguments[0].apply(console, Array.prototype.slice.call(arguments, 1))
-}, target_obj_20);
+});
 try {
   var fn_22 = function() {
     var next_obj_7 = oops.core.validate_object_access_dynamically.call(null, target_obj_20, 0, "method", true) ? goog.object.get(target_obj_20, "method") : null;
@@ -40,9 +40,9 @@ try {
 
 var target_obj_23 = window;
 var _STAR_runtime_state_STAR_24 = oops.state._STAR_runtime_state_STAR_;
-oops.state._STAR_runtime_state_STAR_ = oops.state.prepare_state.call(null, function() {
+oops.state._STAR_runtime_state_STAR_ = oops.state.prepare_state.call(null, target_obj_23, new Error, function() {
   arguments[0].apply(console, Array.prototype.slice.call(arguments, 1))
-}, target_obj_23);
+});
 try {
   var fn_25 = oops.core.get_selector_dynamically.call(null, target_obj_23, cljs.core.identity.call(null, "method"));
   if (oops.core.validate_fn_call_dynamically.call(null, fn_25, oops.state.get_last_access_modifier.call(null)))
@@ -61,9 +61,9 @@ try {
 
 var target_obj_26 = window;
 var _STAR_runtime_state_STAR_27 = oops.state._STAR_runtime_state_STAR_;
-oops.state._STAR_runtime_state_STAR_ = oops.state.prepare_state.call(null, function() {
+oops.state._STAR_runtime_state_STAR_ = oops.state.prepare_state.call(null, target_obj_26, new Error, function() {
   arguments[0].apply(console, Array.prototype.slice.call(arguments, 1))
-}, target_obj_26);
+});
 try {
   var fn_28 = oops.core.get_selector_dynamically.call(null, target_obj_26, "method");
   if (oops.core.validate_fn_call_dynamically.call(null, fn_28, oops.state.get_last_access_modifier.call(null)))

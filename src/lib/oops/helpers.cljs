@@ -1,4 +1,5 @@
-(ns oops.helpers)
+(ns oops.helpers
+  (:require-macros [oops.debug :refer [debug-assert]]))
 
 (defn is-prototype? [o]
   (identical? (.-prototype (.-constructor o)) o))
@@ -30,3 +31,15 @@
             (.push arr item)
             (recur (next items)))
           arr)))))
+
+(defn repurpose-error [error msg info]
+  (debug-assert (instance? js/Error error))
+  (debug-assert (string? msg))
+  (set! (.-message error) msg)
+  (specify! error
+    IPrintWithWriter                                                                                                          ; nice to have for cljs-devtools and debug printing
+    (-pr-writer [_obj writer opts]
+      (-write writer msg)
+      (when (some? info)
+        (-write writer " ")
+        (pr-writer info writer opts)))))

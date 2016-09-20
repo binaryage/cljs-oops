@@ -1,25 +1,41 @@
 (ns oops.state
-  (:require-macros [oops.state :refer [state-console-reporter-idx
+  (:require-macros [oops.state :refer [state-target-object-idx
+                                       state-call-site-error-idx
+                                       state-console-reporter-idx
                                        state-error-reported?-idx
-                                       state-current-key-path-idx
-                                       state-current-target-object-idx
+                                       state-key-path-idx
                                        state-last-access-modifier-idx]]
                    [oops.debug :refer [debug-assert]]
-                   [oops.constants :refer [get-dot-access]]))
+                   [oops.constants :refer [get-dot-access]])
+  (:require [oops.helpers :refer [repurpose-error]]))
 
 (def ^:dynamic *runtime-state*)
 
 ; state is a javascript array with following slots:
-(debug-assert (= (state-console-reporter-idx) 0))
-(debug-assert (= (state-error-reported?-idx) 1))
-(debug-assert (= (state-current-key-path-idx) 2))
-(debug-assert (= (state-current-target-object-idx) 3))
-(debug-assert (= (state-last-access-modifier-idx) 4))
+(debug-assert (= (state-target-object-idx) 0))
+(debug-assert (= (state-call-site-error-idx) 1))
+(debug-assert (= (state-console-reporter-idx) 2))
+(debug-assert (= (state-error-reported?-idx) 3))
+(debug-assert (= (state-key-path-idx) 4))
+(debug-assert (= (state-last-access-modifier-idx) 5))
 
 ; -- helpers ----------------------------------------------------------------------------------------------------------------
 
-(defn prepare-state [console-reporter target-object]
-  (array console-reporter false (array) target-object (get-dot-access)))
+(defn make-empty-key-path []
+  (array))
+
+(defn prepare-state [target-object call-site-error console-reporter]
+  (array target-object
+         call-site-error
+         console-reporter
+         false
+         (make-empty-key-path)
+         (get-dot-access)))
+
+(defn get-target-object []
+  (debug-assert *runtime-state*)
+  (let [current-target-object (aget *runtime-state* (state-target-object-idx))]
+    current-target-object))
 
 (defn get-console-reporter []
   (debug-assert *runtime-state*)
@@ -27,28 +43,29 @@
     (debug-assert (fn? console-reporter))
     console-reporter))
 
-(defn get-current-target-object []
+(defn get-call-site-error []
   (debug-assert *runtime-state*)
-  (let [current-target-object (aget *runtime-state* (state-current-target-object-idx))]
-    current-target-object))
+  (let [call-site-error (aget *runtime-state* (state-call-site-error-idx))]
+    (debug-assert (instance? js/Error call-site-error))
+    call-site-error))
 
 (defn add-key-to-current-path! [key]
   (debug-assert (string? key))
   (debug-assert *runtime-state*)
-  (let [current-key-path (aget *runtime-state* (state-current-key-path-idx))]
+  (let [current-key-path (aget *runtime-state* (state-key-path-idx))]
     (debug-assert (array? current-key-path))
     (.push current-key-path key)
     current-key-path))
 
-(defn get-current-key-path []
+(defn get-key-path []
   (debug-assert *runtime-state*)
-  (let [current-key-path (aget *runtime-state* (state-current-key-path-idx))]
+  (let [current-key-path (aget *runtime-state* (state-key-path-idx))]
     (debug-assert (array? current-key-path))
     current-key-path))
 
-(defn get-current-key-path-str []
+(defn get-key-path-str []
   (debug-assert *runtime-state*)
-  (.join (get-current-key-path) "."))
+  (.join (get-key-path) "."))
 
 (defn get-last-access-modifier []
   (debug-assert *runtime-state*)
@@ -67,3 +84,6 @@
 (defn mark-error-reported! []
   (debug-assert *runtime-state*)
   (aset *runtime-state* (state-error-reported?-idx) true))
+
+(defn prepare-error-from-call-site [msg data]
+  (repurpose-error (get-call-site-error) msg data))

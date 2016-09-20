@@ -46,8 +46,8 @@
 
 (defn gen-object-access-validation-error [obj-sym flavor]
   (debug-assert (symbol? obj-sym))
-  (gen-report-if-needed :unexpected-object-value `{:obj    (oops.state/get-current-target-object)
-                                                   :path   (oops.state/get-current-key-path-str)
+  (gen-report-if-needed :unexpected-object-value `{:obj    (oops.state/get-target-object)
+                                                   :path   (oops.state/get-key-path-str)
                                                    :flavor ~flavor}))
 
 (defn gen-dynamic-object-access-validation [obj-sym mode-sym]
@@ -233,14 +233,12 @@
 
 (defn gen-report-runtime-message [kind msg data]
   (debug-assert (contains? #{:error :warning} kind))
-  (let [console-reporter-sym (gensym "console-reporter")
-        mode (case kind
+  (let [mode (case kind
                :error `(oops.config/get-error-reporting)
                :warning `(oops.config/get-warning-reporting))]
     `(case ~mode
-       :throw (throw (ex-info ~(gen-reported-message msg) ~(gen-reported-data data)))
-       :console (let [~console-reporter-sym (oops.state/get-console-reporter)]
-                  (~console-reporter-sym ~(gen-console-method kind) ~(gen-reported-message msg) ~(gen-reported-data data)))
+       :throw (throw (oops.state/prepare-error-from-call-site ~(gen-reported-message msg) ~(gen-reported-data data)))
+       :console ((oops.state/get-console-reporter) ~(gen-console-method kind) ~(gen-reported-message msg) ~(gen-reported-data data))
        false nil)))
 
 (defn validate-object-statically [obj]
@@ -271,8 +269,10 @@
   (let [body-code `(do ~@body)]
     (if-not (config/diagnostics?)
       body-code
-      (let [console-reporter (list 'js* console-reporter-template)]
-        `(binding [oops.state/*runtime-state* (oops.state/prepare-state ~console-reporter ~obj-sym)]                          ; it is imporant to keep console-reporter inline so we get proper call-site location and line number
+      (let [console-reporter (list 'js* console-reporter-template)
+            call-site-error `(js/Error.)]
+        ; it is imporant to keep console-reporter and call-site-error inline so we get proper call-site location and line number
+        `(binding [oops.state/*runtime-state* (oops.state/prepare-state ~obj-sym ~call-site-error ~console-reporter)]
            ~(gen-debug-runtime-state-consistency-check body-code))))))
 
 (defn gen-supress-reporting? [msg-id]
@@ -283,9 +283,9 @@
   (debug-assert (symbol? mode-sym))
   `(if (and (= ~mode-sym ~dot-access)
             (not (goog.object/containsKey ~obj-sym ~key)))
-     ~(gen-report-if-needed :missing-object-key `{:obj  (oops.state/get-current-target-object)
+     ~(gen-report-if-needed :missing-object-key `{:obj  (oops.state/get-target-object)
                                                   :key  ~key
-                                                  :path (oops.state/get-current-key-path-str)})
+                                                  :path (oops.state/get-key-path-str)})
      true))
 
 (defn gen-dynamic-fn-call-validation-wrapper [fn-sym body]
@@ -334,8 +334,8 @@
   `(cond
      (and (= ~mode-sym ~soft-access) (nil? ~fn-sym)) true
      (goog/isFunction ~fn-sym) true
-     :else ~(gen-report-if-needed :expected-function-value `{:obj   (oops.state/get-current-target-object)
-                                                             :path  (oops.state/get-current-key-path-str)
+     :else ~(gen-report-if-needed :expected-function-value `{:obj   (oops.state/get-target-object)
+                                                             :path  (oops.state/get-key-path-str)
                                                              :fn    ~fn-sym
                                                              :soft? (= ~mode-sym ~soft-access)})))
 

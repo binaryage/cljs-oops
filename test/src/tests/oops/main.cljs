@@ -13,7 +13,8 @@
                             under-chrome
                             if-phantom
                             with-console-recording
-                            when-compiler-config when-not-compiler-config]]))
+                            when-compiler-config when-not-compiler-config]]
+            [clojure.string :as string]))
 
 (runonce
   (init-test!))
@@ -447,3 +448,28 @@
           (oapply! o "f" [(get-arg 1)]) 1
           (oapply+ o "f" [(get-arg 1)]) 1
           (oapply!+ o "f" [(get-arg 1)]) 1)))))
+
+; TODO: we will probably need chromedriver to automate this...
+
+(defn raise-error! []
+  (oget+ (js-obj) (identity nil)))
+
+(comment
+  ; just for testing stack call-site stack trace in Chrome by hand...
+  (with-runtime-config {:empty-selector-access :error}
+    (raise-error!)))
+
+(deftest test-runtime-errors
+  (under-chrome
+    (testing "runtime errors should be thrown from call-site locations"
+      (presume-runtime-config {:error-reporting :throw})
+      (with-runtime-config {:empty-selector-access :error}
+        (let [cause-error! (fn []
+                             (try
+                               (raise-error!)
+                               (catch :default e
+                                 e)))
+              extract-top-stack-location (fn [e]
+                                           ; first line is the error message itself
+                                           (second (string/split-lines (.-stack e))))]
+          (is (some? (re-find #"raise_error_BANG_" (extract-top-stack-location (cause-error!))))))))))

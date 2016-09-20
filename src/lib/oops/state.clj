@@ -11,17 +11,9 @@
 
 ; -- constants for runtime state slots --------------------------------------------------------------------------------------
 
-(defmacro state-console-reporter-idx []
-  0)
-
-(defmacro state-error-reported?-idx []
-  1)
-
-(defmacro state-current-key-path-idx []
-  2)
-
-(defmacro state-current-target-object-idx []
-  3)
-
-(defmacro state-last-access-modifier-idx []
-  4)
+(defmacro state-target-object-idx [] 0)
+(defmacro state-call-site-error-idx [] 1)
+(defmacro state-console-reporter-idx [] 2)
+(defmacro state-error-reported?-idx [] 3)
+(defmacro state-key-path-idx [] 4)
+(defmacro state-last-access-modifier-idx [] 5)
