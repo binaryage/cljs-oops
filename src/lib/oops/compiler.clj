@@ -14,7 +14,7 @@
   `(binding [ana/*cljs-warnings* (register-messages! ana/*cljs-warnings*)]
      ~@body))
 
-(defmacro with-compilation-opts! [opts & body]
+(defmacro with-compiler-opts! [opts & body]
   `(binding [oops.state/*invocation-opts* (merge oops.state/*invocation-opts* ~opts)]
      ~@body))
 
@@ -23,11 +23,9 @@
              oops.state/*invocation-env* ~env]
      ~@body))
 
-(defmacro with-diagnostics-context! [form env obj-sym & body]
-  (debug-assert (symbol? obj-sym))
+(defmacro with-compiler-context! [form env & body]
   `(oops.compiler/with-hooked-compiler!
-     (oops.compiler/with-compiler-diagnostics-context! ~form ~env
-       (oops.core/gen-runtime-diagnostics-context! ~form ~env ~obj-sym ~@body))))
+     (oops.compiler/with-compiler-diagnostics-context! ~form ~env ~@body)))
 
 (defn annotate-with-state [info]
   (assoc info :form oops.state/*invocation-form*))
