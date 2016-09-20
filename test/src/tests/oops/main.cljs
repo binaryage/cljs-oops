@@ -461,4 +461,30 @@
         (oset! o "!kx" (get-val true))
         (is (= @counter 1))
         (oset!+ o "!ky" (get-val true))
-        (is (= @counter 2))))))
+        (is (= @counter 2)))))
+  (testing "args must evaluate only once"
+    (with-runtime-config {:suppress-reporting #{:dynamic-selector-usage}}
+      (let [counter (atom 0)
+            o (js-obj "k1" nil
+                      "f" identity)
+            get-arg (fn [x]
+                      (swap! counter inc)
+                      x)]
+        (ocall o "f" (get-arg 1) (get-arg 2))
+        (is (= @counter 2))
+        (ocall! o "f" (get-arg 1))
+        (is (= @counter 3))
+        (ocall+ o "f" (get-arg 1))
+        (is (= @counter 4))
+        (ocall!+ o "f" (get-arg 1))
+        (is (= @counter 5))
+        (oapply o "f" (get-arg [1 2 3]))
+        (is (= @counter 6))
+        (oapply o "f" [(get-arg 1) (get-arg 2)])
+        (is (= @counter 8))
+        (oapply! o "f" [(get-arg 1)])
+        (is (= @counter 9))
+        (oapply+ o "f" [(get-arg 1)])
+        (is (= @counter 10))
+        (oapply!+ o "f" [(get-arg 1)])
+        (is (= @counter 11))))))
