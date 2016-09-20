@@ -15,25 +15,23 @@
 //     (oapply js/window "method" ["p1" "p2"]))
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-var target_obj_26 = window;
-var _STAR_runtime_state_STAR_27 = oops.state._STAR_runtime_state_STAR_;
+var target_obj_20 = window;
+var _STAR_runtime_state_STAR_21 = oops.state._STAR_runtime_state_STAR_;
 oops.state._STAR_runtime_state_STAR_ = oops.state.prepare_state.call(null, function() {
   arguments[0].apply(console, Array.prototype.slice.call(arguments, 1))
-}, target_obj_26);
+}, target_obj_20);
 try {
-  var obj_28 = target_obj_26;
-  var fn_29 = function() {
-    var obj_9 = obj_28;
-    if (oops.core.validate_object_access_dynamically.call(null, obj_9, 0, "method", true)) return goog.object.get(obj_9, "method");
+  var fn_22 = function() {
+    var obj_7 = target_obj_20;
+    if (oops.core.validate_object_access_dynamically.call(null, obj_7, 0, "method", true)) return goog.object.get(obj_7, "method");
     else return null
   }();
-  if (oops.core.validate_fn_call_dynamically.call(null, fn_29, oops.state.get_last_access_modifier.call(null)))
-    if (!(fn_29 == null)) fn_29.apply(obj_28, oops.helpers.to_native_array.call(null, new cljs.core.PersistentVector(null,
-      2, 5, cljs.core.PersistentVector.EMPTY_NODE, ["p1", "p2"], null)));
+  if (oops.core.validate_fn_call_dynamically.call(null, fn_22, oops.state.get_last_access_modifier.call(null)))
+    if (!(fn_22 == null)) fn_22.apply(target_obj_20, oops.helpers.to_native_array.call(null, new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, ["p1", "p2"], null)));
     else;
   else;
 } finally {
-  oops.state._STAR_runtime_state_STAR_ = _STAR_runtime_state_STAR_27
+  oops.state._STAR_runtime_state_STAR_ = _STAR_runtime_state_STAR_21
 }
 
 // SNIPPET #2:
@@ -41,21 +39,20 @@ try {
 //     (oapply+ js/window (identity "method") ["p1" "p2"]))
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-var target_obj_30 = window;
-var _STAR_runtime_state_STAR_31 = oops.state._STAR_runtime_state_STAR_;
+var target_obj_23 = window;
+var _STAR_runtime_state_STAR_24 = oops.state._STAR_runtime_state_STAR_;
 oops.state._STAR_runtime_state_STAR_ = oops.state.prepare_state.call(null, function() {
   arguments[0].apply(console, Array.prototype.slice.call(arguments, 1))
-}, target_obj_30);
+}, target_obj_23);
 try {
-  var obj_32 = target_obj_30;
-  var fn_33 = oops.core.get_selector_dynamically.call(null, obj_32, cljs.core.identity.call(null, "method"));
-  if (oops.core.validate_fn_call_dynamically.call(null, fn_33, oops.state.get_last_access_modifier.call(null)))
-    if (!(fn_33 == null)) fn_33.apply(obj_32, oops.helpers.to_native_array.call(null, new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, ["p1", "p2"], null)));
+  var fn_25 = oops.core.get_selector_dynamically.call(null, target_obj_23, cljs.core.identity.call(null, "method"));
+  if (oops.core.validate_fn_call_dynamically.call(null, fn_25, oops.state.get_last_access_modifier.call(null)))
+    if (!(fn_25 == null)) fn_25.apply(target_obj_23, oops.helpers.to_native_array.call(null, new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, ["p1", "p2"], null)));
     else;
   else;
 } finally {
   oops.state._STAR_runtime_state_STAR_ =
-    _STAR_runtime_state_STAR_31
+    _STAR_runtime_state_STAR_24
 }
 
 // SNIPPET #3:
@@ -63,19 +60,17 @@ try {
 //     (oapply+ js/window (macro-identity "method") ["p1" "p2"]))
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-var target_obj_34 = window;
-var _STAR_runtime_state_STAR_35 = oops.state._STAR_runtime_state_STAR_;
+var target_obj_26 = window;
+var _STAR_runtime_state_STAR_27 = oops.state._STAR_runtime_state_STAR_;
 oops.state._STAR_runtime_state_STAR_ = oops.state.prepare_state.call(null, function() {
   arguments[0].apply(console, Array.prototype.slice.call(arguments, 1))
-}, target_obj_34);
+}, target_obj_26);
 try {
-  var obj_36 = target_obj_34;
-  var fn_37 = oops.core.get_selector_dynamically.call(null, obj_36, "method");
-  if (oops.core.validate_fn_call_dynamically.call(null, fn_37, oops.state.get_last_access_modifier.call(null)))
-    if (!(fn_37 == null)) fn_37.apply(obj_36, oops.helpers.to_native_array.call(null, new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, ["p1", "p2"], null)));
+  var fn_28 = oops.core.get_selector_dynamically.call(null, target_obj_26, "method");
+  if (oops.core.validate_fn_call_dynamically.call(null, fn_28, oops.state.get_last_access_modifier.call(null)))
+    if (!(fn_28 == null)) fn_28.apply(target_obj_26, oops.helpers.to_native_array.call(null, new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, ["p1", "p2"], null)));
     else;
   else;
 } finally {
-  oops.state._STAR_runtime_state_STAR_ =
-    _STAR_runtime_state_STAR_35
+  oops.state._STAR_runtime_state_STAR_ = _STAR_runtime_state_STAR_27
 };

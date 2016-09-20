@@ -404,36 +404,35 @@
     (report-if-needed! :static-empty-selector-access))
   path)
 
-(defn gen-oget-impl [obj selector-list]
+(defn gen-oget-impl [obj-sym selector-list]
+  (debug-assert (symbol? obj-sym))
   (if-let [path (schema/selector->path selector-list)]
-    (gen-static-path-get obj (check-path! path))
-    (gen-dynamic-selector-get obj selector-list)))
+    (gen-static-path-get obj-sym (check-path! path))
+    (gen-dynamic-selector-get obj-sym selector-list)))
 
-(defn gen-oset-impl [obj selector-list val]
-  (let [obj-sym (gensym "obj")
-        path (schema/selector->path selector-list)]
-    `(let [~obj-sym ~obj]
+(defn gen-oset-impl [obj-sym selector-list val]
+  (debug-assert (symbol? obj-sym))
+  (let [path (schema/selector->path selector-list)]
+    `(do
        ~(if path
           (gen-static-path-set obj-sym (check-path! path) val)
           (gen-dynamic-selector-set obj-sym selector-list val))
        ~obj-sym)))
 
-(defn gen-ocall-impl [obj selector-list args]
-  (let [obj-sym (gensym "obj")
-        fn-sym (gensym "fn")
+(defn gen-ocall-impl [obj-sym selector-list args]
+  (debug-assert (symbol? obj-sym))
+  (let [fn-sym (gensym "fn")
         action `(if-not (nil? ~fn-sym)
                   (.call ~fn-sym ~obj-sym ~@args))]
-    `(let [~obj-sym ~obj
-           ~fn-sym ~(gen-oget-impl obj-sym selector-list)]
+    `(let [~fn-sym ~(gen-oget-impl obj-sym selector-list)]
        ~(gen-dynamic-fn-call-validation-wrapper fn-sym action))))
 
-(defn gen-oapply-impl [obj selector-list args]
-  (let [obj-sym (gensym "obj")
-        fn-sym (gensym "fn")
+(defn gen-oapply-impl [obj-sym selector-list args]
+  (debug-assert (symbol? obj-sym))
+  (let [fn-sym (gensym "fn")
         action `(if-not (nil? ~fn-sym)
                   (.apply ~fn-sym ~obj-sym (oops.helpers/to-native-array ~args)))]
-    `(let [~obj-sym ~obj
-           ~fn-sym ~(gen-oget-impl obj-sym selector-list)]
+    `(let [~fn-sym ~(gen-oget-impl obj-sym selector-list)]
        ~(gen-dynamic-fn-call-validation-wrapper fn-sym action))))
 
 ; -- shared macro bodies ----------------------------------------------------------------------------------------------------
