@@ -5,7 +5,7 @@
             [cljs.env]
             [oops.messages :refer [register-messages!]]
             [oops.state :as state]
-            [oops.debug :refer [log]]))
+            [oops.debug :refer [log debug-assert]]))
 
 (defmacro gensym [name]
   `(clojure.core/gensym (str ~name "-")))
@@ -23,10 +23,11 @@
              oops.state/*invocation-env* ~env]
      ~@body))
 
-(defmacro with-diagnostics-context! [form env obj & body]
+(defmacro with-diagnostics-context! [form env obj-sym & body]
+  (debug-assert (symbol? obj-sym))
   `(oops.compiler/with-hooked-compiler!
      (oops.compiler/with-compiler-diagnostics-context! ~form ~env
-       (oops.core/gen-runtime-diagnostics-context! ~form ~env ~obj ~@body))))
+       (oops.core/gen-runtime-diagnostics-context! ~form ~env ~obj-sym ~@body))))
 
 (defn annotate-with-state [info]
   (assoc info :form oops.state/*invocation-form*))

@@ -387,3 +387,35 @@
                             "ERROR: (\"Oops, Expected a function on key path 'non-fn', got <number> instead\" {:path \"non-fn\", :soft? false, :fn 1, :obj #js {:nil-fn nil, :non-fn 1}})"
                             "ERROR: (\"Oops, Expected a function or nil on key path 'non-fn', got <number> instead\" {:path \"non-fn\", :soft? true, :fn 1, :obj #js {:nil-fn nil, :non-fn 1}})"
                             "ERROR: (\"Oops, Expected a function or nil on key path 'non-fn', got <number> instead\" {:path \"non-fn\", :soft? true, :fn 1, :obj #js {:nil-fn nil, :non-fn 1}})"])))))))
+
+(deftest test-param-evaluation
+  (testing "obj param must evaluate only once"
+    (let [counter (atom 0)
+          get-obj (fn []
+                    (swap! counter inc)
+                    (js-obj "k1" nil
+                            "f" identity))]
+      (oget (get-obj) "?k1" "?k2")
+      (is (= @counter 1))
+      (oget+ (get-obj) (identity "?k1") "?k2")
+      (is (= @counter 2))
+      (oset! (get-obj) "!kx" true)
+      (is (= @counter 3))
+      (oset!+ (get-obj) (identity "!ky") true)
+      (is (= @counter 4))
+      (ocall (get-obj) "f")
+      (is (= @counter 5))
+      (ocall! (get-obj) "f")
+      (is (= @counter 6))
+      (ocall+ (get-obj) (identity "f"))
+      (is (= @counter 7))
+      (ocall!+ (get-obj) (identity "f"))
+      (is (= @counter 8))
+      (oapply (get-obj) "f" [])
+      (is (= @counter 9))
+      (oapply! (get-obj) "f" [])
+      (is (= @counter 10))
+      (oapply+ (get-obj) (identity "f") [])
+      (is (= @counter 11))
+      (oapply!+ (get-obj) (identity "f") [])
+      (is (= @counter 12)))))
