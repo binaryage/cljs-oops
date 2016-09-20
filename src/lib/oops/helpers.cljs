@@ -19,3 +19,14 @@
 (defn cljs-instance? [value]
   (and (goog/isObject value)                                                                                                  ; see http://stackoverflow.com/a/22482737/84283
        (cljs-type? (get-constructor value))))
+
+(defn to-native-array [coll]
+  (if (array? coll)
+    coll
+    (let [arr (array)]
+      (loop [items (seq coll)]                                                                                                ; note: items is either a seq or nil
+        (if-not (nil? items)
+          (let [item (-first items)]
+            (.push arr item)
+            (recur (next items)))
+          arr)))))

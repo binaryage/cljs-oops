@@ -421,7 +421,7 @@
   (let [obj-sym (gensym "obj")
         fn-sym (gensym "fn")
         action `(if-not (nil? ~fn-sym)
-                  (.apply ~fn-sym ~obj-sym (into-array ~args)))]
+                  (.apply ~fn-sym ~obj-sym (oops.helpers/to-native-array ~args)))]
     `(let [~obj-sym ~obj
            ~fn-sym ~(gen-oget obj-sym selector-list)]
        ~(gen-dynamic-fn-call-validation-wrapper fn-sym action))))
@@ -533,7 +533,7 @@
 
 (def oapply-api (s/fspec :args (s/cat :obj any?
                                       :selector (s/+ any?)
-                                      :args any?)
+                                      :args sequential?)
                          :ret any?))
 
 (s/def oget oget-api)

@@ -27,7 +27,7 @@ try {
     else return null
   }();
   if (oops.core.validate_fn_call_dynamically.call(null, fn_22, oops.state.get_last_access_modifier.call(null)))
-    if (!(fn_22 == null)) fn_22.apply(obj_21, cljs.core.into_array.call(null, new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, ["p1", "p2"], null)));
+    if (!(fn_22 == null)) fn_22.apply(obj_21, oops.helpers.to_native_array.call(null, new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, ["p1", "p2"], null)));
     else;
   else;
 } finally {
@@ -47,7 +47,7 @@ try {
   var obj_24 = window;
   var fn_25 = oops.core.get_selector_dynamically.call(null, obj_24, cljs.core.identity.call(null, "method"));
   if (oops.core.validate_fn_call_dynamically.call(null, fn_25, oops.state.get_last_access_modifier.call(null)))
-    if (!(fn_25 == null)) fn_25.apply(obj_24, cljs.core.into_array.call(null, new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, ["p1", "p2"], null)));
+    if (!(fn_25 == null)) fn_25.apply(obj_24, oops.helpers.to_native_array.call(null, new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, ["p1", "p2"], null)));
     else;
   else;
 } finally {
@@ -68,7 +68,7 @@ try {
   var obj_27 = window;
   var fn_28 = oops.core.get_selector_dynamically.call(null, obj_27, "method");
   if (oops.core.validate_fn_call_dynamically.call(null, fn_28, oops.state.get_last_access_modifier.call(null)))
-    if (!(fn_28 == null)) fn_28.apply(obj_27, cljs.core.into_array.call(null, new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, ["p1", "p2"], null)));
+    if (!(fn_28 == null)) fn_28.apply(obj_27, oops.helpers.to_native_array.call(null, new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, ["p1", "p2"], null)));
     else;
   else;
 } finally {
