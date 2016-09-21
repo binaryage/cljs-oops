@@ -26,3 +26,9 @@
   (with-debug
     (oget js/window "k1.?k2.k3")
     (oget+ js/window (identity "k1.?k2.k3"))))
+
+(testing "nested static oget expansion"
+  (oget (oget js/window "k1") ["?k2" "k3"]))
+
+(testing "nested dynamic oget expansion"
+  (oget+ (oget js/window "k1") (oget js/window "k2.k3")))

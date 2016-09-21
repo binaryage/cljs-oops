@@ -124,3 +124,77 @@ var result_2 = function() {
     oops.state._STAR_runtime_state_STAR_ = _STAR_runtime_state_STAR_5
   }
 }();
+
+// SNIPPET #6:
+//   (testing "nested static oget expansion"
+//     (oget (oget js/window "k1") ["?k2" "k3"]))
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+var target_obj_8 = function() {
+  var target_obj_9 = window;
+  var _STAR_runtime_state_STAR_6 = oops.state._STAR_runtime_state_STAR_;
+  oops.state._STAR_runtime_state_STAR_ = oops.state.prepare_state.call(null, target_obj_9, new Error, function() {
+    arguments[0].apply(console, Array.prototype.slice.call(arguments, 1))
+  });
+  try {
+    var next_obj_10 = oops.core.validate_object_access_dynamically.call(null, target_obj_9, 0, "k1", true) ? goog.object.get(target_obj_9, "k1") : null;
+    return next_obj_10
+  } finally {
+    oops.state._STAR_runtime_state_STAR_ =
+      _STAR_runtime_state_STAR_6
+  }
+}();
+var _STAR_runtime_state_STAR_7 = oops.state._STAR_runtime_state_STAR_;
+oops.state._STAR_runtime_state_STAR_ = oops.state.prepare_state.call(null, target_obj_8, new Error, function() {
+  arguments[0].apply(console, Array.prototype.slice.call(arguments, 1))
+});
+try {
+  var next_obj_11 = oops.core.validate_object_access_dynamically.call(null, target_obj_8, 1, "k2", true) ? goog.object.get(target_obj_8, "k2") : null;
+  if (!(next_obj_11 == null)) var next_obj_12 = oops.core.validate_object_access_dynamically.call(null, next_obj_11, 0, "k3", true) ? goog.object.get(next_obj_11, "k3") : null;
+  else;
+} finally {
+  oops.state._STAR_runtime_state_STAR_ = _STAR_runtime_state_STAR_7
+}
+
+// SNIPPET #7:
+//   (testing "nested dynamic oget expansion"
+//     (oget+ (oget js/window "k1") (oget js/window "k2.k3")))
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+var target_obj_10 = function() {
+  var target_obj_11 = window;
+  var _STAR_runtime_state_STAR_8 = oops.state._STAR_runtime_state_STAR_;
+  oops.state._STAR_runtime_state_STAR_ = oops.state.prepare_state.call(null, target_obj_11, new Error, function() {
+    arguments[0].apply(console, Array.prototype.slice.call(arguments, 1))
+  });
+  try {
+    var next_obj_13 = oops.core.validate_object_access_dynamically.call(null, target_obj_11, 0, "k1", true) ? goog.object.get(target_obj_11, "k1") : null;
+    return next_obj_13
+  } finally {
+    oops.state._STAR_runtime_state_STAR_ =
+      _STAR_runtime_state_STAR_8
+  }
+}();
+var _STAR_runtime_state_STAR_9 = oops.state._STAR_runtime_state_STAR_;
+oops.state._STAR_runtime_state_STAR_ = oops.state.prepare_state.call(null, target_obj_10, new Error, function() {
+  arguments[0].apply(console, Array.prototype.slice.call(arguments, 1))
+});
+try {
+  oops.core.get_selector_dynamically.call(null, target_obj_10, function() {
+    var target_obj_12 = window;
+    var _STAR_runtime_state_STAR_10 = oops.state._STAR_runtime_state_STAR_;
+    oops.state._STAR_runtime_state_STAR_ = oops.state.prepare_state.call(null, target_obj_12, new Error, function() {
+      arguments[0].apply(console, Array.prototype.slice.call(arguments, 1))
+    });
+    try {
+      var next_obj_14 = oops.core.validate_object_access_dynamically.call(null, target_obj_12, 0, "k2", true) ? goog.object.get(target_obj_12,
+        "k2") : null;
+      var next_obj_15 = oops.core.validate_object_access_dynamically.call(null, next_obj_14, 0, "k3", true) ? goog.object.get(next_obj_14, "k3") : null;
+      return next_obj_15
+    } finally {
+      oops.state._STAR_runtime_state_STAR_ = _STAR_runtime_state_STAR_10
+    }
+  }())
+} finally {
+  oops.state._STAR_runtime_state_STAR_ = _STAR_runtime_state_STAR_9
+};
