@@ -2,7 +2,8 @@
   (:refer-clojure :exclude [gensym])
   (:require [oops.schema :as schema]
             [oops.config :as config]
-            [oops.compiler :as compiler :refer [gensym with-compiler-context! with-compiler-opts!]]
+            [oops.helpers :refer [gensym]]
+            [oops.compiler :as compiler :refer [with-compiler-context! with-compiler-opts!]]
             [oops.constants :refer [dot-access soft-access punch-access]]
             [oops.debug :refer [log debug-assert]]
             [oops.state :as state]

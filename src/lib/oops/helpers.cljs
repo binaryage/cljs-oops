@@ -1,5 +1,6 @@
 (ns oops.helpers
-  (:require-macros [oops.debug :refer [debug-assert]]))
+  (:require-macros [oops.helpers]
+                   [oops.debug :refer [debug-assert]]))
 
 (defn is-prototype? [o]
   (identical? (.-prototype (.-constructor o)) o))
