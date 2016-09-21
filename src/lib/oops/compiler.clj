@@ -1,10 +1,23 @@
 (ns oops.compiler
   "Provides some helper utils for interaction with cljs compiler."
+  (:refer-clojure :exclude [macroexpand])
   (:require [cljs.analyzer :as ana]
             [cljs.env]
             [oops.messages :refer [register-messages!]]
             [oops.state :as state]
             [oops.debug :refer [log debug-assert]]))
+
+(defn macroexpand* [env form]
+  (if-not (and (seq? form) (seq form))
+    form
+    (let [expanded-form (ana/macroexpand-1 env form)]
+      (if (identical? form expanded-form)
+        expanded-form
+        (macroexpand* env expanded-form)))))
+
+(defn macroexpand [form]
+  (debug-assert oops.state/*invocation-env*)
+  (macroexpand* oops.state/*invocation-env* form))
 
 (defmacro with-hooked-compiler! [& body]
   `(binding [ana/*cljs-warnings* (register-messages! ana/*cljs-warnings*)]

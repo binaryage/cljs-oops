@@ -400,6 +400,9 @@
 
 ; -- raw implementations ----------------------------------------------------------------------------------------------------
 
+(defn macroexpand-selector-list [selector-list]
+  (map compiler/macroexpand selector-list))
+
 (defn check-path! [path]
   (if (empty? path)
     (report-if-needed! :static-empty-selector-access))
@@ -440,36 +443,40 @@
 
 (defn gen-oget [obj selector-list]
   (validate-object-statically obj)
-  (let [target-obj-sym (gensym "target-obj")]
+  (let [target-obj-sym (gensym "target-obj")
+        expanded-selector-list (macroexpand-selector-list selector-list)]
     `(let [~target-obj-sym ~obj]
        ~(gen-runtime-diagnostics-context! target-obj-sym
-          (gen-oget-impl target-obj-sym selector-list)))))
+          (gen-oget-impl target-obj-sym expanded-selector-list)))))
 
 (defn gen-oset [obj selector+val]
   (validate-object-statically obj)
   (let [selector-list (butlast selector+val)
+        expanded-selector-list (macroexpand-selector-list selector-list)
         val (last selector+val)
         target-obj-sym (gensym "target-obj")]
     `(let [~target-obj-sym ~obj]
        ~(gen-runtime-diagnostics-context! target-obj-sym
-          (gen-oset-impl target-obj-sym selector-list val)))))
+          (gen-oset-impl target-obj-sym expanded-selector-list val)))))
 
 (defn gen-ocall [obj selector args]
   (validate-object-statically obj)
   (let [selector-list [selector]
+        expanded-selector-list (macroexpand-selector-list selector-list)
         target-obj-sym (gensym "target-obj")]
     `(let [~target-obj-sym ~obj]
        ~(gen-runtime-diagnostics-context! target-obj-sym
-          (gen-ocall-impl target-obj-sym selector-list args)))))
+          (gen-ocall-impl target-obj-sym expanded-selector-list args)))))
 
 (defn gen-oapply [obj selector+args]
   (validate-object-statically obj)
   (let [selector-list (butlast selector+args)
+        expanded-selector-list (macroexpand-selector-list selector-list)
         args (last selector+args)
         target-obj-sym (gensym "target-obj")]
     `(let [~target-obj-sym ~obj]
        ~(gen-runtime-diagnostics-context! target-obj-sym
-          (gen-oapply-impl target-obj-sym selector-list args)))))
+          (gen-oapply-impl target-obj-sym expanded-selector-list args)))))
 
 ; -- public macros ----------------------------------------------------------------------------------------------------------
 

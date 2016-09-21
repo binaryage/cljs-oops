@@ -14,8 +14,8 @@
 (testing "dynamic oapply expansion"
   (oapply+ js/window (identity "method") ["p1" "p2"]))
 
-(testing "dynamic oapply expansion with macro-generated method"
-  (oapply+ js/window (macro-identity "method") ["p1" "p2"]))
+(testing "oapply expansion with macro-generated method and params should be static"
+  (oapply+ js/window (macro-identity "method") (macro-identity [(macro-identity "p1") "p2"])))
 
 (testing "oapply expansion with disabled diagnostics"
   (without-diagnostics

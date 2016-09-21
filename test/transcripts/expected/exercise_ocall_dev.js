@@ -54,8 +54,8 @@ try {
 }
 
 // SNIPPET #3:
-//   (testing "dynamic ocall expansion with macro-generated method"
-//     (ocall+ js/window (macro-identity "method") "p1" "p2"))
+//   (testing "ocall expansion with macro-generated method and params should be static"
+//     (ocall js/window (macro-identity "method") (macro-identity "p1") "p2"))
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 var target_obj_3 = window;
@@ -64,7 +64,10 @@ oops.state._STAR_runtime_state_STAR_ = oops.state.prepare_state.call(null, targe
   arguments[0].apply(console, Array.prototype.slice.call(arguments, 1))
 });
 try {
-  var fn_3 = oops.core.get_selector_dynamically.call(null, target_obj_3, "method");
+  var fn_3 = function() {
+    var next_obj_2 = oops.core.validate_object_access_dynamically.call(null, target_obj_3, 0, "method", true) ? goog.object.get(target_obj_3, "method") : null;
+    return next_obj_2
+  }();
   if (oops.core.validate_fn_call_dynamically.call(null, fn_3, oops.state.get_last_access_modifier.call(null)))
     if (!(fn_3 == null)) fn_3.call(target_obj_3, "p1", "p2");
     else;
@@ -83,8 +86,8 @@ try {
 var result_1 = function() {
   var target_obj_4 = window;
   var fn_4 = function() {
-    var next_obj_2 = goog.object.get(target_obj_4, "method");
-    return next_obj_2
+    var next_obj_3 = goog.object.get(target_obj_4, "method");
+    return next_obj_3
   }();
   if (!(fn_4 == null)) fn_4.call(target_obj_4, "p1", "p2");
   else;
@@ -111,9 +114,9 @@ var result_2 = function() {
     var captured_runtime_state_1 = oops.state._STAR_runtime_state_STAR_;
     var result_3 = function() {
       var fn_6 = function() {
-        var next_obj_3 = oops.core.validate_object_access_dynamically.call(null,
+        var next_obj_4 = oops.core.validate_object_access_dynamically.call(null,
           target_obj_6, 0, "method", true) ? goog.object.get(target_obj_6, "method") : null;
-        return next_obj_3
+        return next_obj_4
       }();
       if (oops.core.validate_fn_call_dynamically.call(null, fn_6, oops.state.get_last_access_modifier.call(null)))
         if (!(fn_6 == null)) return fn_6.call(target_obj_6, "p1", "p2");
@@ -121,7 +124,7 @@ var result_2 = function() {
       else return null
     }();
     if (captured_runtime_state_1 === oops.state._STAR_runtime_state_STAR_);
-    else throw new Error("Assert failed: (clojure.core/identical? captured-runtime-state-35 oops.state/*runtime-state*)");
+    else throw new Error("Assert failed: (clojure.core/identical? captured-runtime-state-36 oops.state/*runtime-state*)");
   } finally {
     oops.state._STAR_runtime_state_STAR_ = _STAR_runtime_state_STAR_4
   }
@@ -141,7 +144,7 @@ var result_2 = function() {
       else return null
     }();
     if (captured_runtime_state_2 === oops.state._STAR_runtime_state_STAR_);
-    else throw new Error("Assert failed: (clojure.core/identical? captured-runtime-state-43 oops.state/*runtime-state*)");
+    else throw new Error("Assert failed: (clojure.core/identical? captured-runtime-state-44 oops.state/*runtime-state*)");
     return result_4
   } finally {
     oops.state._STAR_runtime_state_STAR_ =

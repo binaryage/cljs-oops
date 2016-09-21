@@ -1,5 +1,6 @@
 (ns oops.main
   (:require [cljs.test :refer-macros [deftest testing is are run-tests use-fixtures]]
+            [cuerdas.core]
             [oops.core :refer [oget oset! ocall! oapply! ocall oapply
                                oget+ oset!+ ocall!+ oapply!+ ocall+ oapply+]]
             [oops.config :refer [with-runtime-config with-compiler-config with-child-factory]]
@@ -13,7 +14,9 @@
                             under-chrome
                             if-phantom
                             with-console-recording
-                            when-compiler-config when-not-compiler-config]]
+                            with-stderr-recording
+                            when-compiler-config when-not-compiler-config
+                            macro-identity]]
             [clojure.string :as string]))
 
 (runonce
@@ -476,3 +479,14 @@
           (is (some? (re-find #"raise_error_BANG_" (extract-top-stack-location (cause-error!)))))
           (with-runtime-config {:throw-errors-from-macro-call-sites false}
             (is (nil? (re-find #"raise_error_BANG_" (extract-top-stack-location (cause-error!)))))))))))
+
+(deftest test-selector-macroexpansion
+  (testing "selectors should macro-expand before processed"
+    (with-compiler-config {:dynamic-selector-usage :warn}
+      (let [recorder (atom)]
+        (with-stderr-recording recorder
+          (oget (js-obj) (macro-identity "?x"))
+          (oset! (js-obj) (macro-identity "!x") (macro-identity "val"))
+          (ocall (js-obj "f" identity) (macro-identity "f") (macro-identity "p"))
+          (oapply (js-obj "f" identity) (macro-identity "f") (macro-identity ["p"])))
+        (is (empty? @recorder) "expected no warnings about dynamic selectors")))))

@@ -14,8 +14,8 @@
 (testing "dynamic oset! expansion"
   (oset!+ js/window (identity "!k1.!k2") "val"))
 
-(testing "dynamic oset! expansion with macro-generated params"
-  (oset!+ js/window (macro-identity "!k1.!k2") "val"))
+(testing "oset! expansion with macro-generated params should be static"
+  (oset! js/window (macro-identity "!k1.!k2") "val"))
 
 (testing "oset! expansion with disabled diagnostics"
   (without-diagnostics

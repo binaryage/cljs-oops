@@ -14,8 +14,8 @@
 (testing "dynamic ocall expansion"
   (ocall+ js/window (identity "method") "p1" "p2"))
 
-(testing "dynamic ocall expansion with macro-generated method"
-  (ocall+ js/window (macro-identity "method") "p1" "p2"))
+(testing "ocall expansion with macro-generated method and params should be static"
+  (ocall js/window (macro-identity "method") (macro-identity "p1") "p2"))
 
 (testing "ocall expansion with disabled diagnostics"
   (without-diagnostics
