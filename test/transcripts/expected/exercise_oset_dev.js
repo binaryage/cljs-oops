@@ -15,22 +15,22 @@
 //     (oset! js/window "!k1" "!k2" "val"))
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-var target_obj_44 = window;
-var _STAR_runtime_state_STAR_45 = oops.state._STAR_runtime_state_STAR_;
-oops.state._STAR_runtime_state_STAR_ = oops.state.prepare_state.call(null, target_obj_44, new Error, function() {
+var target_obj_1 = window;
+var _STAR_runtime_state_STAR_1 = oops.state._STAR_runtime_state_STAR_;
+oops.state._STAR_runtime_state_STAR_ = oops.state.prepare_state.call(null, target_obj_1, new Error, function() {
   arguments[0].apply(console, Array.prototype.slice.call(arguments, 1))
 });
 try {
-  var parent_obj_46 = function() {
-    var next_obj_7 = oops.core.validate_object_access_dynamically.call(null, target_obj_44, 2, "k1", true) ? goog.object.get(target_obj_44, "k1") : null;
-    var ensured_obj_8 = next_obj_7 == null ? oops.core.punch_key_dynamically_BANG_.call(null, target_obj_44, "k1") : next_obj_7;
-    return ensured_obj_8
+  var parent_obj_1 = function() {
+    var next_obj_1 = oops.core.validate_object_access_dynamically.call(null, target_obj_1, 2, "k1", true) ? goog.object.get(target_obj_1, "k1") : null;
+    var ensured_obj_1 = next_obj_1 == null ? oops.core.punch_key_dynamically_BANG_.call(null, target_obj_1, "k1") : next_obj_1;
+    return ensured_obj_1
   }();
-  if (oops.core.validate_object_access_dynamically.call(null, parent_obj_46, 2, "k2", true)) goog.object.set(parent_obj_46, "k2",
+  if (oops.core.validate_object_access_dynamically.call(null, parent_obj_1, 2, "k2", true)) goog.object.set(parent_obj_1, "k2",
     "val");
   else;
 } finally {
-  oops.state._STAR_runtime_state_STAR_ = _STAR_runtime_state_STAR_45
+  oops.state._STAR_runtime_state_STAR_ = _STAR_runtime_state_STAR_1
 }
 
 // SNIPPET #2:
@@ -38,15 +38,15 @@ try {
 //     (oset!+ js/window (identity "!k1.!k2") "val"))
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-var target_obj_47 = window;
-var _STAR_runtime_state_STAR_48 = oops.state._STAR_runtime_state_STAR_;
-oops.state._STAR_runtime_state_STAR_ = oops.state.prepare_state.call(null, target_obj_47, new Error, function() {
+var target_obj_2 = window;
+var _STAR_runtime_state_STAR_2 = oops.state._STAR_runtime_state_STAR_;
+oops.state._STAR_runtime_state_STAR_ = oops.state.prepare_state.call(null, target_obj_2, new Error, function() {
   arguments[0].apply(console, Array.prototype.slice.call(arguments, 1))
 });
 try {
-  oops.core.set_selector_dynamically.call(null, target_obj_47, cljs.core.identity.call(null, "!k1.!k2"), "val")
+  oops.core.set_selector_dynamically.call(null, target_obj_2, cljs.core.identity.call(null, "!k1.!k2"), "val")
 } finally {
-  oops.state._STAR_runtime_state_STAR_ = _STAR_runtime_state_STAR_48
+  oops.state._STAR_runtime_state_STAR_ = _STAR_runtime_state_STAR_2
 }
 
 // SNIPPET #3:
@@ -54,15 +54,15 @@ try {
 //     (oset!+ js/window (macro-identity "!k1.!k2") "val"))
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-var target_obj_49 = window;
-var _STAR_runtime_state_STAR_50 = oops.state._STAR_runtime_state_STAR_;
-oops.state._STAR_runtime_state_STAR_ = oops.state.prepare_state.call(null, target_obj_49, new Error, function() {
+var target_obj_3 = window;
+var _STAR_runtime_state_STAR_3 = oops.state._STAR_runtime_state_STAR_;
+oops.state._STAR_runtime_state_STAR_ = oops.state.prepare_state.call(null, target_obj_3, new Error, function() {
   arguments[0].apply(console, Array.prototype.slice.call(arguments, 1))
 });
 try {
-  oops.core.set_selector_dynamically.call(null, target_obj_49, "!k1.!k2", "val")
+  oops.core.set_selector_dynamically.call(null, target_obj_3, "!k1.!k2", "val")
 } finally {
-  oops.state._STAR_runtime_state_STAR_ = _STAR_runtime_state_STAR_50
+  oops.state._STAR_runtime_state_STAR_ = _STAR_runtime_state_STAR_3
 }
 
 // SNIPPET #4:
@@ -72,18 +72,18 @@ try {
 //       (oset!+ js/window (identity "!k1.!k2") "val")))
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-var result_51 = function() {
-  var target_obj_52 = window;
-  var parent_obj_2442 = function() {
-    var next_obj_23 = goog.object.get(target_obj_52, "k1");
-    var ensured_obj_24 = next_obj_23 == null ? oops.core.punch_key_dynamically_BANG_.call(null, target_obj_52, "k1") : next_obj_23;
-    return ensured_obj_24
+var result_1 = function() {
+  var target_obj_4 = window;
+  var parent_obj_2 = function() {
+    var next_obj_2 = goog.object.get(target_obj_4, "k1");
+    var ensured_obj_2 = next_obj_2 == null ? oops.core.punch_key_dynamically_BANG_.call(null, target_obj_4, "k1") : next_obj_2;
+    return ensured_obj_2
   }();
-  goog.object.set(parent_obj_2442, "k2", "val");
-  var target_obj_25 = window;
-  oops.core.set_selector_dynamically.call(null, target_obj_25, cljs.core.identity.call(null,
+  goog.object.set(parent_obj_2, "k2", "val");
+  var target_obj_5 = window;
+  oops.core.set_selector_dynamically.call(null, target_obj_5, cljs.core.identity.call(null,
     "!k1.!k2"), "val");
-  return target_obj_25
+  return target_obj_5
 }();
 
 // SNIPPET #5:
@@ -93,48 +93,48 @@ var result_51 = function() {
 //       (oset!+ js/window (identity "!k1.!k2") "val")))
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-var result_54 = function() {
-  var target_obj_55 = window;
-  var _STAR_runtime_state_STAR_56 = oops.state._STAR_runtime_state_STAR_;
-  oops.state._STAR_runtime_state_STAR_ = oops.state.prepare_state.call(null, target_obj_55, new Error, function() {
+var result_2 = function() {
+  var target_obj_6 = window;
+  var _STAR_runtime_state_STAR_4 = oops.state._STAR_runtime_state_STAR_;
+  oops.state._STAR_runtime_state_STAR_ = oops.state.prepare_state.call(null, target_obj_6, new Error, function() {
     arguments[0].apply(console, Array.prototype.slice.call(arguments, 1))
   });
   try {
-    var captured_runtime_state_57 = oops.state._STAR_runtime_state_STAR_;
-    var result_58 = function() {
-      var parent_obj_59 = function() {
-        var next_obj_38 =
-          oops.core.validate_object_access_dynamically.call(null, target_obj_55, 2, "k1", true) ? goog.object.get(target_obj_55, "k1") : null;
-        var ensured_obj_39 = next_obj_38 == null ? oops.core.punch_key_dynamically_BANG_.call(null, target_obj_55, "k1") : next_obj_38;
-        return ensured_obj_39
+    var captured_runtime_state_1 = oops.state._STAR_runtime_state_STAR_;
+    var result_3 = function() {
+      var parent_obj_3 = function() {
+        var next_obj_3 =
+          oops.core.validate_object_access_dynamically.call(null, target_obj_6, 2, "k1", true) ? goog.object.get(target_obj_6, "k1") : null;
+        var ensured_obj_3 = next_obj_3 == null ? oops.core.punch_key_dynamically_BANG_.call(null, target_obj_6, "k1") : next_obj_3;
+        return ensured_obj_3
       }();
-      if (oops.core.validate_object_access_dynamically.call(null, parent_obj_59, 2, "k2", true)) goog.object.set(parent_obj_59, "k2", "val");
+      if (oops.core.validate_object_access_dynamically.call(null, parent_obj_3, 2, "k2", true)) goog.object.set(parent_obj_3, "k2", "val");
       else;
-      return target_obj_55
+      return target_obj_6
     }();
-    if (captured_runtime_state_57 ===
+    if (captured_runtime_state_1 ===
       oops.state._STAR_runtime_state_STAR_);
     else throw new Error("Assert failed: (clojure.core/identical? captured-runtime-state-32 oops.state/*runtime-state*)");
   } finally {
-    oops.state._STAR_runtime_state_STAR_ = _STAR_runtime_state_STAR_56
+    oops.state._STAR_runtime_state_STAR_ = _STAR_runtime_state_STAR_4
   }
-  var target_obj_40 = window;
-  var _STAR_runtime_state_STAR_41 = oops.state._STAR_runtime_state_STAR_;
-  oops.state._STAR_runtime_state_STAR_ = oops.state.prepare_state.call(null, target_obj_40, new Error, function() {
+  var target_obj_7 = window;
+  var _STAR_runtime_state_STAR_5 = oops.state._STAR_runtime_state_STAR_;
+  oops.state._STAR_runtime_state_STAR_ = oops.state.prepare_state.call(null, target_obj_7, new Error, function() {
     arguments[0].apply(console, Array.prototype.slice.call(arguments,
       1))
   });
   try {
-    var captured_runtime_state_42 = oops.state._STAR_runtime_state_STAR_;
-    var result_43 = function() {
-      oops.core.set_selector_dynamically.call(null, target_obj_40, cljs.core.identity.call(null, "!k1.!k2"), "val");
-      return target_obj_40
+    var captured_runtime_state_2 = oops.state._STAR_runtime_state_STAR_;
+    var result_4 = function() {
+      oops.core.set_selector_dynamically.call(null, target_obj_7, cljs.core.identity.call(null, "!k1.!k2"), "val");
+      return target_obj_7
     }();
-    if (captured_runtime_state_42 === oops.state._STAR_runtime_state_STAR_);
+    if (captured_runtime_state_2 === oops.state._STAR_runtime_state_STAR_);
     else throw new Error("Assert failed: (clojure.core/identical? captured-runtime-state-42 oops.state/*runtime-state*)");
-    return result_43
+    return result_4
   } finally {
     oops.state._STAR_runtime_state_STAR_ =
-      _STAR_runtime_state_STAR_41
+      _STAR_runtime_state_STAR_5
   }
 }();

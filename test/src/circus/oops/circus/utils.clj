@@ -6,7 +6,8 @@
             [clojure.java.shell :as shell]
             [clojure.tools.logging :as log]
             [clojure.pprint :refer [pprint]]
-            [oops.tools :as tools]))
+            [oops.tools :as tools])
+  (:import (java.util.regex Matcher)))
 
 (defn produce-diff [path1 path2]
   (let [options-args ["-U" "5"]
@@ -44,24 +45,42 @@
         relevant-content))))
 
 (defn make-empty-normalizer-state []
-  {:counter  1
-   :mappings {}})
+  {:counter     1
+   :counters    {}
+   :identifiers {}
+   :mappings    {}})
 
 (defn get-counter [normalizer-state]
   (:counter normalizer-state))
+
+(defn get-mapping [normalizer-state name]
+  (get-in normalizer-state [:mappings name]))
+
+(defn get-counter-for-name [normalizer-state name]
+  (get-in normalizer-state [:counters name]))
 
 (defn register-mapping [normalizer-state name replacement]
   (-> normalizer-state
       (update :counter inc)
       (update :mappings assoc name replacement)))
 
-(defn get-mapping [normalizer-state name]
-  (get-in normalizer-state [:mappings name]))
+(defn register-counter [normalizer-state name identifier]
+  (let [x (fn [state]
+            (let [assigned-number (get-in state [:identifiers identifier])]
+              (assoc-in state [:counters name] assigned-number)))]
+    (-> normalizer-state
+        (update-in [:identifiers identifier] (fn [c] (inc (or c 0))))
+        (x))))
 
 (defn register-mapping-if-needed [normalizer-state name replacement]
   (if (get-mapping normalizer-state name)
     normalizer-state
     (register-mapping normalizer-state name replacement)))
+
+(defn register-counter-if-needed [normalizer-state name identifier]
+  (if (get-counter-for-name normalizer-state name)
+    normalizer-state
+    (register-counter normalizer-state name identifier)))
 
 (defn normalize-identifiers [[content normalizer-state]]
   "The goal here is to rename all generated $<number>$ identifiers with stable numbering."
@@ -93,6 +112,25 @@
                   new-content (string/replace content needle (get-mapping new-normalizer-state needle))]
               [new-content new-normalizer-state]))]
     (reduce * [content normalizer-state] (re-seq #"\d+_\d+" content))))
+
+(defn linearize-numbering [[content normalizer-state]]
+  "The goal here is to rename all generated <IDENTIFIER>_<NUM> to linear numbering for each distinct identifier."
+  (let [names (distinct (re-seq #"[a-zA-Z0-9_$]+_\d+" content))
+        * (fn [[content normalizer-state] name]
+            (let [group (re-matches #"([a-zA-Z0-9_$]+_)(\d+)" name)
+                  identifier (nth group 1)
+                  new-normalizer-state (register-counter-if-needed normalizer-state name identifier)
+                  massaged-name (str identifier "$$$" (get-counter-for-name new-normalizer-state name))                       ; $$$ is a marker so we don't conflict with name candidates for future replacement
+                  pattern (re-pattern (str name "([^0-9]?)"))                                                                 ; we want to prevent replacing partial matches, eg. id_1 to mess with id_100
+                  replacement (str (Matcher/quoteReplacement massaged-name) "$1")
+                  new-content (string/replace content pattern replacement)]
+              [new-content new-normalizer-state]))
+        + (fn [[content normalizer-state] name]
+            (let [group (re-matches #"([a-zA-Z0-9_$]+_)(\d+)" name)
+                  identifier (nth group 1)
+                  new-content (string/replace content (str identifier "$$$") identifier)]
+              [new-content normalizer-state]))]
+    (reduce + (reduce * [content normalizer-state] names) names)))
 
 (defn safe-spit [path content]
   (io/make-parents path)
@@ -158,7 +196,8 @@
         [stabilized-code normalizer-state] (-> [unwrapped-code (make-empty-normalizer-state)]
                                                (normalize-identifiers)
                                                (normalize-gensyms)
-                                               (normalize-twins))]
+                                               (normalize-twins)
+                                               (linearize-numbering))]
     (log/debug "normalizer state:\n" (pprint-str normalizer-state 10000))
     stabilized-code))
 
