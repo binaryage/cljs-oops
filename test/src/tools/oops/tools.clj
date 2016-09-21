@@ -4,7 +4,8 @@
             [oops.config :as config]
             [clojure.string :as string]
             [clojure.java.io :as io]
-            [cuerdas.core :as cuerdas]))
+            [cuerdas.core :as cuerdas])
+  (:import (java.io StringWriter)))
 
 (defn pprint-code [v]
   (with-out-str
@@ -154,3 +155,33 @@
 (defmacro presume-compiler-config [config]
   (let [compiler-config (select-keys (config/get-compiler-config) (keys config))]
     `(cljs.test/is (= ~compiler-config ~config))))
+
+(defmacro macro-identity [x]
+  x)
+
+(def err-recorder (volatile! nil))
+(def prev-err (volatile! nil))
+
+(defmacro start-err-recorder! []
+  (assert (nil? @err-recorder))
+  (vreset! err-recorder (new StringWriter))
+  (vreset! prev-err *err*)
+  (alter-var-root #'*err* (fn [_] @err-recorder))
+  nil)
+
+(defmacro stop-err-recorder! []
+  (assert (some? @err-recorder))
+  (let [recording (str @err-recorder)]
+    (alter-var-root #'*err* (fn [_] @prev-err))
+    (vreset! err-recorder nil)
+    (vreset! prev-err nil)
+    recording))
+
+(defmacro with-stderr-recording [recorder & body]
+  ; note: we rely on macroexpander behaviour here
+  `(do
+     (oops.tools/start-err-recorder!)
+     (let [res# (do ~@body)
+           recording# (oops.tools/stop-err-recorder!)]
+       (cljs.core/swap! ~recorder cljs.core/concat (remove empty? (cuerdas.core/lines recording#)))
+       res#)))
