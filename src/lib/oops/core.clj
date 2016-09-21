@@ -401,7 +401,9 @@
 ; -- raw implementations ----------------------------------------------------------------------------------------------------
 
 (defn macroexpand-selector-list [selector-list]
-  (map compiler/macroexpand selector-list))
+  (if-not (config/macroexpand-selectors?)
+    selector-list
+    (map compiler/macroexpand selector-list)))
 
 (defn check-path! [path]
   (if (empty? path)

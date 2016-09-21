@@ -123,21 +123,19 @@
 ; -- icing ------------------------------------------------------------------------------------------------------------------
 
 (defn diagnostics? [& [config]]
-  {:post [(contains? #{true false nil} %)]}
   (true? (get-config-key :diagnostics config)))
 
 (defn key-get-mode [& [config]]
-  {:post [(contains? #{:core :goog} %)]}
   (get-config-key :key-get config))
 
 (defn key-set-mode [& [config]]
-  {:post [(contains? #{:core :goog} %)]}
   (get-config-key :key-set config))
 
 (defn strict-punching? [& [config]]
-  {:post [(contains? #{true false nil} %)]}
-  (get-config-key :strict-punching config))
+  (true? (get-config-key :strict-punching config)))
 
 (defn debug? [& [config]]
-  {:post [(contains? #{true false nil} %)]}
   (true? (get-config-key :debug config)))
+
+(defn macroexpand-selectors? [& [config]]
+  (true? (get-config-key :macroexpand-selectors config)))

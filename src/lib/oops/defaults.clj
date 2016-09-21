@@ -10,6 +10,7 @@
    :key-set                                    :goog                                                                          ; #{:core :goog}
    :strict-punching                            true                                                                           ; #{true falsy}
    :skip-config-validation                     false                                                                          ; #{true falsy}
+   :macroexpand-selectors                      true                                                                           ; #{true falsy}
 
    ; compile-time warnings/errors
    :dynamic-selector-usage                     :warn                                                                          ; #{:error :warn falsy}
@@ -61,6 +62,7 @@
 (s/def ::config/key-set ::config/key-impl)
 (s/def ::config/strict-punching ::config/boolish)
 (s/def ::config/skip-config-validation ::config/boolish)
+(s/def ::config/macroexpand-selectors ::config/boolish)
 
 (s/def ::config/dynamic-selector-usage ::config/message)
 (s/def ::config/static-nil-target-object ::config/message)
@@ -88,6 +90,7 @@
                    ::config/key-set
                    ::config/strict-punching
                    ::config/skip-config-validation
+                   ::config/macroexpand-selectors
                    ::config/dynamic-selector-usage
                    ::config/static-nil-target-object
                    ::config/static-empty-selector-access

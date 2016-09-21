@@ -489,4 +489,15 @@
           (oset! (js-obj) (macro-identity "!x") (macro-identity "val"))
           (ocall (js-obj "f" identity) (macro-identity "f") (macro-identity "p"))
           (oapply (js-obj "f" identity) (macro-identity "f") (macro-identity ["p"])))
-        (is (empty? @recorder) "expected no warnings about dynamic selectors")))))
+        (is (empty? @recorder) "expected no warnings about dynamic selectors"))))
+  (testing "selectors should not macro-expand if expansion was disabled"
+    (with-compiler-config {:dynamic-selector-usage :warn
+                           :macroexpand-selectors  false}
+      (let [recorder (atom)]
+        (with-stderr-recording recorder
+          (oget (js-obj) (macro-identity "?x"))
+          (oset! (js-obj) (macro-identity "!x") (macro-identity "val"))
+          (ocall (js-obj "f" identity) (macro-identity "f") (macro-identity "p"))
+          (oapply (js-obj "f" identity) (macro-identity "f") (macro-identity ["p"])))
+        (is (= (count @recorder) 4))
+        (is (some? (re-matches #".*Unexpected dynamic selector usage.*" (first @recorder))))))))
