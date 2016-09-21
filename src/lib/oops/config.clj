@@ -1,8 +1,9 @@
 (ns oops.config
+  (:refer-clojure :exclude [gensym])
   (:require [cljs.env]
             [clojure.spec :as s]
             [oops.state]
-            [oops.helpers :as helpers]
+            [oops.helpers :as helpers :refer [gensym]]
             [oops.defaults :as defaults]))
 
 ; this is for testing, see with-compiler-config macro below
@@ -77,22 +78,34 @@
 (defmacro push-config-overrides! [config]
   (let [current-adhoc-config-overrides @adhoc-config-overrides]
     (vreset! adhoc-config-overrides-stack (conj @adhoc-config-overrides-stack current-adhoc-config-overrides))
-    (vreset! adhoc-config-overrides (merge current-adhoc-config-overrides config))))
+    (vreset! adhoc-config-overrides (merge current-adhoc-config-overrides config))
+    nil))
 
 (defmacro pop-config-overrides! []
   (let [stack @adhoc-config-overrides-stack]
     (assert (pos? (count stack)))
     (vreset! adhoc-config-overrides (last stack))
-    (vreset! adhoc-config-overrides-stack (butlast stack))))
+    (vreset! adhoc-config-overrides-stack (butlast stack))
+    nil))
 
 ; note: we rely on macroexpand behaviour here, it will expand
-; push-compiler-config first, then macros in body and then pop-compiler-config
-; this way we can tweak compiler config for an isolated code piece, which is handy for testing
+; push-config-overrides!first, then macros in body and then pop-config-overrides!
+; this way we can tweak compiler config for an isolated code piece, which is handy for testing or ad-hoc config tweaks
 (defmacro with-compiler-config [config & body]
-  `(do
-     (oops.config/push-config-overrides! ~config)
-     ~@body
-     (oops.config/pop-config-overrides!)))
+  (let [result-sym (gensym "result")]
+    `(do
+       (oops.config/push-config-overrides! ~config)
+       (let [~result-sym (do ~@body)]
+         (oops.config/pop-config-overrides!)
+         ~result-sym))))
+
+(defmacro without-diagnostics [& body]
+  `(oops.config/with-compiler-config {:diagnostics false}
+     ~@body))
+
+(defmacro with-debug [& body]
+  `(oops.config/with-compiler-config {:debug true}
+     ~@body))
 
 ; -- runtime macros ---------------------------------------------------------------------------------------------------------
 

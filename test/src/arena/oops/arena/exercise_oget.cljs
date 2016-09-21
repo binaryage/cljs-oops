@@ -1,17 +1,28 @@
 (ns oops.arena.exercise-oget
   (:require-macros [oops.arena.macros :refer [macro-identity]])
   (:require [oops.core :refer [oget oget+]]
+            [oops.config :refer [without-diagnostics with-debug]]
             [oops.tools :refer [init-arena-test! testing]]))
 
 (init-arena-test!)
 
 ; we want to test generated code shape expansion under dev mode
 
-(testing "dev oget expansion"
+(testing "static oget expansion"
   (oget js/window "k1" ["?k2" "k3"]))
 
-(testing "dev oget+ expansion"
+(testing "dynamic oget expansion"
   (oget+ js/window (identity "k1.?k2.k3")))
 
-(testing "dev ocall+ expansion with macro-generated params"
+(testing "dynamic oget expansion with macro-generated params"
   (oget+ js/window (macro-identity "k1.?k2.k3")))
+
+(testing "oget expansion with disabled diagnostics"
+  (without-diagnostics
+    (oget js/window "k1.?k2.k3")
+    (oget+ js/window (identity "k1.?k2.k3"))))
+
+(testing "oget expansion with enabled debugging"
+  (with-debug
+    (oget js/window "k1.?k2.k3")
+    (oget+ js/window (identity "k1.?k2.k3"))))
