@@ -482,7 +482,8 @@
 
 (deftest test-selector-macroexpansion
   (testing "selectors should macro-expand before processed"
-    (with-compiler-config {:dynamic-selector-usage :warn}
+    (with-compiler-config {:dynamic-selector-usage :warn
+                           :diagnostics            true}
       (let [recorder (atom)]
         (with-stderr-recording recorder
           (oget (js-obj) (macro-identity "?x"))
@@ -492,6 +493,7 @@
         (is (empty? @recorder) "expected no warnings about dynamic selectors"))))
   (testing "selectors should not macro-expand if expansion was disabled"
     (with-compiler-config {:dynamic-selector-usage :warn
+                           :diagnostics            true
                            :macroexpand-selectors  false}
       (let [recorder (atom)]
         (with-stderr-recording recorder
