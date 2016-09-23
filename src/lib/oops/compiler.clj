@@ -3,7 +3,7 @@
   (:refer-clojure :exclude [macroexpand])
   (:require [cljs.analyzer :as ana]
             [cljs.env]
-            [oops.messages :refer [register-messages!]]
+            [oops.messages :refer [messages-registered? register-messages]]
             [oops.state :as state]
             [oops.debug :refer [log debug-assert]]))
 
@@ -20,7 +20,9 @@
   (macroexpand* oops.state/*invocation-env* form))
 
 (defmacro with-hooked-compiler! [& body]
-  `(binding [ana/*cljs-warnings* (register-messages! ana/*cljs-warnings*)]
+  `(do
+     (if-not (messages-registered? ana/*cljs-warnings*)
+       (set! ana/*cljs-warnings* (register-messages ana/*cljs-warnings*)))                                                    ; add our messages on first invocation
      ~@body))
 
 (defmacro with-compiler-opts! [opts & body]

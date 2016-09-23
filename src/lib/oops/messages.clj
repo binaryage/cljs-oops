@@ -1,32 +1,45 @@
 (ns oops.messages
-  (:require [cljs.analyzer :as ana]))
+  (:require [cljs.analyzer :as ana]
+            [oops.debug :refer [debug-assert]]))
 
 ; -- helpers ----------------------------------------------------------------------------------------------------------------
 
-(defn register-messages! [table]
-  (assoc table
-    :dynamic-selector-usage true
-    :static-nil-target-object true
-    :static-empty-selector-access true))
+(def message-ids
+  [:dynamic-selector-usage
+   :static-nil-target-object
+   :static-empty-selector-access])
+
+(defn messages-registered? [table]
+  (debug-assert (map? table))
+  (let [result (contains? table (first message-ids))]
+    (debug-assert (or (not result) (every? #(contains? table %) (rest message-ids))))
+    result))
+
+(defn register-messages [table]
+  (debug-assert (map? table))
+  (merge table (zipmap message-ids (repeat (count message-ids) true))))
 
 (defn post-process-error-message [msg]
   (str "Oops, " msg))
 
-(defn known-macro? [command]
+(defn static-macro? [command]
   (contains? #{'oget 'oset! 'ocall 'oapply 'ocall! 'oapply!} command))
 
 ; -- compile-time error/warning messages (in hooked cljs compiler) ----------------------------------------------------------
 
-(defmethod ana/error-message :dynamic-selector-usage [_type info]
+(defmethod ana/error-message :dynamic-selector-usage [type info]
+  (debug-assert (some #{type} message-ids))
   (let [command (first (:form info))]
     (post-process-error-message (str "Unexpected dynamic selector usage"
-                                     (if (known-macro? command)
+                                     (if (static-macro? command)
                                        (str " (consider using " command "+)"))))))
 
-(defmethod ana/error-message :static-nil-target-object [_type _info]
+(defmethod ana/error-message :static-nil-target-object [type _info]
+  (debug-assert (some #{type} message-ids))
   (post-process-error-message (str "Unexpected nil target object")))
 
-(defmethod ana/error-message :static-empty-selector-access [_type _info]
+(defmethod ana/error-message :static-empty-selector-access [type _info]
+  (debug-assert (some #{type} message-ids))
   (post-process-error-message (str "Accessing target object with empty selector")))
 
-; WARNING: when adding a new method here, don't forget to update register-messages! as well
+; WARNING: when adding a new method here, don't forget to update register-messages as well
