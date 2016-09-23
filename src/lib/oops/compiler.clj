@@ -41,9 +41,21 @@
 (defn annotate-with-state [info]
   (assoc info :form oops.state/*invocation-form*))
 
+(defn make-slug [type env]
+  (list type (:file env) (:line env) (:column env)))
+
+(defn ensure-no-warnings-duplicity! [type env]
+  (assert cljs.env/*compiler*)
+  (let [slug (make-slug type env)
+        issued-warnings (get @cljs.env/*compiler* ::issued-warnings)]
+    (when-not (contains? issued-warnings slug)
+      (swap! cljs.env/*compiler* update ::issued-warnings #(conj (or % #{}) slug))
+      true)))
+
 (defn warn! [type & [info]]
   (assert state/*invocation-env* "oops.state/*invocation-env* must be set via with-diagnostics-context! first!")
-  (ana/warning type state/*invocation-env* (annotate-with-state info)))
+  (if (ensure-no-warnings-duplicity! type state/*invocation-env*)                                                             ; prevent issuing duplicated warnings (due to double macro analysis under some circumstances)
+    (ana/warning type state/*invocation-env* (annotate-with-state info))))
 
 (defn error! [type & [info]]
   (assert state/*invocation-env* "oops.state/*invocation-env* must be set via with-diagnostics-context! first!")
