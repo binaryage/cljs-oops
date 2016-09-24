@@ -2,10 +2,21 @@
   "Provides some helper utils for interaction with cljs compiler."
   (:refer-clojure :exclude [macroexpand])
   (:require [cljs.analyzer :as ana]
+            [cljs.closure]
             [cljs.env]
             [oops.messages :refer [messages-registered? register-messages]]
             [oops.state :as state]
             [oops.debug :refer [log debug-assert]]))
+
+; -- helpers ----------------------------------------------------------------------------------------------------------------
+
+(defn annotate-with-state [info]
+  (assoc info :form oops.state/*invocation-form*))
+
+(defn make-slug [type env]
+  (list type (:file env) (:line env) (:column env)))
+
+; -- cljs macro expanding ---------------------------------------------------------------------------------------------------
 
 (defn macroexpand* [env form]
   (if-not (and (seq? form) (seq form))
@@ -18,6 +29,8 @@
 (defn macroexpand [form]
   (debug-assert oops.state/*invocation-env*)
   (macroexpand* oops.state/*invocation-env* form))
+
+; -- compiler context -------------------------------------------------------------------------------------------------------
 
 (defmacro with-hooked-compiler! [& body]
   `(do
@@ -38,19 +51,32 @@
   `(oops.compiler/with-hooked-compiler!
      (oops.compiler/with-compiler-diagnostics-context! ~form ~env ~@body)))
 
-(defn annotate-with-state [info]
-  (assoc info :form oops.state/*invocation-form*))
+; -- subsystem for preventing duplicit warnings -----------------------------------------------------------------------------
 
-(defn make-slug [type env]
-  (list type (:file env) (:line env) (:column env)))
+(defonce original-build-fn (volatile! nil))
+
+(defn build-wrapper [& args]
+  (debug-assert @original-build-fn)
+  (if cljs.env/*compiler*
+    (swap! cljs.env/*compiler* dissoc ::issued-warnings))
+  (apply @original-build-fn args))
+
+(defn install-build-wrapper-if-needed! []
+  ; this feels way too hacky, know a better way how to achieve this?
+  (if (nil? @original-build-fn)
+    (vreset! original-build-fn cljs.closure/build)
+    (alter-var-root #'cljs.closure/build (constantly build-wrapper))))
 
 (defn ensure-no-warnings-duplicity! [type env]
   (assert cljs.env/*compiler*)
+  (install-build-wrapper-if-needed!)
   (let [slug (make-slug type env)
         issued-warnings (get @cljs.env/*compiler* ::issued-warnings)]
     (when-not (contains? issued-warnings slug)
       (swap! cljs.env/*compiler* update ::issued-warnings #(conj (or % #{}) slug))
       true)))
+
+; -- compile-time warnings and errors ---------------------------------------------------------------------------------------
 
 (defn warn! [type & [info]]
   (assert state/*invocation-env* "oops.state/*invocation-env* must be set via with-diagnostics-context! first!")
