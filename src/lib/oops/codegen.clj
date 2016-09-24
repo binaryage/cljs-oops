@@ -3,12 +3,12 @@
   The generated code greatly depends on effective oops configuration (see defaults.clj). E.g. diagnostics, debugging and
   other settings."
   (:refer-clojure :exclude [gensym])
-  (:require [oops.schema :as schema]
-            [oops.config :as config]
-            [oops.reporting :refer [report-if-needed! report-dynamic-selector-usage-if-needed!]]
+  (:require [oops.config :as config]
+            [oops.schema :as schema]
             [oops.helpers :refer [gensym]]
-            [oops.compiler :as compiler :refer [with-compiler-context! with-compiler-opts!]]
+            [oops.compiler :as compiler]
             [oops.constants :refer [dot-access soft-access punch-access]]
+            [oops.reporting :refer [report-if-needed! report-dynamic-selector-usage-if-needed!]]
             [oops.debug :refer [log debug-assert]]))
 
 ; -- helper code generators -------------------------------------------------------------------------------------------------

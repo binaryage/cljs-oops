@@ -1,12 +1,12 @@
 (ns oops.compiler
   "Provides utils for interaction with cljs compiler. Beware! HACKS ahead!"
   (:refer-clojure :exclude [macroexpand])
-  (:require [cljs.analyzer :as ana]
+  (:require [cljs.analyzer]
             [cljs.closure]
             [cljs.env]
-            [oops.messages :refer [messages-registered? register-messages]]
             [oops.state :as state]
-            [oops.debug :refer [log debug-assert]]))
+            [oops.messages :refer [messages-registered? register-messages]]
+            [oops.debug :refer [debug-assert]]))
 
 ; -- helpers ----------------------------------------------------------------------------------------------------------------
 
@@ -21,7 +21,7 @@
 (defn macroexpand* [env form]
   (if-not (and (seq? form) (seq form))
     form
-    (let [expanded-form (ana/macroexpand-1 env form)]
+    (let [expanded-form (cljs.analyzer/macroexpand-1 env form)]
       (if (identical? form expanded-form)
         expanded-form
         (macroexpand* env expanded-form)))))
@@ -34,8 +34,8 @@
 
 (defmacro with-hooked-compiler! [& body]
   `(do
-     (if-not (messages-registered? ana/*cljs-warnings*)
-       (set! ana/*cljs-warnings* (register-messages ana/*cljs-warnings*)))                                                    ; add our messages on first invocation
+     (if-not (messages-registered? cljs.analyzer/*cljs-warnings*)
+       (set! cljs.analyzer/*cljs-warnings* (register-messages cljs.analyzer/*cljs-warnings*)))                                ; add our messages on first invocation
      ~@body))
 
 (defmacro with-compiler-opts! [opts & body]
@@ -81,9 +81,9 @@
 (defn warn! [type & [info]]
   (assert state/*invocation-env* "oops.state/*invocation-env* must be set via with-diagnostics-context! first!")
   (if (ensure-no-warnings-duplicity! type state/*invocation-env*)                                                             ; prevent issuing duplicated warnings (due to double macro analysis under some circumstances)
-    (ana/warning type state/*invocation-env* (annotate-with-state info))))
+    (cljs.analyzer/warning type state/*invocation-env* (annotate-with-state info))))
 
 (defn error! [type & [info]]
   (assert state/*invocation-env* "oops.state/*invocation-env* must be set via with-diagnostics-context! first!")
-  (let [msg (ana/error-message type (annotate-with-state info))]
-    (throw (ana/error state/*invocation-env* msg))))
+  (let [msg (cljs.analyzer/error-message type (annotate-with-state info))]
+    (throw (cljs.analyzer/error state/*invocation-env* msg))))
