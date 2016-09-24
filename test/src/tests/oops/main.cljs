@@ -502,4 +502,4 @@
           (ocall (js-obj "f" identity) (macro-identity "f") (macro-identity "p"))
           (oapply (js-obj "f" identity) (macro-identity "f") (macro-identity ["p"])))
         (is (= (count @recorder) 4))
-        (is (some? (re-matches #".*Unexpected dynamic selector usage.*" (first @recorder))))))))
+        (is (some? (re-matches #".*Unexpected dynamic selector usage.*" (str (first @recorder)))))))))
