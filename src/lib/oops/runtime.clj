@@ -6,15 +6,15 @@
             [oops.constants :refer [dot-access soft-access punch-access]]
             [oops.debug :refer [log debug-assert]]))
 
-(defmacro report-error-dynamically-impl [msg data]
+(defmacro report-error-dynamically [msg data]
   `(when-not (oops.state/was-error-reported?)                                                                                 ; we want to print only first error for single invocation
      (oops.state/mark-error-reported!)
      ~(gen-report-runtime-message :error msg data)))
 
-(defmacro report-warning-dynamically-impl [msg data]
+(defmacro report-warning-dynamically [msg data]
   (gen-report-runtime-message :warning msg data))
 
-(defmacro report-if-needed-dynamically-impl [msg-id info-sym]
+(defmacro report-if-needed-dynamically [msg-id info-sym]
   (debug-assert (symbol? info-sym))
   (if (config/diagnostics?)
     `(do
@@ -26,7 +26,7 @@
            (false nil) nil))
        nil)))
 
-(defmacro validate-object-access-dynamically-impl [obj-sym mode-sym key-sym check-key?]
+(defmacro validate-object-access-dynamically [obj-sym mode-sym key-sym check-key?]
   (debug-assert (symbol? obj-sym))
   (debug-assert (symbol? mode-sym))
   (debug-assert (symbol? key-sym))
@@ -37,7 +37,7 @@
        ~(gen-check-key-access obj-sym mode-sym key-sym)
        true)))
 
-(defmacro validate-fn-call-dynamically-impl [fn-sym mode-sym]
+(defmacro validate-fn-call-dynamically [fn-sym mode-sym]
   (debug-assert (symbol? fn-sym))
   (debug-assert (symbol? mode-sym))
   `(cond
@@ -48,7 +48,7 @@
                                                              :fn    ~fn-sym
                                                              :soft? (= ~mode-sym ~soft-access)})))
 
-(defmacro build-path-dynamically-impl [selector-sym]
+(defmacro build-path-dynamically [selector-sym]
   (debug-assert (symbol? selector-sym))
   (let [atomic-case (let [path-sym (gensym "selector-path")]
                       `(let [~path-sym (cljs.core/array)]
@@ -67,31 +67,31 @@
          path#)
       build-path-code)))
 
-(defmacro get-key-dynamically-impl [obj-sym key-sym mode]
+(defmacro get-key-dynamically [obj-sym key-sym mode]
   (debug-assert (symbol? obj-sym))
   (debug-assert (symbol? key-sym))
   (gen-instrumented-key-get obj-sym key-sym mode))
 
-(defmacro set-key-dynamically-impl [obj-sym key-sym val-sym mode]
+(defmacro set-key-dynamically [obj-sym key-sym val-sym mode]
   (debug-assert (symbol? obj-sym))
   (debug-assert (symbol? key-sym))
   (debug-assert (symbol? val-sym))
   (gen-instrumented-key-set obj-sym key-sym val-sym mode))
 
-(defmacro get-selector-dynamically-impl [obj-sym selector-sym]
+(defmacro get-selector-dynamically [obj-sym selector-sym]
   (debug-assert (symbol? obj-sym))
   (debug-assert (symbol? selector-sym))
   (let [path-code (gen-checked-build-path selector-sym)]
     (gen-dynamic-selector-validation-wrapper selector-sym (gen-dynamic-path-get obj-sym path-code))))
 
-(defmacro set-selector-dynamically-impl [obj-sym selector-sym val-sym]
+(defmacro set-selector-dynamically [obj-sym selector-sym val-sym]
   (debug-assert (symbol? obj-sym))
   (debug-assert (symbol? selector-sym))
   (debug-assert (symbol? val-sym))
   (let [path-code (gen-checked-build-path selector-sym)]
     (gen-dynamic-selector-validation-wrapper selector-sym (gen-dynamic-path-set obj-sym path-code val-sym))))
 
-(defmacro punch-key-dynamically-impl [obj-sym key-sym]
+(defmacro punch-key-dynamically [obj-sym key-sym]
   (debug-assert (symbol? obj-sym))
   (debug-assert (symbol? key-sym))
   (let [child-obj-sym (gensym "child-obj")

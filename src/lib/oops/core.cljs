@@ -13,36 +13,36 @@
 ; -- diagnostics reporting --------------------------------------------------------------------------------------------------
 
 (defn ^:dynamic report-error-dynamically [msg data]
-  (runtime/report-error-dynamically-impl msg data))
+  (runtime/report-error-dynamically msg data))
 
 (defn ^:dynamic report-warning-dynamically [msg data]
-  (runtime/report-warning-dynamically-impl msg data))
+  (runtime/report-warning-dynamically msg data))
 
 (defn ^:dynnamic report-if-needed-dynamically [msg-id & [info]]
-  (runtime/report-if-needed-dynamically-impl msg-id info))
+  (runtime/report-if-needed-dynamically msg-id info))
 
 ; -- runtime support for macros ---------------------------------------------------------------------------------------------
 
 (defn ^:dynamic punch-key-dynamically! [obj key]
-  (runtime/punch-key-dynamically-impl obj key))
+  (runtime/punch-key-dynamically obj key))
 
 (defn ^boolean validate-object-access-dynamically [obj mode key check-key?]
-  (runtime/validate-object-access-dynamically-impl obj mode key check-key?))
+  (runtime/validate-object-access-dynamically obj mode key check-key?))
 
 (defn ^boolean validate-fn-call-dynamically [fn mode]
-  (runtime/validate-fn-call-dynamically-impl fn mode))
+  (runtime/validate-fn-call-dynamically fn mode))
 
 (defn build-path-dynamically [selector]
-  (runtime/build-path-dynamically-impl selector))
+  (runtime/build-path-dynamically selector))
 
 (defn get-key-dynamically [obj key mode]
-  (runtime/get-key-dynamically-impl obj key mode))
+  (runtime/get-key-dynamically obj key mode))
 
 (defn set-key-dynamically [obj key val mode]
-  (runtime/set-key-dynamically-impl obj key val mode))
+  (runtime/set-key-dynamically obj key val mode))
 
 (defn get-selector-dynamically [obj selector]
-  (runtime/get-selector-dynamically-impl obj selector))
+  (runtime/get-selector-dynamically obj selector))
 
 (defn set-selector-dynamically [obj selector val]
-  (runtime/set-selector-dynamically-impl obj selector val))
+  (runtime/set-selector-dynamically obj selector val))
