@@ -17,6 +17,8 @@
    :dynamic-selector-usage                     :warn                                                                          ; #{:error :warn falsy}
    :static-nil-target-object                   :warn                                                                          ; #{:error :warn falsy}
    :static-empty-selector-access               :warn                                                                          ; #{:error :warn falsy}
+   :static-unexpected-punching-access          :warn                                                                          ; #{:error :warn falsy}
+   :static-unexpected-soft-access              :warn                                                                          ; #{:error :warn falsy}
 
    ; -- runtime config ------------------------------------------------------------------------------------------------------
 

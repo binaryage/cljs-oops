@@ -10,7 +10,9 @@
 (def message-ids
   [:dynamic-selector-usage
    :static-nil-target-object
-   :static-empty-selector-access])
+   :static-empty-selector-access
+   :static-unexpected-punching-access
+   :static-unexpected-soft-access])
 
 (defn messages-registered? [table]
   (debug-assert (map? table))
@@ -47,5 +49,13 @@
 (defmethod ana/error-message :static-empty-selector-access [type _info]
   (debug-assert (some #{type} message-ids))
   (post-process-message (str "Accessing target object with empty selector")))
+
+(defmethod ana/error-message :static-unexpected-punching-access [type _info]
+  (debug-assert (some #{type} message-ids))
+  (post-process-message (str "Unexpected selector with punching (\"!\" makes sense only with oset!)")))
+
+(defmethod ana/error-message :static-unexpected-soft-access [type _info]
+  (debug-assert (some #{type} message-ids))
+  (post-process-message (str "Unexpected selector with soft access (\"?\" does not make sense with oset!)")))
 
 ; WARNING: when adding a new method here, don't forget to update register-messages as well

@@ -8,8 +8,14 @@
             [oops.helpers :refer [gensym]]
             [oops.compiler :as compiler]
             [oops.constants :refer [dot-access soft-access punch-access]]
-            [oops.reporting :refer [report-if-needed! report-dynamic-selector-usage-if-needed!]]
+            [oops.reporting :refer [report-if-needed! report-offending-selector-if-needed!]]
             [oops.debug :refer [log debug-assert]]))
+
+(defn find-first-dynamic-selector [selector-list]
+  (first (remove schema/static-selector? selector-list)))
+
+(defn report-dynamic-selector-usage-if-needed! [selector-list]
+  (report-offending-selector-if-needed! (find-first-dynamic-selector selector-list) :dynamic-selector-usage))
 
 ; -- helper code generators -------------------------------------------------------------------------------------------------
 
@@ -278,15 +284,10 @@
     selector-list
     (map compiler/macroexpand selector-list)))
 
-(defn check-path! [path]
-  (if (empty? path)
-    (report-if-needed! :static-empty-selector-access))
-  path)
-
 (defn gen-oget-impl [obj-sym selector-list]
   (debug-assert (symbol? obj-sym))
   (if-let [path (schema/selector->path selector-list)]
-    (gen-static-path-get obj-sym (check-path! path))
+    (gen-static-path-get obj-sym (schema/check-static-path! path :get selector-list))
     (gen-dynamic-selector-get obj-sym selector-list)))
 
 (defn gen-oset-impl [obj-sym selector-list val]
@@ -294,7 +295,7 @@
   (let [path (schema/selector->path selector-list)]
     `(do
        ~(if path
-          (gen-static-path-set obj-sym (check-path! path) val)
+          (gen-static-path-set obj-sym (schema/check-static-path! path :set selector-list) val)
           (gen-dynamic-selector-set obj-sym selector-list val))
        ~obj-sym)))
 

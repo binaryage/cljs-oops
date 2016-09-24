@@ -233,10 +233,10 @@
 (deftest test-oset
   (testing "static set"
     (let [sample-obj #js {"nested" #js {}}]
-      (are [selector] (= (oget (oset! sample-obj selector "val") selector) "val")
-        "!xxx"
-        ["!yyy"]
-        ["nested" "!y"])
+      (are [s1 s2] (= (oget (oset! sample-obj s1 "val") s2) "val")
+        "!xxx" "xxx"
+        ["!yyy"] "yyy"
+        ["nested" "!y"] "nested.y")
       (is (= (js/JSON.stringify sample-obj) "{\"nested\":{\"y\":\"val\"},\"xxx\":\"val\",\"yyy\":\"val\"}"))))
   (testing "dynamic selector set"
     (let [sample-obj #js {"nested" #js {}}
@@ -247,17 +247,17 @@
       (is (= (js/JSON.stringify sample-obj) "{\"nested\":{\"key2\":\"val\"},\"key\":\"val\"}"))))
   (testing "static punching set!"
     (let [sample-obj #js {"nested" #js {}}]
-      (are [selector] (= (oget+ (oset!+ sample-obj selector "val") selector) "val")
-        ".!nested.!xxx"
-        "!aaa"
-        ["!z1" "!z2" "!z3"])
+      (are [s1 s2] (= (oget+ (oset!+ sample-obj s1 "val") s2) "val")
+        ".!nested.!xxx" "nested.xxx"
+        "!aaa" "aaa"
+        ["!z1" "!z2" "!z3"] "z1.z2.z3")
       (is (= (js/JSON.stringify sample-obj) "{\"nested\":{\"xxx\":\"val\"},\"aaa\":\"val\",\"z1\":{\"z2\":{\"z3\":\"val\"}}}"))))
   (testing "dynamic punching set!"
     (let [sample-obj #js {"nested" #js {}}]
-      (are [selector] (= (oget+ (oset!+ sample-obj (identity selector) "val") selector) "val")
-        ".!nested.!xxx"
-        "!aaa"
-        ["!z1" "!z2" "!z3"])
+      (are [s1 s2] (= (oget+ (oset!+ sample-obj (identity s1) "val") s2) "val")
+        ".!nested.!xxx" "nested.xxx"
+        "!aaa" "aaa"
+        ["!z1" "!z2" "!z3"] "z1.z2.z3")
       (is (= (js/JSON.stringify sample-obj) "{\"nested\":{\"xxx\":\"val\"},\"aaa\":\"val\",\"z1\":{\"z2\":{\"z3\":\"val\"}}}"))))
   (testing "punching set! with custom child-factory"
     (let [sample-obj #js {"nested" #js {}}
@@ -265,18 +265,18 @@
       (with-child-factory (fn [_obj key]
                             (vreset! counter (str (if @counter (str @counter ",")) key))
                             (js-obj))
-        (are [selector] (= (oget+ (oset!+ sample-obj selector "val") selector) "val")
-          ".!nested.!xxx"
-          "!aaa"
-          ["!z1" "!z2" "!z3"])
+        (are [s1 s2] (= (oget+ (oset!+ sample-obj s1 "val") s2) "val")
+          ".!nested.!xxx" "nested.xxx"
+          "!aaa" "aaa"
+          ["!z1" "!z2" "!z3"] "z1.z2.z3")
         (is (= @counter "z1,z2")))))                                                                                          ; only z1 and z2 are punched
   (testing "punching set! with :js-array child-factory"
     (let [sample-obj #js {"nested" #js {}}]
       (with-child-factory :js-array
-        (are [selector] (= (oget+ (oset!+ sample-obj selector "val") selector) "val")
-          ".!nested.!xxx.!1"
-          "!aaa"
-          ["!z1" "!0" "!3"])
+        (are [s1 s2] (= (oget+ (oset!+ sample-obj s1 "val") s2) "val")
+          ".!nested.!xxx.!1" "nested.xxx.1"
+          "!aaa" "aaa"
+          ["!z1" "!0" "!3"] "z1.0.3")
         (is (= (js/JSON.stringify sample-obj) "{\"nested\":{\"xxx\":[null,\"val\"]},\"aaa\":\"val\",\"z1\":[[null,null,null,\"val\"]]}")))))
   (testing "flexible selector in oset!"
     (let [sample-obj #js {"n1" #js {"n2" #js {}}}]
@@ -287,10 +287,10 @@
     (presume-compiler-config {:strict-punching true})
     (with-compiler-config {:strict-punching false}
       (let [sample-obj #js {"nested" #js {}}]
-        (are [selector] (= (oget+ (oset!+ sample-obj selector "val") selector) "val")
-          ".!nested.xxx"
-          "aaa"
-          ["!z1" "!z2" "z3"])
+        (are [s1 s2] (= (oget+ (oset!+ sample-obj s1 "val") s2) "val")
+          ".!nested.xxx" "nested.xxx"
+          "aaa" "aaa"
+          ["!z1" "!z2" "z3"] "z1.z2.z3")
         (is (= (js/JSON.stringify sample-obj) "{\"nested\":{\"xxx\":\"val\"},\"aaa\":\"val\",\"z1\":{\"z2\":{\"z3\":\"val\"}}}")))))
   (testing "oset corner cases"
     ; TODO
@@ -502,4 +502,29 @@
           (ocall (js-obj "f" identity) (macro-identity "f") (macro-identity "p"))
           (oapply (js-obj "f" identity) (macro-identity "f") (macro-identity ["p"])))
         (is (= (count @recorder) 4))
-        (is (some? (re-matches #".*Unexpected dynamic selector usage.*" (str (first @recorder)))))))))
+        (is (re-matches #".*Unexpected dynamic selector usage.*" (str (first @recorder))))))))
+
+(deftest test-invalid-selectors
+  (testing "invalid punching selectors (static)"
+    (with-compiler-config {:static-unexpected-punching-access :warn
+                           :diagnostics                       true}
+      (let [recorder (atom)]
+        (with-stderr-recording recorder
+          (oget (js-obj) "!x")
+          (oset! (js-obj) "!x" "val")                                                                                         ; no warning
+          (ocall (js-obj "f" identity) "!f")
+          (oapply (js-obj "f" identity) "!f" []))
+        (is (= (count @recorder) 3))
+        (is (re-matches #".*Unexpected selector with punching.*" (str (first @recorder)))))))
+  (testing "invalid soft selectors (static)"
+    (with-compiler-config {:static-unexpected-soft-access :warn
+                           :diagnostics                   true}
+      (let [recorder (atom)]
+        (with-stderr-recording recorder
+          (oget (js-obj) "?x")                                                                                                ; no warning
+          (oset! (js-obj) "?x" "val")
+          (oset! (js-obj) "!a.?x" "val")
+          (ocall (js-obj "f" identity) "?f")                                                                                  ; no warning
+          (oapply (js-obj "f" identity) "?f" []))                                                                             ; no warning
+        (is (= (count @recorder) 2))
+        (is (re-matches #".*Unexpected selector with soft access.*" (str (first @recorder))))))))

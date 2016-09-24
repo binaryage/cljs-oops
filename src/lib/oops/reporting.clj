@@ -1,8 +1,7 @@
 (ns oops.reporting
   "A subsystem for reporting compile-time issues depending on current config."
   (:refer-clojure :exclude [gensym])
-  (:require [oops.schema :as schema]
-            [oops.config :as config]
+  (:require [oops.config :as config]
             [oops.compiler :as compiler]
             [oops.debug :refer [log debug-assert]]
             [oops.state :as state]))
@@ -23,15 +22,11 @@
     (if-not (supress-reporting? type)
       (report! type info))))
 
-(defn find-first-dynamic-selector [selector-list]
-  (first (remove schema/static-selector? selector-list)))
-
-(defn report-dynamic-selector-usage-if-needed! [selector-list]
+(defn report-offending-selector-if-needed! [offending-selector type & [info]]
+  (debug-assert offending-selector)
   (if (config/diagnostics?)
-    (if-not (supress-reporting? :dynamic-selector-usage)
-      (let [offending-selector (find-first-dynamic-selector selector-list)]
-        (debug-assert offending-selector)
-        (let [point-to-offending-selector (into {} (filter second (select-keys (meta offending-selector) [:line :column])))]
-          ; note that sometimes param meta could be missing, we don't alter state/*invocation-env* in that case
-          (binding [state/*invocation-env* (merge state/*invocation-env* point-to-offending-selector)]
-            (report! :dynamic-selector-usage)))))))
+    (if-not (supress-reporting? type)
+      (let [point-to-offending-selector (into {} (filter second (select-keys (meta offending-selector) [:line :column])))]
+        ; note that sometimes param meta could be missing, we don't alter state/*invocation-env* in that case
+        (binding [state/*invocation-env* (merge state/*invocation-env* point-to-offending-selector)]
+          (report! type info))))))

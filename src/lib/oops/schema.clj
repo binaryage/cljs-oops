@@ -1,10 +1,11 @@
 (ns oops.schema
   "The code for compile-time conversion of selectors to paths. Uses clojure.spec to do the heavy-lifting."
   (:require [clojure.spec :as s]
-            [clojure.walk :as walk]
+            [clojure.walk :refer [postwalk]]
+            [clojure.string :as string]
             [oops.sdefs :as sdefs]
             [oops.constants :refer [dot-access soft-access punch-access]]
-            [clojure.string :as string]
+            [oops.reporting :refer [report-if-needed! report-offending-selector-if-needed!]]
             [oops.debug :refer [debug-assert log]]))
 
 ; --- path utils ------------------------------------------------------------------------------------------------------------
@@ -40,7 +41,7 @@
     node))
 
 (defn coerce-selector-keys [destured-selector]
-  (walk/postwalk coerce-key-node destured-selector))
+  (postwalk coerce-key-node destured-selector))
 
 (defn coerce-selector-node [node]
   (if (and (sequential? node)
@@ -49,7 +50,7 @@
     node))
 
 (defn coerce-nested-selectors [destured-selector]
-  (walk/postwalk coerce-selector-node destured-selector))
+  (postwalk coerce-selector-node destured-selector))
 
 (defn build-selector-path [destructured-selector]
   {:post [(or (nil? %) (s/valid? ::sdefs/obj-path %))]}
@@ -70,3 +71,28 @@
 
 (defn static-selector? [selector]
   (s/valid? ::sdefs/obj-selector selector))
+
+(defn get-access-modes [path]
+  (map first path))
+
+(defn find-offending-selector [selector-list offender-matcher]
+  (let [* (fn [selector]
+            (let [path (selector->path selector)
+                  modes (get-access-modes path)]
+              (if (some offender-matcher modes)
+                selector)))]
+    (some * selector-list)))
+
+(defn check-and-report-invalid-mode! [modes mode selector-list message-type]
+  (if (some #{mode} modes)
+    (let [offending-selector (find-offending-selector selector-list #{mode})]
+      (report-offending-selector-if-needed! offending-selector message-type))))
+
+(defn check-static-path! [path type selector-list]
+  (if (empty? path)
+    (report-if-needed! :static-empty-selector-access)
+    (let [modes (get-access-modes path)]
+      (case type
+        :get (check-and-report-invalid-mode! modes punch-access selector-list :static-unexpected-punching-access)
+        :set (check-and-report-invalid-mode! modes soft-access selector-list :static-unexpected-soft-access))))
+  path)
