@@ -1,6 +1,6 @@
 (ns oops.core
   (:require-macros [oops.core]
-                   [oops.codegen :refer [report-runtime-error-impl
+                   [oops.runtime :refer [report-runtime-error-impl
                                          report-runtime-warning-impl
                                          report-if-needed-dynamically-impl
                                          punch-key-dynamically-impl
