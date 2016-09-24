@@ -65,9 +65,9 @@
   (debug-assert (= (gen-op-get) 0))
   (debug-assert (= (gen-op-set) 1))
   (if (empty? path)
-    [:empty-selector-access]
+    [:unexpected-empty-selector]
     (case op
       0 (if (has-invalid-path-access-mode? path #(not= % (get-punch-access)))
-          [:unexpected-punching-access])
+          [:unexpected-punching-selector])
       1 (if (has-invalid-path-access-mode? path #(not= % (get-soft-access)))
-          [:unexpected-soft-access]))))
+          [:unexpected-soft-selector]))))

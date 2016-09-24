@@ -10,9 +10,9 @@
 (def message-ids
   [:dynamic-selector-usage
    :static-nil-target-object
-   :static-empty-selector-access
-   :static-unexpected-punching-access
-   :static-unexpected-soft-access])
+   :static-unexpected-empty-selector
+   :static-unexpected-punching-selector
+   :static-unexpected-soft-selector])
 
 (defn messages-registered? [table]
   (debug-assert (map? table))
@@ -46,15 +46,15 @@
   (debug-assert (some #{type} message-ids))
   (post-process-message (str "Unexpected nil target object")))
 
-(defmethod ana/error-message :static-empty-selector-access [type _info]
+(defmethod ana/error-message :static-unexpected-empty-selector [type _info]
   (debug-assert (some #{type} message-ids))
-  (post-process-message (str "Accessing target object with empty selector")))
+  (post-process-message (str "Unexpected empty selector")))
 
-(defmethod ana/error-message :static-unexpected-punching-access [type _info]
+(defmethod ana/error-message :static-unexpected-punching-selector [type _info]
   (debug-assert (some #{type} message-ids))
   (post-process-message (str "Unexpected punching selector (\"!\" makes sense only with oset!)")))
 
-(defmethod ana/error-message :static-unexpected-soft-access [type _info]
+(defmethod ana/error-message :static-unexpected-soft-selector [type _info]
   (debug-assert (some #{type} message-ids))
   (post-process-message (str "Unexpected soft selector (\"?\" does not make sense with oset!)")))
 

@@ -92,9 +92,9 @@
 (defn check-static-path! [path op selector-list]
   (if (config/diagnostics?)
     (if (empty? path)
-      (report-if-needed! :static-empty-selector-access)
+      (report-if-needed! :static-unexpected-empty-selector)
       (let [modes (get-access-modes path)]
         (case op
-          :get (check-and-report-invalid-mode! modes punch-access selector-list :static-unexpected-punching-access)
-          :set (check-and-report-invalid-mode! modes soft-access selector-list :static-unexpected-soft-access)))))
+          :get (check-and-report-invalid-mode! modes punch-access selector-list :static-unexpected-punching-selector)
+          :set (check-and-report-invalid-mode! modes soft-access selector-list :static-unexpected-soft-selector)))))
   path)

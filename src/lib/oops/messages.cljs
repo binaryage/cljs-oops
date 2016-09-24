@@ -32,11 +32,11 @@
 (defmethod runtime-message :invalid-selector [_type]
   (post-process-message "Invalid selector"))
 
-(defmethod runtime-message :empty-selector-access [_type]
-  (post-process-message (str "Accessing target object with empty selector")))
+(defmethod runtime-message :unexpected-empty-selector [_type]
+  (post-process-message (str "Unexpected empty selector")))
 
-(defmethod runtime-message :unexpected-punching-access [_type]
+(defmethod runtime-message :unexpected-punching-selector [_type]
   (post-process-message (str "Unexpected punching selector (\"!\" makes sense only with oset!)")))
 
-(defmethod runtime-message :unexpected-soft-access [_type]
+(defmethod runtime-message :unexpected-soft-selector [_type]
   (post-process-message (str "Unexpected soft selector (\"?\" does not make sense with oset!)")))

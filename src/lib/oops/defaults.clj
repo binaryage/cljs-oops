@@ -16,9 +16,9 @@
    ; compile-time warnings/errors
    :dynamic-selector-usage                     :warn                                                                          ; #{:error :warn falsy}
    :static-nil-target-object                   :warn                                                                          ; #{:error :warn falsy}
-   :static-empty-selector-access               :warn                                                                          ; #{:error :warn falsy}
-   :static-unexpected-punching-access          :warn                                                                          ; #{:error :warn falsy}
-   :static-unexpected-soft-access              :warn                                                                          ; #{:error :warn falsy}
+   :static-unexpected-empty-selector           :warn                                                                          ; #{:error :warn falsy}
+   :static-unexpected-punching-selector        :warn                                                                          ; #{:error :warn falsy}
+   :static-unexpected-soft-selector            :warn                                                                          ; #{:error :warn falsy}
 
    ; -- runtime config ------------------------------------------------------------------------------------------------------
 
@@ -27,9 +27,9 @@
    :runtime-expected-function-value            :error                                                                         ; #{:error :warn falsy}
    :runtime-invalid-selector                   :error                                                                         ; #{:error :warn falsy}
    :runtime-missing-object-key                 :error                                                                         ; #{:error :warn falsy}
-   :runtime-empty-selector-access              :warn                                                                          ; #{:error :warn falsy}
-   :runtime-unexpected-punching-access         :warn                                                                          ; #{:error :warn falsy}
-   :runtime-unexpected-soft-access             :warn                                                                          ; #{:error :warn falsy}
+   :runtime-unexpected-empty-selector          :warn                                                                          ; #{:error :warn falsy}
+   :runtime-unexpected-punching-selector       :warn                                                                          ; #{:error :warn falsy}
+   :runtime-unexpected-soft-selector           :warn                                                                          ; #{:error :warn falsy}
 
    ; reporting modes
    :runtime-error-reporting                    :throw                                                                         ; #{:throw :console falsy}
@@ -71,13 +71,13 @@
 
 (s/def ::config/dynamic-selector-usage ::config/message)
 (s/def ::config/static-nil-target-object ::config/message)
-(s/def ::config/static-empty-selector-access ::config/message)
+(s/def ::config/static-unexpected-empty-selector ::config/message)
 
 (s/def ::config/runtime-unexpected-object-value ::config/message)
 (s/def ::config/runtime-expected-function-value ::config/message)
 (s/def ::config/runtime-invalid-selector ::config/message)
 (s/def ::config/runtime-missing-object-key ::config/message)
-(s/def ::config/runtime-empty-selector-access ::config/message)
+(s/def ::config/runtime-unexpected-empty-selector ::config/message)
 
 (s/def ::config/runtime-error-reporting ::config/reporting)
 (s/def ::config/runtime-warning-reporting ::config/reporting)
@@ -98,11 +98,11 @@
                    ::config/macroexpand-selectors
                    ::config/dynamic-selector-usage
                    ::config/static-nil-target-object
-                   ::config/static-empty-selector-access
+                   ::config/static-unexpected-empty-selector
                    ::config/runtime-unexpected-object-value
                    ::config/runtime-invalid-selector
                    ::config/runtime-missing-object-key
-                   ::config/runtime-empty-selector-access
+                   ::config/runtime-unexpected-empty-selector
                    ::config/runtime-error-reporting
                    ::config/runtime-warning-reporting
                    ::config/runtime-throw-errors-from-macro-call-sites

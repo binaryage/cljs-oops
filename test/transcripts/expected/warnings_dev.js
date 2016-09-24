@@ -12,9 +12,9 @@
 // COMPILER STDERR:
 //   WARNING: Oops, Unexpected dynamic selector usage (consider using oget+) at line 15 test/src/arena/oops/arena/warnings.cljs
 //   WARNING: Oops, Unexpected nil target object at line 18 test/src/arena/oops/arena/warnings.cljs
-//   WARNING: Oops, Accessing target object with empty selector at line 21 test/src/arena/oops/arena/warnings.cljs
-//   WARNING: Oops, Accessing target object with empty selector at line 22 test/src/arena/oops/arena/warnings.cljs
-//   WARNING: Oops, Accessing target object with empty selector at line 23 test/src/arena/oops/arena/warnings.cljs
+//   WARNING: Oops, Unexpected empty selector at line 21 test/src/arena/oops/arena/warnings.cljs
+//   WARNING: Oops, Unexpected empty selector at line 22 test/src/arena/oops/arena/warnings.cljs
+//   WARNING: Oops, Unexpected empty selector at line 23 test/src/arena/oops/arena/warnings.cljs
 // ----------------------------------------------------------------------------------------------------------
 
 // SNIPPET #1:
