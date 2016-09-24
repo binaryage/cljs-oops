@@ -6,12 +6,12 @@
             [oops.constants :refer [dot-access soft-access punch-access]]
             [oops.debug :refer [log debug-assert]]))
 
-(defmacro report-runtime-error-impl [msg data]
+(defmacro report-error-dynamically-impl [msg data]
   `(when-not (oops.state/was-error-reported?)                                                                                 ; we want to print only first error for single invocation
      (oops.state/mark-error-reported!)
      ~(gen-report-runtime-message :error msg data)))
 
-(defmacro report-runtime-warning-impl [msg data]
+(defmacro report-warning-dynamically-impl [msg data]
   (gen-report-runtime-message :warning msg data))
 
 (defmacro report-if-needed-dynamically-impl [msg-id info-sym]
@@ -21,8 +21,8 @@
        (debug-assert (oops.config/has-config-key? ~msg-id) (str "runtime config has missing key: " ~msg-id))
        (if-not ~(gen-supress-reporting? msg-id)
          (case (oops.config/get-config-key ~msg-id)
-           :warn (oops.core/report-runtime-warning (oops.messages/runtime-message ~msg-id ~info-sym) ~info-sym)
-           :error (oops.core/report-runtime-error (oops.messages/runtime-message ~msg-id ~info-sym) ~info-sym)
+           :warn (oops.core/report-warning-dynamically (oops.messages/runtime-message ~msg-id ~info-sym) ~info-sym)
+           :error (oops.core/report-error-dynamically (oops.messages/runtime-message ~msg-id ~info-sym) ~info-sym)
            (false nil) nil))
        nil)))
 

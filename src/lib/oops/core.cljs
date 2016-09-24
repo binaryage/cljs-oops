@@ -12,11 +12,11 @@
 
 ; -- diagnostics reporting --------------------------------------------------------------------------------------------------
 
-(defn ^:dynamic report-runtime-error [msg data]
-  (runtime/report-runtime-error-impl msg data))
+(defn ^:dynamic report-error-dynamically [msg data]
+  (runtime/report-error-dynamically-impl msg data))
 
-(defn ^:dynamic report-runtime-warning [msg data]
-  (runtime/report-runtime-warning-impl msg data))
+(defn ^:dynamic report-warning-dynamically [msg data]
+  (runtime/report-warning-dynamically-impl msg data))
 
 (defn ^:dynnamic report-if-needed-dynamically [msg-id & [info]]
   (runtime/report-if-needed-dynamically-impl msg-id info))
