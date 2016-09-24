@@ -1,5 +1,5 @@
 (ns oops.messages
-  "A subsystem for printing compile-time warnings and erros. Piggybacks on cljs.analyzer."
+  "A subsystem for printing compile-time warnings and errors. Piggybacks on cljs.analyzer."
   (:require [cljs.analyzer :as ana]
             [oops.debug :refer [debug-assert]]))
 

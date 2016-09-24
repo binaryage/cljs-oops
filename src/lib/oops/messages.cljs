@@ -1,5 +1,5 @@
 (ns oops.messages
-  "A subsystem for printing runtime warnings and erros."
+  "A subsystem for printing runtime warnings and errors."
   (:require-macros [oops.messages]))
 
 ; -- helpers ----------------------------------------------------------------------------------------------------------------
