@@ -3,6 +3,7 @@
   (:require [clojure.spec :as s]
             [clojure.walk :refer [postwalk]]
             [clojure.string :as string]
+            [oops.config :as config]
             [oops.sdefs :as sdefs]
             [oops.constants :refer [dot-access soft-access punch-access]]
             [oops.reporting :refer [report-if-needed! report-offending-selector-if-needed!]]
@@ -89,10 +90,11 @@
       (report-offending-selector-if-needed! offending-selector message-type))))
 
 (defn check-static-path! [path type selector-list]
-  (if (empty? path)
-    (report-if-needed! :static-empty-selector-access)
-    (let [modes (get-access-modes path)]
-      (case type
-        :get (check-and-report-invalid-mode! modes punch-access selector-list :static-unexpected-punching-access)
-        :set (check-and-report-invalid-mode! modes soft-access selector-list :static-unexpected-soft-access))))
+  (if (config/diagnostics?)
+    (if (empty? path)
+      (report-if-needed! :static-empty-selector-access)
+      (let [modes (get-access-modes path)]
+        (case type
+          :get (check-and-report-invalid-mode! modes punch-access selector-list :static-unexpected-punching-access)
+          :set (check-and-report-invalid-mode! modes soft-access selector-list :static-unexpected-soft-access)))))
   path)
