@@ -1,15 +1,16 @@
 (ns oops.core
-  (:require-macros [oops.core :refer [report-runtime-error-impl
-                                      report-runtime-warning-impl
-                                      report-if-needed-dynamically-impl
-                                      punch-key-dynamically-impl
-                                      validate-object-access-dynamically-impl
-                                      validate-fn-call-dynamically-impl
-                                      build-path-dynamically-impl
-                                      get-key-dynamically-impl
-                                      set-key-dynamically-impl
-                                      get-selector-dynamically-impl
-                                      set-selector-dynamically-impl]])
+  (:require-macros [oops.core]
+                   [oops.codegen :refer [report-runtime-error-impl
+                                         report-runtime-warning-impl
+                                         report-if-needed-dynamically-impl
+                                         punch-key-dynamically-impl
+                                         validate-object-access-dynamically-impl
+                                         validate-fn-call-dynamically-impl
+                                         build-path-dynamically-impl
+                                         get-key-dynamically-impl
+                                         set-key-dynamically-impl
+                                         get-selector-dynamically-impl
+                                         set-selector-dynamically-impl]])
   (:require [clojure.spec]
             [goog.object]
             [oops.sdefs]
@@ -36,7 +37,7 @@
   (punch-key-dynamically-impl obj key))
 
 (defn ^boolean validate-object-access-dynamically [obj mode key check-key?]
-  (validate-object-access-dynamically-impl obj mode  key check-key?))
+  (validate-object-access-dynamically-impl obj mode key check-key?))
 
 (defn ^boolean validate-fn-call-dynamically [fn mode]
   (validate-fn-call-dynamically-impl fn mode))
