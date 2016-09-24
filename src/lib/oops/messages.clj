@@ -22,7 +22,7 @@
   (debug-assert (map? table))
   (merge table (zipmap message-ids (repeat (count message-ids) true))))
 
-(defn ^:dynamic post-process-error-message [msg]
+(defn ^:dynamic post-process-message [msg]
   (str *oops-message-prefix* ", " msg))
 
 (defmacro gen-oops-message-prefix []
@@ -36,16 +36,16 @@
 (defmethod ana/error-message :dynamic-selector-usage [type info]
   (debug-assert (some #{type} message-ids))
   (let [command (first (:form info))]
-    (post-process-error-message (str "Unexpected dynamic selector usage"
-                                     (if (static-macro? command)
-                                       (str " (consider using " command "+)"))))))
+    (post-process-message (str "Unexpected dynamic selector usage"
+                               (if (static-macro? command)
+                                 (str " (consider using " command "+)"))))))
 
 (defmethod ana/error-message :static-nil-target-object [type _info]
   (debug-assert (some #{type} message-ids))
-  (post-process-error-message (str "Unexpected nil target object")))
+  (post-process-message (str "Unexpected nil target object")))
 
 (defmethod ana/error-message :static-empty-selector-access [type _info]
   (debug-assert (some #{type} message-ids))
-  (post-process-error-message (str "Accessing target object with empty selector")))
+  (post-process-message (str "Accessing target object with empty selector")))
 
 ; WARNING: when adding a new method here, don't forget to update register-messages as well
