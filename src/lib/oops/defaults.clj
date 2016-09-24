@@ -72,12 +72,16 @@
 (s/def ::config/dynamic-selector-usage ::config/message)
 (s/def ::config/static-nil-target-object ::config/message)
 (s/def ::config/static-unexpected-empty-selector ::config/message)
+(s/def ::config/static-unexpected-punching-selector ::config/message)
+(s/def ::config/static-unexpected-soft-selector ::config/message)
 
 (s/def ::config/runtime-unexpected-object-value ::config/message)
 (s/def ::config/runtime-expected-function-value ::config/message)
 (s/def ::config/runtime-invalid-selector ::config/message)
 (s/def ::config/runtime-missing-object-key ::config/message)
 (s/def ::config/runtime-unexpected-empty-selector ::config/message)
+(s/def ::config/runtime-unexpected-punching-selector ::config/message)
+(s/def ::config/runtime-unexpected-soft-selector ::config/message)
 
 (s/def ::config/runtime-error-reporting ::config/reporting)
 (s/def ::config/runtime-warning-reporting ::config/reporting)
@@ -99,10 +103,14 @@
                    ::config/dynamic-selector-usage
                    ::config/static-nil-target-object
                    ::config/static-unexpected-empty-selector
+                   ::config/static-unexpected-punching-selector
+                   ::config/static-unexpected-soft-selector
                    ::config/runtime-unexpected-object-value
                    ::config/runtime-invalid-selector
                    ::config/runtime-missing-object-key
                    ::config/runtime-unexpected-empty-selector
+                   ::config/runtime-unexpected-punching-selector
+                   ::config/runtime-unexpected-soft-selector
                    ::config/runtime-error-reporting
                    ::config/runtime-warning-reporting
                    ::config/runtime-throw-errors-from-macro-call-sites
