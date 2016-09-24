@@ -1,16 +1,6 @@
 (ns oops.core
   (:require-macros [oops.core]
-                   [oops.runtime :refer [report-runtime-error-impl
-                                         report-runtime-warning-impl
-                                         report-if-needed-dynamically-impl
-                                         punch-key-dynamically-impl
-                                         validate-object-access-dynamically-impl
-                                         validate-fn-call-dynamically-impl
-                                         build-path-dynamically-impl
-                                         get-key-dynamically-impl
-                                         set-key-dynamically-impl
-                                         get-selector-dynamically-impl
-                                         set-selector-dynamically-impl]])
+                   [oops.runtime :as runtime])
   (:require [clojure.spec]
             [goog.object]
             [oops.sdefs]
@@ -23,36 +13,36 @@
 ; -- diagnostics reporting --------------------------------------------------------------------------------------------------
 
 (defn ^:dynamic report-runtime-error [msg data]
-  (report-runtime-error-impl msg data))
+  (runtime/report-runtime-error-impl msg data))
 
 (defn ^:dynamic report-runtime-warning [msg data]
-  (report-runtime-warning-impl msg data))
+  (runtime/report-runtime-warning-impl msg data))
 
 (defn ^:dynnamic report-if-needed-dynamically [msg-id & [info]]
-  (report-if-needed-dynamically-impl msg-id info))
+  (runtime/report-if-needed-dynamically-impl msg-id info))
 
 ; -- runtime support for macros ---------------------------------------------------------------------------------------------
 
 (defn ^:dynamic punch-key-dynamically! [obj key]
-  (punch-key-dynamically-impl obj key))
+  (runtime/punch-key-dynamically-impl obj key))
 
 (defn ^boolean validate-object-access-dynamically [obj mode key check-key?]
-  (validate-object-access-dynamically-impl obj mode key check-key?))
+  (runtime/validate-object-access-dynamically-impl obj mode key check-key?))
 
 (defn ^boolean validate-fn-call-dynamically [fn mode]
-  (validate-fn-call-dynamically-impl fn mode))
+  (runtime/validate-fn-call-dynamically-impl fn mode))
 
 (defn build-path-dynamically [selector]
-  (build-path-dynamically-impl selector))
+  (runtime/build-path-dynamically-impl selector))
 
 (defn get-key-dynamically [obj key mode]
-  (get-key-dynamically-impl obj key mode))
+  (runtime/get-key-dynamically-impl obj key mode))
 
 (defn set-key-dynamically [obj key val mode]
-  (set-key-dynamically-impl obj key val mode))
+  (runtime/set-key-dynamically-impl obj key val mode))
 
 (defn get-selector-dynamically [obj selector]
-  (get-selector-dynamically-impl obj selector))
+  (runtime/get-selector-dynamically-impl obj selector))
 
 (defn set-selector-dynamically [obj selector val]
-  (set-selector-dynamically-impl obj selector val))
+  (runtime/set-selector-dynamically-impl obj selector val))
