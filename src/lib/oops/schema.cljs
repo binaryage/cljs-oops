@@ -1,7 +1,9 @@
 (ns oops.schema
   "The code for runtime conversion of selectors to paths. Note: we prefer hand-written loops for performance reasons."
   (:require-macros [oops.schema]
-                   [oops.constants :refer [get-dot-access get-soft-access get-punch-access]]))
+                   [oops.constants :refer [get-dot-access get-soft-access get-punch-access
+                                           gen-op-get gen-op-set]]
+                   [oops.debug :refer [debug-assert]]))
 
 ; implementation here should mimic static versions in schema.clj
 ; for perfomance reasons we don't reuse the same code on cljs side
@@ -50,3 +52,22 @@
           (collect-coerced-keys-into-array! item arr)
           (coerce-key-dynamically! item arr))
         (recur (next items))))))
+
+(defn has-invalid-path-access-mode? [path is-valid?]
+  (loop [items (seq path)]
+    (when items
+      (if (is-valid? (first items))
+        (recur (next (next items)))
+        true))))
+
+; we should mimic check-static-path! here
+(defn check-dynamic-path! [path op]
+  (debug-assert (= (gen-op-get) 0))
+  (debug-assert (= (gen-op-set) 1))
+  (if (empty? path)
+    [:empty-selector-access]
+    (case op
+      0 (if (has-invalid-path-access-mode? path #(not= % (get-punch-access)))
+          [:unexpected-punching-access])
+      1 (if (has-invalid-path-access-mode? path #(not= % (get-soft-access)))
+          [:unexpected-soft-access]))))

@@ -28,6 +28,8 @@
    :runtime-invalid-selector                   :error                                                                         ; #{:error :warn falsy}
    :runtime-missing-object-key                 :error                                                                         ; #{:error :warn falsy}
    :runtime-empty-selector-access              :warn                                                                          ; #{:error :warn falsy}
+   :runtime-unexpected-punching-access         :warn                                                                          ; #{:error :warn falsy}
+   :runtime-unexpected-soft-access             :warn                                                                          ; #{:error :warn falsy}
 
    ; reporting modes
    :runtime-error-reporting                    :throw                                                                         ; #{:throw :console falsy}

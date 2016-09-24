@@ -89,12 +89,12 @@
     (let [offending-selector (find-offending-selector selector-list #{mode})]
       (report-offending-selector-if-needed! offending-selector message-type))))
 
-(defn check-static-path! [path type selector-list]
+(defn check-static-path! [path op selector-list]
   (if (config/diagnostics?)
     (if (empty? path)
       (report-if-needed! :static-empty-selector-access)
       (let [modes (get-access-modes path)]
-        (case type
+        (case op
           :get (check-and-report-invalid-mode! modes punch-access selector-list :static-unexpected-punching-access)
           :set (check-and-report-invalid-mode! modes soft-access selector-list :static-unexpected-soft-access)))))
   path)

@@ -241,9 +241,9 @@
   (testing "dynamic selector set"
     (let [sample-obj #js {"nested" #js {}}
           dynamic-key-fn (fn [name] name)]
-      (are [selector] (= (oget+ (oset!+ sample-obj selector "val") selector) "val")
-        (dynamic-key-fn "!key")
-        [(dynamic-key-fn "!nested") (dynamic-key-fn "!key2")])
+      (are [s1 s2] (= (oget+ (oset!+ sample-obj s1 "val") s2) "val")
+        (dynamic-key-fn "!key") "key"
+        [(dynamic-key-fn "!nested") (dynamic-key-fn "!key2")] "nested.key2")
       (is (= (js/JSON.stringify sample-obj) "{\"nested\":{\"key2\":\"val\"},\"key\":\"val\"}"))))
   (testing "static punching set!"
     (let [sample-obj #js {"nested" #js {}}]
@@ -516,6 +516,17 @@
           (oapply (js-obj "f" identity) "!f" []))
         (is (= (count @recorder) 3))
         (is (re-matches #".*Unexpected punching selector.*" (str (first @recorder)))))))
+  (testing "invalid punching selectors (dynamic)"
+    (with-compiler-config {:runtime-unexpected-punching-access :warn
+                           :diagnostics                        true}
+      (let [recorder (atom)]
+        (with-console-recording recorder
+          (oget (js-obj) (identity "!x"))
+          (oset! (js-obj) (identity "!x") "val")                                                                              ; no warning
+          (ocall (js-obj "f" identity) (identity "!f"))
+          (oapply (js-obj "f" identity) (identity "!f") []))
+        (is (= (count @recorder) 3))
+        (is (re-matches #".*Unexpected punching selector.*" (str (first @recorder)))))))
   (testing "invalid soft selectors (static)"
     (with-compiler-config {:static-unexpected-soft-access :warn
                            :diagnostics                   true}
@@ -526,5 +537,17 @@
           (oset! (js-obj) "!a.?x" "val")
           (ocall (js-obj "f" identity) "?f")                                                                                  ; no warning
           (oapply (js-obj "f" identity) "?f" []))                                                                             ; no warning
+        (is (= (count @recorder) 2))
+        (is (re-matches #".*Unexpected soft selector.*" (str (first @recorder)))))))
+  (testing "invalid soft selectors (dynamic)"
+    (with-compiler-config {:runtime-unexpected-soft-access :warn
+                           :diagnostics                    true}
+      (let [recorder (atom)]
+        (with-console-recording recorder
+          (oget (js-obj) (identity "?x"))                                                                                     ; no warning
+          (oset! (js-obj) (identity "?x") "val")
+          (oset! (js-obj) (identity "!a.?x") "val")
+          (ocall (js-obj "f" identity) (identity "?f"))                                                                       ; no warning
+          (oapply (js-obj "f" identity) (identity "?f") []))                                                                  ; no warning
         (is (= (count @recorder) 2))
         (is (re-matches #".*Unexpected soft selector.*" (str (first @recorder))))))))

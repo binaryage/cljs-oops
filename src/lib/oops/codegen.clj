@@ -151,17 +151,12 @@
        ~body)
     body))
 
-(defn gen-dynamic-path-check [path-sym]
-  (debug-assert (symbol? path-sym))
-  (if (config/diagnostics?)
-    `(cond
-       (cljs.core/empty? ~path-sym) ~(gen-report-if-needed :empty-selector-access))))
-
-(defn gen-checked-build-path [selector-sym]
+(defn gen-checked-build-path [selector-sym op]
   (debug-assert (symbol? selector-sym))
   (let [path-sym (gensym "path")]
     `(let [~path-sym (oops.core/build-path-dynamically ~selector-sym)]
-       ~(gen-dynamic-path-check path-sym)
+       ~(if (config/diagnostics?)
+          `(oops.core/check-path-dynamically ~path-sym ~op))
        ~path-sym)))
 
 (defn gen-static-path-set [obj-sym path val]

@@ -6,7 +6,8 @@
   (:require [oops.config :as config]
             [oops.codegen :refer :all]
             [oops.helpers :refer [gensym]]
-            [oops.constants :refer [dot-access soft-access punch-access]]
+            [oops.constants :refer [dot-access soft-access punch-access
+                                    gen-op-get gen-op-set]]
             [oops.debug :refer [log debug-assert]]))
 
 (defmacro report-error-dynamically [msg data]
@@ -70,6 +71,12 @@
          path#)
       build-path-code)))
 
+(defmacro check-path-dynamically [path-sym op]
+  (debug-assert (symbol? path-sym))
+  (let [issue-sym (gensym "issue")]
+    `(if-let [~issue-sym (oops.schema/check-dynamic-path! ~path-sym ~op)]
+       (apply oops.core/report-if-needed-dynamically ~issue-sym))))
+
 (defmacro get-key-dynamically [obj-sym key-sym mode]
   (debug-assert (symbol? obj-sym))
   (debug-assert (symbol? key-sym))
@@ -84,14 +91,14 @@
 (defmacro get-selector-dynamically [obj-sym selector-sym]
   (debug-assert (symbol? obj-sym))
   (debug-assert (symbol? selector-sym))
-  (let [path-code (gen-checked-build-path selector-sym)]
+  (let [path-code (gen-checked-build-path selector-sym (gen-op-get))]
     (gen-dynamic-selector-validation-wrapper selector-sym (gen-dynamic-path-get obj-sym path-code))))
 
 (defmacro set-selector-dynamically [obj-sym selector-sym val-sym]
   (debug-assert (symbol? obj-sym))
   (debug-assert (symbol? selector-sym))
   (debug-assert (symbol? val-sym))
-  (let [path-code (gen-checked-build-path selector-sym)]
+  (let [path-code (gen-checked-build-path selector-sym (gen-op-set))]
     (gen-dynamic-selector-validation-wrapper selector-sym (gen-dynamic-path-set obj-sym path-code val-sym))))
 
 (defmacro punch-key-dynamically [obj-sym key-sym]

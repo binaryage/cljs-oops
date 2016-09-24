@@ -45,6 +45,9 @@
 (defn build-path-dynamically [selector]
   (runtime/build-path-dynamically selector))
 
+(defn check-path-dynamically [path op]
+  (runtime/check-path-dynamically path op))
+
 (defn get-key-dynamically [obj key mode]
   (runtime/get-key-dynamically obj key mode))
 

@@ -4,6 +4,9 @@
 (def ^:const soft-access 1)
 (def ^:const punch-access 2)
 
+(def ^:const op-get 0)
+(def ^:const op-set 1)
+
 ; --- macros for cljs -------------------------------------------------------------------------------------------------------
 
 (defmacro get-dot-access [] dot-access)
@@ -18,3 +21,6 @@
 (defmacro error-reported-idx [] 3)
 (defmacro key-path-idx [] 4)
 (defmacro last-access-modifier-idx [] 5)
+
+(defmacro gen-op-get [] op-get)
+(defmacro gen-op-set [] op-set)
