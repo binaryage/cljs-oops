@@ -1,4 +1,7 @@
 (ns oops.codegen
+  "Helpers for generating code for core macros.
+  The generated code greatly depends on effective oops configuration (see defaults.clj). E.g. diagnostics, debugging and
+  other settings."
   (:refer-clojure :exclude [gensym])
   (:require [oops.schema :as schema]
             [oops.config :as config]

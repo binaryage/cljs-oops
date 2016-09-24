@@ -1,5 +1,5 @@
 (ns oops.compiler
-  "Provides some helper utils for interaction with cljs compiler."
+  "Provides utils for interaction with cljs compiler. Beware! HACKS ahead!"
   (:refer-clojure :exclude [macroexpand])
   (:require [cljs.analyzer :as ana]
             [cljs.closure]

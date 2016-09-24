@@ -1,10 +1,9 @@
 (ns oops.reporting
+  "A subsystem for reporting compile-time issues depending on current config."
   (:refer-clojure :exclude [gensym])
   (:require [oops.schema :as schema]
             [oops.config :as config]
-            [oops.helpers :refer [gensym]]
-            [oops.compiler :as compiler :refer [with-compiler-context! with-compiler-opts!]]
-            [oops.constants :refer [dot-access soft-access punch-access]]
+            [oops.compiler :as compiler]
             [oops.debug :refer [log debug-assert]]
             [oops.state :as state]))
 

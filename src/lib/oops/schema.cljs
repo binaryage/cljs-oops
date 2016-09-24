@@ -1,4 +1,5 @@
 (ns oops.schema
+  "The code for runtime conversion of selectors to paths. Note: we prefer hand-written loops for performance reasons."
   (:require-macros [oops.schema]
                    [oops.constants :refer [get-dot-access get-soft-access get-punch-access]]))
 

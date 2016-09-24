@@ -1,4 +1,5 @@
 (ns oops.config
+  "Code supporting dynamic (run-time) configuration. See runtime-prefixed keys in config map in defaults.clj."
   (:require-macros [oops.config :refer [gen-runtime-config]]))
 
 (defn get-initial-runtime-config []

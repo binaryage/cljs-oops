@@ -1,4 +1,5 @@
 (ns oops.debug
+  "Some debug utils."
   (:require [clojure.pprint]
             [clojure.string :as string]
             [oops.config :as config]))

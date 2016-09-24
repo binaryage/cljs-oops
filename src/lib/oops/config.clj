@@ -1,4 +1,5 @@
 (ns oops.config
+  "Code supporting static (compile-time) configuration. See defaults.clj for config map."
   (:refer-clojure :exclude [gensym])
   (:require [cljs.env]
             [clojure.spec :as s]

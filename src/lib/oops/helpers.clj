@@ -1,4 +1,5 @@
 (ns oops.helpers
+  "Various helpers for our Clojure code."
   (:refer-clojure :exclude [gensym])
   (:require [cuerdas.core :as cuerdas]
             [clojure.pprint :refer [pprint]]))
@@ -19,4 +20,3 @@
 
 (defmacro gensym [name]
   `(clojure.core/gensym (str ~name "-")))
-

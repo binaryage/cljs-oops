@@ -1,4 +1,5 @@
 (ns oops.schema
+  "The code for compile-time conversion of selectors to paths. Uses clojure.spec to do the heavy-lifting."
   (:require [clojure.spec :as s]
             [clojure.walk :as walk]
             [oops.sdefs :as sdefs]

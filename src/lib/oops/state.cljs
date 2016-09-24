@@ -1,4 +1,5 @@
 (ns oops.state
+  "Here we gather runtime state. For perfomance/code-gen reasons we keep everything under one JS array."
   (:require-macros [oops.state :refer [state-target-object-idx
                                        state-call-site-error-idx
                                        state-console-reporter-idx

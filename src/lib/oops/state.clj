@@ -1,4 +1,5 @@
-(ns oops.state)
+(ns oops.state
+  "Here we gather compile-time state.")
 
 ; we want to isolate all state into this namespace
 ; please note that we have two distinct environments:

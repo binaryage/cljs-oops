@@ -1,4 +1,5 @@
 (ns oops.helpers
+  "Various helpers to be avaialbe to our code at runtime."
   (:require-macros [oops.helpers]
                    [oops.debug :refer [debug-assert]]))
 

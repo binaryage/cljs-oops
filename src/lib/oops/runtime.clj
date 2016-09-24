@@ -1,4 +1,7 @@
 (ns oops.runtime
+  "Macros for generating runtime support code.
+  Generated functions are located in oops.core namespace and have '-dynamically' postix to clearly distinguish them from
+  compile-time code."
   (:refer-clojure :exclude [gensym])
   (:require [oops.config :as config]
             [oops.codegen :refer :all]

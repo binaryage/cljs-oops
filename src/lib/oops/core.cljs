@@ -1,4 +1,14 @@
 (ns oops.core
+  "The main namespace to be consumend by library users from Clojurescript.
+  Provides core macros via core.clj and runtime support (see runtime.clj).
+
+    (ns your-project.namespace
+        (:require [oops.core :refer [oget oset! ocall oapply ocall! oapply!
+                                     oget+ oset!+ ocall+ oapply+ ocall!+ oapply!+]]))
+
+    (oset! (js-obj) :mood \"a happy camper\")
+
+  Read about usage: https://github.com/binaryage/cljs-oops"
   (:require-macros [oops.core]
                    [oops.runtime :as runtime])
   (:require [clojure.spec]

@@ -1,4 +1,5 @@
 (ns oops.sdefs
+  "Spec definitions for our dynamic code."
   (:require-macros [oops.constants :refer [get-dot-access get-soft-access get-punch-access]]
                    [oops.spec :refer [native-array-aware-*]])
   (:require [clojure.spec :as s]))

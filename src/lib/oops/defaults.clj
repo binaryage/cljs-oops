@@ -1,4 +1,5 @@
 (ns oops.defaults
+  "Default configuration + specs."
   (:require [cljs.env]
             [oops.state]
             [clojure.spec :as s]))
