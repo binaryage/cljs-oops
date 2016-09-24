@@ -515,7 +515,7 @@
           (ocall (js-obj "f" identity) "!f")
           (oapply (js-obj "f" identity) "!f" []))
         (is (= (count @recorder) 3))
-        (is (re-matches #".*Unexpected selector with punching.*" (str (first @recorder)))))))
+        (is (re-matches #".*Unexpected punching selector.*" (str (first @recorder)))))))
   (testing "invalid soft selectors (static)"
     (with-compiler-config {:static-unexpected-soft-access :warn
                            :diagnostics                   true}
@@ -527,4 +527,4 @@
           (ocall (js-obj "f" identity) "?f")                                                                                  ; no warning
           (oapply (js-obj "f" identity) "?f" []))                                                                             ; no warning
         (is (= (count @recorder) 2))
-        (is (re-matches #".*Unexpected selector with soft access.*" (str (first @recorder))))))))
+        (is (re-matches #".*Unexpected soft selector.*" (str (first @recorder))))))))

@@ -52,10 +52,10 @@
 
 (defmethod ana/error-message :static-unexpected-punching-access [type _info]
   (debug-assert (some #{type} message-ids))
-  (post-process-message (str "Unexpected selector with punching (\"!\" makes sense only with oset!)")))
+  (post-process-message (str "Unexpected punching selector (\"!\" makes sense only with oset!)")))
 
 (defmethod ana/error-message :static-unexpected-soft-access [type _info]
   (debug-assert (some #{type} message-ids))
-  (post-process-message (str "Unexpected selector with soft access (\"?\" does not make sense with oset!)")))
+  (post-process-message (str "Unexpected soft selector (\"?\" does not make sense with oset!)")))
 
 ; WARNING: when adding a new method here, don't forget to update register-messages as well
