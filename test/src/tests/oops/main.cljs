@@ -9,7 +9,7 @@
              :refer-macros [init-test!
                             presume-compiler-config
                             runonce
-                            when-advanced-mode when-not-advanced-mode
+                            when-advanced-mode when-not-advanced-mode if-advanced-mode
                             under-phantom
                             under-chrome
                             if-phantom
@@ -495,7 +495,7 @@
           (ocall (js-obj "f" identity) "!f")
           (oapply (js-obj "f" identity) "!f" []))
         (is (= (count @recorder) 3))
-        (is (re-matches #".*Unexpected punching selector.*" (str (first @recorder)))))))
+        (is (every? #(re-matches #".*Unexpected punching selector.*" (str %)) @recorder)))))
   (when-not-advanced-mode
     (testing "invalid punching selectors (dynamic)"
       (with-compiler-config {:runtime-unexpected-punching-selector :warn
@@ -507,7 +507,7 @@
             (ocall+ (js-obj "f" identity) (identity "!f"))
             (oapply+ (js-obj "f" identity) (identity "!f") []))
           (is (= (count @recorder) 3))
-          (is (re-matches #".*Unexpected punching selector.*" (str (first @recorder))))))))
+          (is (every? #(re-matches #".*Unexpected punching selector.*" (str %)) @recorder))))))
   (testing "invalid soft selectors (static)"
     (with-compiler-config {:static-unexpected-soft-selector :warn
                            :diagnostics                     true}
@@ -519,7 +519,7 @@
           (ocall (js-obj "f" identity) "?f")                                                                                  ; no warning
           (oapply (js-obj "f" identity) "?f" []))                                                                             ; no warning
         (is (= (count @recorder) 2))
-        (is (re-matches #".*Unexpected soft selector.*" (str (first @recorder)))))))
+        (is (every? #(re-matches #".*Unexpected soft selector.*" (str %)) @recorder)))))
   (when-not-advanced-mode
     (testing "invalid soft selectors (dynamic)"
       (with-compiler-config {:runtime-unexpected-soft-selector :warn
@@ -532,9 +532,25 @@
             (ocall+ (js-obj "f" identity) (identity "?f"))                                                                    ; no warning
             (oapply+ (js-obj "f" identity) (identity "?f") []))                                                               ; no warning
           (is (= (count @recorder) 2))
-          (is (re-matches #".*Unexpected soft selector.*" (str (first @recorder))))))))
+          (is (every? #(re-matches #".*Unexpected soft selector.*" (str %)) @recorder))))))
+  (testing "empty selectors (static)"
+    (with-compiler-config {:static-unexpected-empty-selector :warn
+                           :diagnostics                      true}
+      (let [recorder (atom [])]
+        (with-stderr-recording recorder
+          (oget (js-obj) nil)
+          (oget (js-obj) [])
+          (oget (js-obj) [[] []])
+          (oset! (js-obj) nil "val")
+          (oset! (js-obj) [[] []] "val")
+          (when-not-advanced-mode
+            (are [snippet] (thrown-with-msg? js/Error #".*Expected a function, got <object> instead.*" snippet)
+              (ocall (js-obj) [[] []] "p1" "p2")
+              (oapply (js-obj) [[] []] ["p1" "p2"]))))
+        (is (= (count @recorder) (if-advanced-mode 5 7)))
+        (is (every? #(re-matches #".*Unexpected empty selector.*" (str %)) @recorder)))))
   (when-not-advanced-mode
-    (testing "dynamic empty selector access in oget"
+    (testing "empty selector usage in oget (dynamic)"
       (let [recorder (atom [])]
         (with-console-recording recorder
           (oget+ (js-obj) (identity nil))
@@ -544,12 +560,12 @@
                           "WARN: (\"Oops, Unexpected empty selector\" nil)"
                           "WARN: (\"Oops, Unexpected empty selector\" nil)"])))))
   (when-not-advanced-mode
-    (testing "dynamic empty selector access error with :unexpected-empty-selector :error"
+    (testing "empty selector usage error with :unexpected-empty-selector :error (dynamic)"
       (presume-runtime-config {:error-reporting :throw})
       (with-runtime-config {:unexpected-empty-selector :error}
         (is (thrown-with-msg? js/Error #"Unexpected empty selector" (oget+ (js-obj) (identity nil)))))))
   (when-not-advanced-mode
-    (testing "dynamic empty selector access error with :unexpected-empty-selector false"
+    (testing "empty selector usage error with :unexpected-empty-selector false (dynamic)"
       (with-runtime-config {:unexpected-empty-selector false}
         (let [o (js-obj)]
           (is o (oget+ o (identity nil))))))))

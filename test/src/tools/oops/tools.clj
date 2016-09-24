@@ -109,6 +109,11 @@
   (if-not (advanced-mode?)
     `(do ~@body)))
 
+(defmacro if-advanced-mode [advanced-body else-body]
+  (if (advanced-mode?)
+    advanced-body
+    else-body))
+
 (defmacro when-compiler-config [config-template & body]
   (gen-when-compiler-config = config-template body))
 

@@ -160,13 +160,13 @@
        ~path-sym)))
 
 (defn gen-static-path-set [obj-sym path val]
-  (debug-assert (not (empty? path)))
   (debug-assert (symbol? obj-sym))
-  (let [parent-obj-path (butlast path)
-        [mode key] (last path)
-        parent-obj-sym (gensym "parent-obj")]
-    `(let [~parent-obj-sym ~(gen-static-path-get obj-sym parent-obj-path)]
-       ~(gen-instrumented-key-set parent-obj-sym key val mode))))
+  (if-not (empty? path)
+    (let [parent-obj-path (butlast path)
+          [mode key] (last path)
+          parent-obj-sym (gensym "parent-obj")]
+      `(let [~parent-obj-sym ~(gen-static-path-get obj-sym parent-obj-path)]
+         ~(gen-instrumented-key-set parent-obj-sym key val mode)))))
 
 (defn gen-dynamic-selector-set [obj selector-list val]
   (report-dynamic-selector-usage-if-needed! selector-list)
