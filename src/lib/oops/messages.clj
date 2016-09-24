@@ -2,6 +2,8 @@
   (:require [cljs.analyzer :as ana]
             [oops.debug :refer [debug-assert]]))
 
+(def ^:dynamic *oops-message-prefix* "Oops")
+
 ; -- helpers ----------------------------------------------------------------------------------------------------------------
 
 (def message-ids
@@ -19,8 +21,11 @@
   (debug-assert (map? table))
   (merge table (zipmap message-ids (repeat (count message-ids) true))))
 
-(defn post-process-error-message [msg]
-  (str "Oops, " msg))
+(defn ^:dynamic post-process-error-message [msg]
+  (str *oops-message-prefix* ", " msg))
+
+(defmacro gen-oops-message-prefix []
+  *oops-message-prefix*)
 
 (defn static-macro? [command]
   (contains? #{'oget 'oset! 'ocall 'oapply 'ocall! 'oapply!} command))

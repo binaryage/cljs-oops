@@ -3,8 +3,8 @@
 
 ; -- helpers ----------------------------------------------------------------------------------------------------------------
 
-(defn post-process-error-message [msg]
-  (str "Oops, " msg))
+(defn ^:dynamic post-process-error-message [msg]
+  (str (oops.messages/gen-oops-message-prefix) ", " msg))
 
 ; -- runtime error/warning messages -----------------------------------------------------------------------------------------
 
