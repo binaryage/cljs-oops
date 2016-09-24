@@ -165,7 +165,7 @@
           "prop\\.1.k3\\..some" "val"
           "\\.\\..\\.x\\." "."
           "\\.\\\\." "x")))
-    (testing "static specials escpaing"
+    (testing "static specials escaping"
       (let [o #js {"?key"   "v"
                    "nested" #js {"!k2" "v2"}}]
         (are [key expected] (= (oget o key) expected)
@@ -173,7 +173,7 @@
           ["nested" "\\!k2"] "v2"
           "nested.\\!k2" "v2"
           ["nested" ".\\!k2"] "v2")))
-    (testing "dynamic specials escpaing"
+    (testing "dynamic specials escaping"
       (let [o #js {"?key"   "v"
                    "nested" #js {"!k2" "v2"}}]
         (are [key expected] (= (oget o (identity key)) expected)
@@ -181,26 +181,6 @@
           ["nested" "\\!k2"] "v2"
           "nested.\\!k2" "v2"
           ["nested" ".\\!k2"] "v2")))
-    (when-not-advanced-mode
-      (testing "dynamic empty selector access in oget"
-        (let [recorder (atom [])]
-          (with-console-recording recorder
-            (oget+ (js-obj) (identity nil))
-            (oget+ (js-obj) (identity []))
-            (oget+ (js-obj) (identity [[] []])))
-          (is (= @recorder ["WARN: (\"Oops, Unexpected empty selector\" nil)"
-                            "WARN: (\"Oops, Unexpected empty selector\" nil)"
-                            "WARN: (\"Oops, Unexpected empty selector\" nil)"])))))
-    (when-not-advanced-mode
-      (testing "dynamic empty selector access error with :unexpected-empty-selector :error"
-        (presume-runtime-config {:error-reporting :throw})
-        (with-runtime-config {:unexpected-empty-selector :error}
-          (is (thrown-with-msg? js/Error #"Unexpected empty selector" (oget+ (js-obj) (identity nil)))))))
-    (when-not-advanced-mode
-      (testing "dynamic empty selector access error with :unexpected-empty-selector false"
-        (with-runtime-config {:unexpected-empty-selector false}
-          (let [o (js-obj)]
-            (is o (oget+ o (identity nil)))))))
     (when-not-advanced-mode
       (testing "warning when accessing missing key"
         (presume-runtime-config {:warning-reporting :console})
@@ -552,4 +532,24 @@
             (ocall+ (js-obj "f" identity) (identity "?f"))                                                                    ; no warning
             (oapply+ (js-obj "f" identity) (identity "?f") []))                                                               ; no warning
           (is (= (count @recorder) 2))
-          (is (re-matches #".*Unexpected soft selector.*" (str (first @recorder)))))))))
+          (is (re-matches #".*Unexpected soft selector.*" (str (first @recorder))))))))
+  (when-not-advanced-mode
+    (testing "dynamic empty selector access in oget"
+      (let [recorder (atom [])]
+        (with-console-recording recorder
+          (oget+ (js-obj) (identity nil))
+          (oget+ (js-obj) (identity []))
+          (oget+ (js-obj) (identity [[] []])))
+        (is (= @recorder ["WARN: (\"Oops, Unexpected empty selector\" nil)"
+                          "WARN: (\"Oops, Unexpected empty selector\" nil)"
+                          "WARN: (\"Oops, Unexpected empty selector\" nil)"])))))
+  (when-not-advanced-mode
+    (testing "dynamic empty selector access error with :unexpected-empty-selector :error"
+      (presume-runtime-config {:error-reporting :throw})
+      (with-runtime-config {:unexpected-empty-selector :error}
+        (is (thrown-with-msg? js/Error #"Unexpected empty selector" (oget+ (js-obj) (identity nil)))))))
+  (when-not-advanced-mode
+    (testing "dynamic empty selector access error with :unexpected-empty-selector false"
+      (with-runtime-config {:unexpected-empty-selector false}
+        (let [o (js-obj)]
+          (is o (oget+ o (identity nil))))))))
