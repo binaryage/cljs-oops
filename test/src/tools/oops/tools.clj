@@ -1,21 +1,12 @@
 (ns oops.tools
   (:require [environ.core :refer [env]]
-            [clojure.pprint :refer [pprint]]
             [oops.config :as config]
             [clojure.string :as string]
             [clojure.java.io :as io]
             [cuerdas.core :as cuerdas])
   (:import (java.io StringWriter)))
 
-(defn pprint-code [v]
-  (with-out-str
-    (binding [clojure.pprint/*print-right-margin* 200
-              *print-level* 5
-              *print-length* 10]
-      (pprint v))))
-
-(defn get-classpath []
-  (apply str (interpose "\n" (seq (.getURLs (ClassLoader/getSystemClassLoader))))))
+; -- helpers ----------------------------------------------------------------------------------------------------------------
 
 (defn advanced-mode? []
   (if cljs.env/*compiler*
@@ -26,10 +17,6 @@
         template-keys (keys config-template)]
     (if (pred config-template (select-keys config template-keys))
       `(do ~@body))))
-
-(defn gen-preserved-comment [comment]
-  (let [preserved-comment (str "@preserve " comment)]
-    `(cljs.core/js-inline-comment ~preserved-comment)))
 
 (defn gen-marker [s]
   `(.log js/console ~(str "-12345-" s "-54321-")))
@@ -91,7 +78,7 @@
         source (fetch-arena-source ns-name)]
     (extract-code-snippet source line)))
 
-; -- macros -----------------------------------------------------------------------------------------------------------------
+; -- console recording ------------------------------------------------------------------------------------------------------
 
 (defmacro with-console-recording [recorder & body]
   `(let [recorder# ~recorder]
@@ -100,6 +87,8 @@
        ~@body
        (finally
          (remove-console-recorder! recorder#)))))
+
+; -- helper macros ----------------------------------------------------------------------------------------------------------
 
 (defmacro when-advanced-mode [& body]
   (if (advanced-mode?)
@@ -157,12 +146,10 @@
        ~(gen-marker snippet-str)
        ~@body)))
 
-(defmacro presume-compiler-config [config]
-  (let [compiler-config (select-keys (config/get-compiler-config) (keys config))]
-    `(cljs.test/is (= ~compiler-config ~config))))
-
 (defmacro macro-identity [x]
   x)
+
+; -- stderr recording (compile-time) ----------------------------------------------------------------------------------------
 
 (def err-recorder (volatile! nil))
 (def prev-err (volatile! nil))
@@ -190,3 +177,10 @@
            recording# (oops.tools/stop-err-recorder!)]
        (cljs.core/swap! ~recorder cljs.core/concat (remove empty? (cuerdas.core/lines recording#)))
        res#)))
+
+; -- testing config assumptions (compile-time) ------------------------------------------------------------------------------
+
+(defmacro presume-compiler-config [config]
+  (let [compiler-config (select-keys (config/get-compiler-config) (keys config))]
+    `(cljs.test/is (= ~compiler-config ~config))))
+

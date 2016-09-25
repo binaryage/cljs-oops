@@ -1,11 +1,12 @@
 (ns oops.tools
   (:require-macros [oops.tools])
   (:require [cljs.test :refer-macros [deftest testing is are run-tests use-fixtures]]
-            [oops.config :as oops-config]
+            [oops.config :as config]
             [devtools.core]))
 
+; -- console recording ------------------------------------------------------------------------------------------------------
+
 (defonce console-recorders (atom []))
-(defonce original-console-api (atom nil))
 
 (defn add-console-recorder! [recorder]
   (swap! console-recorders conj recorder))
@@ -41,6 +42,8 @@
   (aset js/window "console" "info" (get api "info"))
   (aset js/window "console" "error" (get api "error")))
 
+(defonce original-console-api (atom nil))
+
 (defn start-console-capture! []
   {:pre [(nil? @original-console-api)]}
   (reset! original-console-api (store-console-api))
@@ -56,6 +59,8 @@
   (f)
   (stop-console-capture!))
 
+; -- testing config assumptions ---------------------------------------------------------------------------------------------
+
 (defn presume-runtime-config [config]
-  (let [runtime-config (select-keys (oops-config/get-current-runtime-config) (keys config))]
+  (let [runtime-config (select-keys (config/get-current-runtime-config) (keys config))]
     (is (= runtime-config config))))
