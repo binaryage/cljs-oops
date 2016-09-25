@@ -3,7 +3,7 @@
   (:refer-clojure :exclude [gensym])
   (:require [clojure.spec :as s]
             [oops.codegen :refer [gen-oget gen-oset gen-ocall gen-oapply]]
-            [oops.compiler :refer [with-compiler-context! with-compiler-opts!]]))
+            [oops.compiler :refer [with-compiler-context! with-suppressed-reporting!]]))
 
 ; -- core macros ------------------------------------------------------------------------------------------------------------
 
@@ -13,7 +13,7 @@
 
 (defmacro oget+ [obj & selector]
   (with-compiler-context! &form &env
-    (with-compiler-opts! {:suppress-reporting #{:dynamic-selector-usage}}
+    (with-suppressed-reporting! :dynamic-selector-usage
       (gen-oget obj selector))))
 
 (defmacro oset! [obj & selector+val]
@@ -22,7 +22,7 @@
 
 (defmacro oset!+ [obj & selector+val]
   (with-compiler-context! &form &env
-    (with-compiler-opts! {:suppress-reporting #{:dynamic-selector-usage}}
+    (with-suppressed-reporting! :dynamic-selector-usage
       (gen-oset obj selector+val))))
 
 (defmacro ocall [obj selector & args]
@@ -31,7 +31,7 @@
 
 (defmacro ocall+ [obj selector & args]
   (with-compiler-context! &form &env
-    (with-compiler-opts! {:suppress-reporting #{:dynamic-selector-usage}}
+    (with-suppressed-reporting! :dynamic-selector-usage
       (gen-ocall obj selector args))))
 
 (defmacro oapply [obj & selector+args]
@@ -40,7 +40,7 @@
 
 (defmacro oapply+ [obj & selector+args]
   (with-compiler-context! &form &env
-    (with-compiler-opts! {:suppress-reporting #{:dynamic-selector-usage}}
+    (with-suppressed-reporting! :dynamic-selector-usage
       (gen-oapply obj selector+args))))
 
 ; -- convenience macros -----------------------------------------------------------------------------------------------------
@@ -55,7 +55,7 @@
   "This macro is identical to ocall, use it if you want to express a side-effecting call."
   [obj selector & args]
   (with-compiler-context! &form &env
-    (with-compiler-opts! {:suppress-reporting #{:dynamic-selector-usage}}
+    (with-suppressed-reporting! :dynamic-selector-usage
       (gen-ocall obj selector args))))
 
 (defmacro oapply!
@@ -68,7 +68,7 @@
   "This macro is identical to oapply, use it if you want to express a side-effecting call."
   [obj & selector+args]
   (with-compiler-context! &form &env
-    (with-compiler-opts! {:suppress-reporting #{:dynamic-selector-usage}}
+    (with-suppressed-reporting! :dynamic-selector-usage
       (gen-oapply obj selector+args))))
 
 ; -- specs for our macro apis -----------------------------------------------------------------------------------------------

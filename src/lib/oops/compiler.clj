@@ -6,7 +6,8 @@
             [cljs.env]
             [oops.state :as state]
             [oops.messages :refer [messages-registered? register-messages]]
-            [oops.debug :refer [debug-assert]]))
+            [oops.debug :refer [debug-assert]]
+            [clojure.set :as set]))
 
 ; -- helpers ----------------------------------------------------------------------------------------------------------------
 
@@ -41,6 +42,12 @@
 (defmacro with-compiler-opts! [opts & body]
   `(binding [oops.state/*invocation-opts* (merge oops.state/*invocation-opts* ~opts)]
      ~@body))
+
+(defmacro with-suppressed-reporting! [messages & body]
+  (let [messages-set (set (if (coll? messages) messages (list messages)))]
+    `(let [updated-messages-set# (set/union (:suppress-reporting oops.state/*invocation-opts*) ~messages-set)]
+       (oops.compiler/with-compiler-opts! {:suppress-reporting updated-messages-set#}
+         ~@body))))
 
 (defmacro with-compiler-diagnostics-context! [form env & body]
   `(binding [oops.state/*invocation-form* ~form
