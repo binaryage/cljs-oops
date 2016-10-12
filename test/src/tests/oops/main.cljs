@@ -3,7 +3,7 @@
             [cuerdas.core]
             [oops.core :refer [oget oset! ocall! oapply! ocall oapply
                                oget+ oset!+ ocall!+ oapply!+ ocall+ oapply+]]
-            [oops.config :refer [with-runtime-config with-compiler-config with-child-factory]]
+            [oops.config :refer [with-runtime-config with-compiler-config with-child-factory update-current-runtime-config!]]
             [oops.tools
              :refer [with-captured-console presume-runtime-config]
              :refer-macros [init-test!
@@ -23,6 +23,8 @@
   (init-test!))
 
 (use-fixtures :once with-captured-console)
+
+(update-current-runtime-config! {:use-envelope false})
 
 (deftest test-oget
   (let [sample-obj #js {:key               "val"

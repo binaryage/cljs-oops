@@ -196,11 +196,12 @@
 
 (defn gen-reported-data [data]
   `(let [data# ~data]
-     (or (if-let [devtools# (cljs.core/aget js/window "devtools")]
-           (if-let [toolbox# (cljs.core/aget devtools# "toolbox")]
-             (if-let [envelope# (cljs.core/aget toolbox# "envelope")]
-               (if (cljs.core/fn? envelope#)
-                 (envelope# data# "details")))))
+     (or (if (oops.config/use-envelope?)
+           (if-let [devtools# (cljs.core/aget js/window "devtools")]
+             (if-let [toolbox# (cljs.core/aget devtools# "toolbox")]
+               (if-let [envelope# (cljs.core/aget toolbox# "envelope")]
+                 (if (cljs.core/fn? envelope#)
+                   (envelope# data# "details"))))))
          data#)))
 
 (defn gen-console-method [kind]

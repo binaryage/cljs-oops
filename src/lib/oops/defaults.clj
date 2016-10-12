@@ -37,6 +37,7 @@
 
    :runtime-throw-errors-from-macro-call-sites true                                                                           ; #{true falsy}
    :runtime-child-factory                      :js-obj                                                                        ; #{:js-obj :js-array}
+   :runtime-use-envelope                       true                                                                           ; #{true falsy}
 
    ; -- development ---------------------------------------------------------------------------------------------------------
    ; enable debug if you want to debug/hack oops itself
@@ -88,6 +89,7 @@
 
 (s/def ::config/runtime-throw-errors-from-macro-call-sites ::config/boolish)
 (s/def ::config/runtime-child-factory ::config/child-factory)
+(s/def ::config/runtime-use-envelope ::config/boolish)
 
 (s/def ::config/debug ::config/boolish)
 
@@ -115,4 +117,5 @@
                    ::config/runtime-warning-reporting
                    ::config/runtime-throw-errors-from-macro-call-sites
                    ::config/runtime-child-factory
+                   ::config/runtime-use-envelope
                    ::config/debug]))

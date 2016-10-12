@@ -48,3 +48,6 @@
 
 (defn ^boolean throw-errors-from-macro-call-sites? [& [config]]
   (true? (get-config-key :throw-errors-from-macro-call-sites config)))
+
+(defn ^boolean use-envelope? [& [config]]
+  (true? (get-config-key :use-envelope config)))
