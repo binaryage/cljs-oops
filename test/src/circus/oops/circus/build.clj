@@ -103,8 +103,8 @@
         build-info (make-build-info build)
         parts [(str "// " (get-environment-info))
                (str "// COMPILER CONFIG:\n" (comment-out-text build-info "  "))
-               (if-not (empty? out) (str "// COMPILER STDOUT:\n" (comment-out-text out "  ")))
-               (if-not (empty? err) (str "// COMPILER STDERR:\n" (comment-out-text err "  ")))
+               (if-not (empty? out) (str "// COMPILER STDOUT:\n" (comment-out-text (post-process-compiler-output out) "  ")))
+               (if-not (empty? err) (str "// COMPILER STDERR:\n" (comment-out-text (post-process-compiler-output err) "  ")))
                post-processed-code]
         transcript (string/join "\n" (interpose (comment-out-text separator) (remove nil? parts)))
         canonical-transcript (get-canonical-transcript transcript)]

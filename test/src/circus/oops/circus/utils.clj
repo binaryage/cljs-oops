@@ -224,3 +224,12 @@
   (when-let [cause (.getCause tr)]
     (print "Caused by: ")
     (recur cause)))
+
+(defn replace-absolute-paths [text]
+  (-> text
+      (string/replace #"/.*?/test/src/" "/<absolute-path>/test/src")
+      (string/replace #"/.*?/src/lib/" "/<absolute-path>/src/lib")))
+
+(defn post-process-compiler-output [text]
+  (-> text
+      (replace-absolute-paths)))
