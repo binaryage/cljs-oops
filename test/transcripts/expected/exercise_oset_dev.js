@@ -5,8 +5,8 @@
 //   {:elide-asserts false,
 //    :main oops.arena.exercise-oset,
 //    :optimizations :whitespace,
-//    :output-dir "test/resources/_compiled/exercise-oset-dev/_workdir",
-//    :output-to "test/resources/_compiled/exercise-oset-dev/main.js",
+//    :output-dir "test/resources/.compiled/exercise-oset-dev/_workdir",
+//    :output-to "test/resources/.compiled/exercise-oset-dev/main.js",
 //    :pseudo-names true}
 // ----------------------------------------------------------------------------------------------------------
 

@@ -17,7 +17,7 @@ This is just a generic HTML file with which to load the tests.
     const script = params["script"];
     if (script) {
         // this is for debugging purposes to emulate page.open logic from phantom.js
-        const scriptPath = "_compiled/" + script + "/main.js";
+        const scriptPath = ".compiled/" + script + "/main.js";
         console.log("executing test script: " + scriptPath);
         document.write("<script src=\"" + scriptPath + "\"></" + "script>");
     }

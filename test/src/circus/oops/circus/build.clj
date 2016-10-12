@@ -24,8 +24,8 @@
                                 :elide-asserts true
                                 :optimizations :advanced
                                 :main          (symbol main)
-                                :output-dir    (str "test/resources/_compiled/" out "/_workdir")
-                                :output-to     (str "test/resources/_compiled/" out "/main.js")}
+                                :output-dir    (str "test/resources/.compiled/" out "/_workdir")
+                                :output-to     (str "test/resources/.compiled/" out "/main.js")}
                                (if-not (empty? config)
                                  {:external-config {:oops/config config}}))]
     (post-process-build-options (merge compiler-config overrides))))

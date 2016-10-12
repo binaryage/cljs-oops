@@ -21,7 +21,7 @@
                  [clansi "1.0.0" :scope "test"]]
 
   :clean-targets ^{:protect false} ["target"
-                                    "test/resources/_compiled"]
+                                    "test/resources/.compiled"]
 
   :plugins [[lein-cljsbuild "1.1.4"]
             [lein-shell "0.5.0"]
@@ -89,9 +89,9 @@
                                                    "test/src/runner"
                                                    "test/src/tools"
                                                    "test/src/tests"]
-                                    :compiler     {:output-to       "test/resources/_compiled/basic_onone/main.js"
-                                                   :output-dir      "test/resources/_compiled/basic_onone"
-                                                   :asset-path      "_compiled/basic_onone"
+                                    :compiler     {:output-to       "test/resources/.compiled/basic_onone/main.js"
+                                                   :output-dir      "test/resources/.compiled/basic_onone"
+                                                   :asset-path      ".compiled/basic_onone"
                                                    :main            oops.runner
                                                    :optimizations   :none
                                                    :external-config {:devtools/config {:dont-detect-custom-formatters true}
@@ -105,9 +105,9 @@
                                                    "test/src/runner"
                                                    "test/src/tools"
                                                    "test/src/tests"]
-                                    :compiler     {:output-to       "test/resources/_compiled/basic_oadvanced_core/main.js"
-                                                   :output-dir      "test/resources/_compiled/basic_oadvanced_core"
-                                                   :asset-path      "_compiled/basic_oadvanced_core"
+                                    :compiler     {:output-to       "test/resources/.compiled/basic_oadvanced_core/main.js"
+                                                   :output-dir      "test/resources/.compiled/basic_oadvanced_core"
+                                                   :asset-path      ".compiled/basic_oadvanced_core"
                                                    :main            oops.runner
                                                    :pseudo-names    true
                                                    :optimizations   :advanced
@@ -120,9 +120,9 @@
                                                    "test/src/runner"
                                                    "test/src/tools"
                                                    "test/src/tests"]
-                                    :compiler     {:output-to       "test/resources/_compiled/basic_oadvanced_goog/main.js"
-                                                   :output-dir      "test/resources/_compiled/basic_oadvanced_goog"
-                                                   :asset-path      "_compiled/basic_oadvanced_goog"
+                                    :compiler     {:output-to       "test/resources/.compiled/basic_oadvanced_goog/main.js"
+                                                   :output-dir      "test/resources/.compiled/basic_oadvanced_goog"
+                                                   :asset-path      ".compiled/basic_oadvanced_goog"
                                                    :main            oops.runner
                                                    :pseudo-names    true
                                                    :optimizations   :advanced

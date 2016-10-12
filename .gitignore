@@ -4,7 +4,7 @@ target/
 .lein*
 pom.xml.*
 .idea
-test/resources/_compiled
+test/resources/.compiled
 .profiles/
 out/
 /.nrepl-port

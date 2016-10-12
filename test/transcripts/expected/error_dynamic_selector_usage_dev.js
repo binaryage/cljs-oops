@@ -7,9 +7,9 @@
 //    :main oops.arena.error-dynamic-selector-usage,
 //    :optimizations :whitespace,
 //    :output-dir
-//    "test/resources/_compiled/error-dynamic-selector-usage-dev/_workdir",
+//    "test/resources/.compiled/error-dynamic-selector-usage-dev/_workdir",
 //    :output-to
-//    "test/resources/_compiled/error-dynamic-selector-usage-dev/main.js",
+//    "test/resources/.compiled/error-dynamic-selector-usage-dev/main.js",
 //    :pseudo-names true}
 // ----------------------------------------------------------------------------------------------------------
 // COMPILER STDERR:

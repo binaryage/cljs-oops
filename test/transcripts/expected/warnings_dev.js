@@ -5,8 +5,8 @@
 //   {:elide-asserts false,
 //    :main oops.arena.warnings,
 //    :optimizations :whitespace,
-//    :output-dir "test/resources/_compiled/warnings-dev/_workdir",
-//    :output-to "test/resources/_compiled/warnings-dev/main.js",
+//    :output-dir "test/resources/.compiled/warnings-dev/_workdir",
+//    :output-to "test/resources/.compiled/warnings-dev/main.js",
 //    :pseudo-names true}
 // ----------------------------------------------------------------------------------------------------------
 // COMPILER STDERR:

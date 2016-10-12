@@ -7,9 +7,9 @@
 //    :main oops.arena.error-static-nil-object,
 //    :optimizations :whitespace,
 //    :output-dir
-//    "test/resources/_compiled/error-static-nil-object-dev/_workdir",
+//    "test/resources/.compiled/error-static-nil-object-dev/_workdir",
 //    :output-to
-//    "test/resources/_compiled/error-static-nil-object-dev/main.js",
+//    "test/resources/.compiled/error-static-nil-object-dev/main.js",
 //    :pseudo-names true}
 // ----------------------------------------------------------------------------------------------------------
 // COMPILER STDERR:

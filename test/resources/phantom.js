@@ -36,7 +36,7 @@ const runScript = function(name, cb) {
     printSeparator();
     const url = "main.html";
     const settings = {headers: {"ScriptToExecute": name}};
-    const scriptPath = "_compiled/" + name + "/main.js";
+    const scriptPath = ".compiled/" + name + "/main.js";
     page.open(url, settings, function(status) {
         if (status != "success") {
             console.log('Failed to open "' + url + '" (' + status + ')');

@@ -5,8 +5,8 @@
 //   {:elide-asserts false,
 //    :main oops.arena.exercise-oapply,
 //    :optimizations :whitespace,
-//    :output-dir "test/resources/_compiled/exercise-oapply-dev/_workdir",
-//    :output-to "test/resources/_compiled/exercise-oapply-dev/main.js",
+//    :output-dir "test/resources/.compiled/exercise-oapply-dev/_workdir",
+//    :output-to "test/resources/.compiled/exercise-oapply-dev/main.js",
 //    :pseudo-names true}
 // ----------------------------------------------------------------------------------------------------------
 

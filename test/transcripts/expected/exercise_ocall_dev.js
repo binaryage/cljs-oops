@@ -5,8 +5,8 @@
 //   {:elide-asserts false,
 //    :main oops.arena.exercise-ocall,
 //    :optimizations :whitespace,
-//    :output-dir "test/resources/_compiled/exercise-ocall-dev/_workdir",
-//    :output-to "test/resources/_compiled/exercise-ocall-dev/main.js",
+//    :output-dir "test/resources/.compiled/exercise-ocall-dev/_workdir",
+//    :output-to "test/resources/.compiled/exercise-ocall-dev/main.js",
 //    :pseudo-names true}
 // ----------------------------------------------------------------------------------------------------------
 

@@ -6,8 +6,8 @@
 //    :external-config #:oops{:config {:key-set :goog, :key-get :goog}},
 //    :main oops.arena.dynamic-oget,
 //    :optimizations :advanced,
-//    :output-dir "test/resources/_compiled/dynamic-oget-goog/_workdir",
-//    :output-to "test/resources/_compiled/dynamic-oget-goog/main.js",
+//    :output-dir "test/resources/.compiled/dynamic-oget-goog/_workdir",
+//    :output-to "test/resources/.compiled/dynamic-oget-goog/main.js",
 //    :pseudo-names true}
 // ----------------------------------------------------------------------------------------------------------
 
