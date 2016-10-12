@@ -71,6 +71,44 @@
     (with-suppressed-reporting! :dynamic-selector-usage
       (gen-oapply obj selector+args))))
 
+; -- convenience g-macros ---------------------------------------------------------------------------------------------------
+
+(defmacro gget [& args]
+  `(oops.core/oget js/goog.global ~@args))
+
+(defmacro gget+ [& args]
+  `(oops.core/oget+ js/goog.global ~@args))
+
+(defmacro gset! [& args]
+  `(oops.core/oset! js/goog.global ~@args))
+
+(defmacro gset!+ [& args]
+  `(oops.core/oset!+ js/goog.global ~@args))
+
+(defmacro gcall [& args]
+  `(oops.core/ocall js/goog.global ~@args))
+
+(defmacro gcall+ [& args]
+  `(oops.core/ocall+ js/goog.global ~@args))
+
+(defmacro gapply [& args]
+  `(oops.core/oapply js/goog.global ~@args))
+
+(defmacro gapply+ [& args]
+  `(oops.core/oapply+ js/goog.global ~@args))
+
+(defmacro gcall! [& args]
+  `(oops.core/ocall! js/goog.global ~@args))
+
+(defmacro gcall!+ [& args]
+  `(oops.core/ocall!+ js/goog.global ~@args))
+
+(defmacro gapply! [& args]
+  `(oops.core/oapply! js/goog.global ~@args))
+
+(defmacro gapply!+ [& args]
+  `(oops.core/oapply!+ js/goog.global ~@args))
+
 ; -- specs for our macro apis -----------------------------------------------------------------------------------------------
 ;
 ; This is not much useful because we cannot reason about macro args much,
@@ -120,3 +158,21 @@
 (s/def oapply+ oapply-api)
 (s/def oapply! oapply-api)
 (s/def oapply!+ oapply-api)
+
+; --- g-api
+
+(s/def gget gget-api)
+(s/def gget+ gget-api)
+
+(s/def gset! gset-api)
+(s/def gset!+ gset-api)
+
+(s/def gcall gcall-api)
+(s/def gcall+ gcall-api)
+(s/def gcall! gcall-api)
+(s/def gcall!+ gcall-api)
+
+(s/def gapply gapply-api)
+(s/def gapply+ gapply-api)
+(s/def gapply! gapply-api)
+(s/def gapply!+ gapply-api)
