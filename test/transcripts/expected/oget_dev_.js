@@ -1,12 +1,12 @@
 // Clojure v1.9.0-alpha13, ClojureScript v1.9.229
 // ----------------------------------------------------------------------------------------------------------
 // COMPILER CONFIG:
-//   arena/exercise_oget.cljs [dev]
+//   arena/oget_dev.cljs []
 //   {:elide-asserts false,
-//    :main oops.arena.exercise-oget,
+//    :main oops.arena.oget-dev,
 //    :optimizations :whitespace,
-//    :output-dir "test/resources/.compiled/exercise-oget-dev/_workdir",
-//    :output-to "test/resources/.compiled/exercise-oget-dev/main.js",
+//    :output-dir "test/resources/.compiled/oget-dev-/_workdir",
+//    :output-to "test/resources/.compiled/oget-dev-/main.js",
 //    :pseudo-names true}
 // ----------------------------------------------------------------------------------------------------------
 

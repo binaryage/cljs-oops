@@ -1,4 +1,4 @@
-(ns oops.arena.exercise-oset
+(ns oops.arena.oset-dev
   (:require-macros [oops.arena.macros :refer [macro-identity]])
   (:require [oops.core :refer [oset! oset!+]]
             [oops.config :refer [without-diagnostics with-debug]]

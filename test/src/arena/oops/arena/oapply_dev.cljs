@@ -1,4 +1,4 @@
-(ns oops.arena.exercise-oapply
+(ns oops.arena.oapply-dev
   (:require-macros [oops.arena.macros :refer [macro-identity]])
   (:require [oops.core :refer [oapply oapply+]]
             [oops.config :refer [without-diagnostics with-debug]]

@@ -1,12 +1,12 @@
 // Clojure v1.9.0-alpha13, ClojureScript v1.9.229
 // ----------------------------------------------------------------------------------------------------------
 // COMPILER CONFIG:
-//   arena/exercise_oapply.cljs [dev]
+//   arena/oapply_dev.cljs []
 //   {:elide-asserts false,
-//    :main oops.arena.exercise-oapply,
+//    :main oops.arena.oapply-dev,
 //    :optimizations :whitespace,
-//    :output-dir "test/resources/.compiled/exercise-oapply-dev/_workdir",
-//    :output-to "test/resources/.compiled/exercise-oapply-dev/main.js",
+//    :output-dir "test/resources/.compiled/oapply-dev-/_workdir",
+//    :output-to "test/resources/.compiled/oapply-dev-/main.js",
 //    :pseudo-names true}
 // ----------------------------------------------------------------------------------------------------------
 

@@ -1,12 +1,12 @@
 // Clojure v1.9.0-alpha13, ClojureScript v1.9.229
 // ----------------------------------------------------------------------------------------------------------
 // COMPILER CONFIG:
-//   arena/exercise_ocall.cljs [dev]
+//   arena/ocall_dev.cljs []
 //   {:elide-asserts false,
-//    :main oops.arena.exercise-ocall,
+//    :main oops.arena.ocall-dev,
 //    :optimizations :whitespace,
-//    :output-dir "test/resources/.compiled/exercise-ocall-dev/_workdir",
-//    :output-to "test/resources/.compiled/exercise-ocall-dev/main.js",
+//    :output-dir "test/resources/.compiled/ocall-dev-/_workdir",
+//    :output-to "test/resources/.compiled/ocall-dev-/main.js",
 //    :pseudo-names true}
 // ----------------------------------------------------------------------------------------------------------
 

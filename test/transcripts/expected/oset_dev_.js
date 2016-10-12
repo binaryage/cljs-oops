@@ -1,12 +1,12 @@
 // Clojure v1.9.0-alpha13, ClojureScript v1.9.229
 // ----------------------------------------------------------------------------------------------------------
 // COMPILER CONFIG:
-//   arena/exercise_oset.cljs [dev]
+//   arena/oset_dev.cljs []
 //   {:elide-asserts false,
-//    :main oops.arena.exercise-oset,
+//    :main oops.arena.oset-dev,
 //    :optimizations :whitespace,
-//    :output-dir "test/resources/.compiled/exercise-oset-dev/_workdir",
-//    :output-to "test/resources/.compiled/exercise-oset-dev/main.js",
+//    :output-dir "test/resources/.compiled/oset-dev-/_workdir",
+//    :output-to "test/resources/.compiled/oset-dev-/main.js",
 //    :pseudo-names true}
 // ----------------------------------------------------------------------------------------------------------
 
