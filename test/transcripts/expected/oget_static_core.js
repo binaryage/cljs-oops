@@ -1,13 +1,13 @@
 // Clojure v1.9.0-alpha13, ClojureScript v1.9.229
 // ----------------------------------------------------------------------------------------------------------
 // COMPILER CONFIG:
-//   arena/static_oget.cljs [core]
+//   arena/oget_static.cljs [core]
 //   {:elide-asserts true,
 //    :external-config #:oops{:config {:key-set :core, :key-get :core}},
-//    :main oops.arena.static-oget,
+//    :main oops.arena.oget-static,
 //    :optimizations :advanced,
-//    :output-dir "test/resources/.compiled/static-oget-core/_workdir",
-//    :output-to "test/resources/.compiled/static-oget-core/main.js",
+//    :output-dir "test/resources/.compiled/oget-static-core/_workdir",
+//    :output-to "test/resources/.compiled/oget-static-core/main.js",
 //    :pseudo-names true}
 // ----------------------------------------------------------------------------------------------------------
 

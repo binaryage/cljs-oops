@@ -1,4 +1,4 @@
-(ns oops.arena.static-oget
+(ns oops.arena.oget-static
   (:require [oops.core :refer [oget]]
             [oops.tools :refer [init-arena-test! testing]]))
 

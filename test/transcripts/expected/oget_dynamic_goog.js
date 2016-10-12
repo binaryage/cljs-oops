@@ -1,13 +1,13 @@
 // Clojure v1.9.0-alpha13, ClojureScript v1.9.229
 // ----------------------------------------------------------------------------------------------------------
 // COMPILER CONFIG:
-//   arena/dynamic_oget.cljs [goog]
+//   arena/oget_dynamic.cljs [goog]
 //   {:elide-asserts true,
 //    :external-config #:oops{:config {:key-set :goog, :key-get :goog}},
-//    :main oops.arena.dynamic-oget,
+//    :main oops.arena.oget-dynamic,
 //    :optimizations :advanced,
-//    :output-dir "test/resources/.compiled/dynamic-oget-goog/_workdir",
-//    :output-to "test/resources/.compiled/dynamic-oget-goog/main.js",
+//    :output-dir "test/resources/.compiled/oget-dynamic-goog/_workdir",
+//    :output-to "test/resources/.compiled/oget-dynamic-goog/main.js",
 //    :pseudo-names true}
 // ----------------------------------------------------------------------------------------------------------
 

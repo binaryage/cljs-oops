@@ -1,13 +1,13 @@
 // Clojure v1.9.0-alpha13, ClojureScript v1.9.229
 // ----------------------------------------------------------------------------------------------------------
 // COMPILER CONFIG:
-//   arena/dynamic_oget.cljs [core]
+//   arena/oget_dynamic.cljs [core]
 //   {:elide-asserts true,
 //    :external-config #:oops{:config {:key-set :core, :key-get :core}},
-//    :main oops.arena.dynamic-oget,
+//    :main oops.arena.oget-dynamic,
 //    :optimizations :advanced,
-//    :output-dir "test/resources/.compiled/dynamic-oget-core/_workdir",
-//    :output-to "test/resources/.compiled/dynamic-oget-core/main.js",
+//    :output-dir "test/resources/.compiled/oget-dynamic-core/_workdir",
+//    :output-to "test/resources/.compiled/oget-dynamic-core/main.js",
 //    :pseudo-names true}
 // ----------------------------------------------------------------------------------------------------------
 

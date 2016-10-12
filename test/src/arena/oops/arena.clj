@@ -8,8 +8,8 @@
 
 (def all-builds
   (concat
-    (make-build-variants "static_oget.cljs")
-    (make-build-variants "dynamic_oget.cljs")
+    (make-build-variants "oget_static.cljs")
+    (make-build-variants "oget_dynamic.cljs")
     [(make-build "exercise_oget.cljs" "dev" {} {:optimizations :whitespace})
      (make-build "exercise_oset.cljs" "dev" {} {:optimizations :whitespace})
      (make-build "exercise_ocall.cljs" "dev" {} {:optimizations :whitespace})

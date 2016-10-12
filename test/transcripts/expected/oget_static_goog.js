@@ -1,13 +1,13 @@
 // Clojure v1.9.0-alpha13, ClojureScript v1.9.229
 // ----------------------------------------------------------------------------------------------------------
 // COMPILER CONFIG:
-//   arena/static_oget.cljs [goog]
+//   arena/oget_static.cljs [goog]
 //   {:elide-asserts true,
 //    :external-config #:oops{:config {:key-set :goog, :key-get :goog}},
-//    :main oops.arena.static-oget,
+//    :main oops.arena.oget-static,
 //    :optimizations :advanced,
-//    :output-dir "test/resources/.compiled/static-oget-goog/_workdir",
-//    :output-to "test/resources/.compiled/static-oget-goog/main.js",
+//    :output-dir "test/resources/.compiled/oget-static-goog/_workdir",
+//    :output-to "test/resources/.compiled/oget-static-goog/main.js",
 //    :pseudo-names true}
 // ----------------------------------------------------------------------------------------------------------
 
