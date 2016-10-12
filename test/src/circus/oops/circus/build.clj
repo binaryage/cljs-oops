@@ -61,7 +61,8 @@
 
 (defn get-environment-info []
   (str "Clojure v" (clojure-version) ", "
-       "ClojureScript v" (cljs-util/clojurescript-version)))
+       "ClojureScript v" (cljs-util/clojurescript-version) ", "
+       "js-beautify v" (js-beautify-version)))
 
 ; -- transcripts ------------------------------------------------------------------------------------------------------------
 

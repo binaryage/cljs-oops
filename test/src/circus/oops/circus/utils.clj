@@ -20,6 +20,16 @@
       (catch Throwable e
         (clansi/style (str "! " (.getMessage e)) :red)))))
 
+(defn js-beautify-version []
+  (let [options-args ["--version"]]
+    (try
+      (let [result (apply shell/sh "js-beautify" options-args)]
+        (if-not (empty? (:err result))
+          (clansi/style (str "! " (:err result)) :red)
+          (cuerdas/rtrim (:out result))))
+      (catch Throwable e
+        (clansi/style (str "! " (.getMessage e)) :red)))))
+
 (defn dim-text [text]
   (clansi/style text :black))                                                                                                 ; black on black background should be displayed as gray
 
