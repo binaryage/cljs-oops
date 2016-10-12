@@ -2,7 +2,9 @@
   (:require [cljs.test :refer-macros [deftest testing is are run-tests use-fixtures]]
             [cuerdas.core]
             [oops.core :refer [oget oset! ocall! oapply! ocall oapply
-                               oget+ oset!+ ocall!+ oapply!+ ocall+ oapply+]]
+                               oget+ oset!+ ocall!+ oapply!+ ocall+ oapply+
+                               gget gset! gcall! gapply! gcall gapply
+                               gget+ gset!+ gcall!+ gapply!+ gcall+ gapply+]]
             [oops.config :refer [with-runtime-config with-compiler-config with-child-factory update-current-runtime-config!]]
             [oops.tools
              :refer [with-captured-console presume-runtime-config]
@@ -607,3 +609,136 @@
       (with-runtime-config {:unexpected-empty-selector false}
         (let [o (js-obj)]
           (is o (oget+ o (identity nil))))))))
+
+(deftest test-gget
+  (let [obj #js {:key               "val"
+                 "@#$%fancy key^&*" "fancy-val"
+                 "nested"           #js {:nested-key1  "nk1"
+                                         "nested-key2" 2}}]
+    (oset! js/window "!x" obj)
+    (testing "simple static gget"
+      (with-runtime-config {:missing-object-key false}
+        (are [key expected] (= (gget key) expected)
+          "x.non-existent" nil
+          "x.key" "val"
+          "x.@#$%fancy key^&*" "fancy-val"
+          ["x" "nested" "nested-key2"] 2)))
+    (testing "simple dynamic get"
+      (with-runtime-config {:missing-object-key false}
+        (are [dyn-selector expected] (= (gget+ dyn-selector) expected)
+          (identity "x.key") "val"
+          (identity "x.xxx") nil
+          (list "x" (identity "nested") "nested-key1") "nk1"
+          (identity ["x" "nested" "nested-key1"]) "nk1"
+          ["x" (identity "nested") "nested-key1"] "nk1")))))
+
+(deftest test-gset
+  (testing "static set"
+    (let [obj #js {"nested" #js {}}]
+      (oset! js/window "!x" obj)
+      (are [s1 s2] (do (gset! s1 "val") (= (oget obj s2) "val"))
+        "x.!xxx" "xxx"
+        ["x.!yyy"] "yyy"
+        ["x.nested" "!y"] "nested.y")
+      (is (= (js/JSON.stringify obj) "{\"nested\":{\"y\":\"val\"},\"xxx\":\"val\",\"yyy\":\"val\"}"))))
+  (testing "dynamic selector set"
+    (let [obj #js {"nested" #js {}}]
+      (oset! js/window "!x" obj)
+      (are [s1 s2] (do (gset!+ s1 "val") (= (oget+ obj s2) "val"))
+        (identity "x.!key") "key"
+        [(identity "x.!nested") (identity "!key2")] "nested.key2")
+      (is (= (js/JSON.stringify obj) "{\"nested\":{\"key2\":\"val\"},\"key\":\"val\"}"))))
+  (testing "static punching set!"
+    (let [obj #js {"nested" #js {}}]
+      (oset! js/window "!x" obj)
+      (are [s1 s2] (do (gset!+ s1 "val") (= (oget+ obj s2) "val"))
+        ".x.!nested.!xxx" "nested.xxx"
+        "x.!aaa" "aaa"
+        ["x.!z1" "!z2" "!z3"] "z1.z2.z3")
+      (is (= (js/JSON.stringify obj) "{\"nested\":{\"xxx\":\"val\"},\"aaa\":\"val\",\"z1\":{\"z2\":{\"z3\":\"val\"}}}"))))
+  (testing "dynamic punching set!"
+    (let [obj #js {"nested" #js {}}]
+      (oset! js/window "!x" obj)
+      (are [s1 s2] (do (gset!+ (identity s1) "val") (= (oget+ obj s2) "val"))
+        ".x.!nested.!xxx" "nested.xxx"
+        "x.!aaa" "aaa"
+        ["x" "!z1" "!z2" "!z3"] "z1.z2.z3")
+      (is (= (js/JSON.stringify obj) "{\"nested\":{\"xxx\":\"val\"},\"aaa\":\"val\",\"z1\":{\"z2\":{\"z3\":\"val\"}}}")))))
+
+(deftest test-gcall
+  (testing "simple invocation via gcall"
+    (let [counter (volatile! 0)
+          obj #js {"inc-fn"    #(vswap! counter inc)
+                   "return-fn" (fn [& args] args)
+                   "add-fn"    (fn [n] (vswap! counter + n))
+                   "add*-fn"   (fn [& args] (vreset! counter (apply + @counter args)))}]
+      (oset! js/window "!x" obj)
+      (gcall "x.inc-fn")
+      (is (= @counter 1))
+      (is (= (gcall! "x.return-fn" 1) '(1)))
+      (is (= (gcall! "x.return-fn") nil))
+      (is (= (gcall! ["x" "return-fn" []] 1 2 3) '(1 2 3)))
+      (gcall! "x.add-fn" 1)
+      (is (= @counter 2))
+      (gcall! "x.add-fn" 1 2 3 4)
+      (is (= @counter 3))
+      (gcall! "x.add*-fn" 1 2 3 4)
+      (is (= @counter 13))))
+  (testing "gcall should retarget this"
+    (let [who? (fn []
+                 (this-as this
+                   (aget this "whoami")))
+          obj #js {"whoami" "ROOT!"
+                   "f"      who?
+                   "a"      #js {"whoami" "A!"
+                                 "f"      who?}
+                   "b"      #js {"a" #js {"whoami" "BA!"
+                                          "f"      who?}}}]
+      (oset! js/window "!x" obj)
+      ; static case
+      (is (= (gcall "x.f") "ROOT!"))
+      (is (= (gcall "x.a.f") "A!"))
+      (is (= (gcall "x.b.a.f") "BA!"))
+      ; dynamic case
+      (is (= (gcall (identity "x.f")) "ROOT!"))
+      (is (= (gcall (identity "x.a.f")) "A!"))
+      (is (= (gcall (identity "x.b.a.f")) "BA!")))))
+
+(deftest test-gapply
+  (testing "simple invocation via gapply"
+    (let [counter (volatile! 0)
+          obj #js {"inc-fn"    #(vswap! counter inc)
+                   "return-fn" (fn [& args] args)
+                   "add-fn"    (fn [n] (vswap! counter + n))
+                   "add*-fn"   (fn [& args] (vreset! counter (apply + @counter args)))}]
+      (oset! js/window "!x" obj)
+      (gapply "x.inc-fn" [])
+      (is (= @counter 1))
+      (is (= (gapply! "x.return-fn" [1]) '(1)))
+      (is (= (gapply! "x.return-fn" []) nil))
+      (is (= (gapply! "x.return-fn" [1 2 3]) '(1 2 3)))
+      (gapply! "x.add-fn" (list 1))
+      (is (= @counter 2))
+      (gapply! "x.add-fn" (list 1 2 3 4))
+      (is (= @counter 3))
+      (gapply! "x.add*-fn" (range 5))
+      (is (= @counter 13))))
+  (testing "gapply should retarget this"
+    (let [who? (fn []
+                 (this-as this
+                   (aget this "whoami")))
+          obj #js {"whoami" "ROOT!"
+                   "f"      who?
+                   "a"      #js {"whoami" "A!"
+                                 "f"      who?}
+                   "b"      #js {"a" #js {"whoami" "BA!"
+                                          "f"      who?}}}]
+      (oset! js/window "!x" obj)
+      ; static case
+      (is (= (gapply "x.f" []) "ROOT!"))
+      (is (= (gapply "x.a.f" []) "A!"))
+      (is (= (gapply "x.b.a.f" []) "BA!"))
+      ; dynamic case
+      (is (= (gapply (identity "x.f") []) "ROOT!"))
+      (is (= (gapply (identity "x.a.f") []) "A!"))
+      (is (= (gapply (identity "x.b.a.f") []) "BA!")))))
