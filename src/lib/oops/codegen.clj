@@ -334,25 +334,25 @@
           (gen-dynamic-selector-set obj-sym selector-list val))
        ~obj-sym)))
 
-(defn gen-ocall-impl [obj-sym selector-list args]
+(defn gen-callable [obj-sym selector-list fn-sym call-info-sym action]
   (debug-assert (symbol? obj-sym))
+  `(let [~call-info-sym ~(gen-oget2-impl obj-sym selector-list)
+         ~fn-sym (aget ~call-info-sym 1)]
+     ~(gen-dynamic-fn-call-validation-wrapper fn-sym action)))
+
+(defn gen-ocall-impl [obj-sym selector-list args]
   (let [fn-sym (gensym "fn")
         call-info-sym (gensym "call-info")
         action `(if-not (nil? ~fn-sym)
                   (.call ~fn-sym (aget ~call-info-sym 0) ~@args))]
-    `(let [~call-info-sym ~(gen-oget2-impl obj-sym selector-list)
-           ~fn-sym (aget ~call-info-sym 1)]
-       ~(gen-dynamic-fn-call-validation-wrapper fn-sym action))))
+    (gen-callable obj-sym selector-list fn-sym call-info-sym action)))
 
 (defn gen-oapply-impl [obj-sym selector-list args]
-  (debug-assert (symbol? obj-sym))
   (let [fn-sym (gensym "fn")
         call-info-sym (gensym "call-info")
         action `(if-not (nil? ~fn-sym)
                   (.apply ~fn-sym (aget ~call-info-sym 0) (oops.helpers/to-native-array ~args)))]
-    `(let [~call-info-sym ~(gen-oget2-impl obj-sym selector-list)
-           ~fn-sym (aget ~call-info-sym 1)]
-       ~(gen-dynamic-fn-call-validation-wrapper fn-sym action))))
+    (gen-callable obj-sym selector-list fn-sym call-info-sym action)))
 
 ; -- shared macro bodies ----------------------------------------------------------------------------------------------------
 
