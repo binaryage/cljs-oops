@@ -154,19 +154,19 @@
          (let [~target-obj-sym ~(gen-dynamic-path-get obj-sym target-obj-path-code)]
            (cljs.core/array ~target-obj-sym ~(gen-dynamic-path-get target-obj-sym last-obj-path-code)))))))
 
-(defn gen-dynamic-selector-get [obj selector-list]
+(defn gen-dynamic-selector-get* [obj selector-list api-sym]
+  (debug-assert (symbol? api-sym))
   (report-dynamic-selector-usage-if-needed! selector-list)
   (debug-assert (pos? (count selector-list)) "empty selector list should take static path")
   (case (count selector-list)
-    1 `(oops.core/get-selector-dynamically ~obj ~(first selector-list))                                                       ; we want to unwrap selector wrapped in oget (in this case)
-    `(oops.core/get-selector-dynamically ~obj ~(gen-selector-list selector-list))))
+    1 `(~api-sym ~obj ~(first selector-list))                                                                                 ; we want to unwrap selector wrapped in oget (in this case)
+    `(~api-sym ~obj ~(gen-selector-list selector-list))))
+
+(defn gen-dynamic-selector-get [obj selector-list]
+  (gen-dynamic-selector-get* obj selector-list 'oops.core/get-selector-dynamically))
 
 (defn gen-dynamic-selector-get2 [obj selector-list]
-  (report-dynamic-selector-usage-if-needed! selector-list)
-  (debug-assert (pos? (count selector-list)) "empty selector list should take static path")
-  (case (count selector-list)
-    1 `(oops.core/get2-selector-dynamically ~obj ~(first selector-list))                                                      ; we want to unwrap selector wrapped in oget (in this case)
-    `(oops.core/get2-selector-dynamically ~obj ~(gen-selector-list selector-list))))
+  (gen-dynamic-selector-get* obj selector-list 'oops.core/get2-selector-dynamically))
 
 (defn gen-dynamic-selector-validation [selector-sym]
   (debug-assert (symbol? selector-sym))
