@@ -5,7 +5,9 @@
 (init-arena-test!)
 
 ; we are compiling under advanced mode
-; all this code is expected to collapse to constant or get elided
+
+; ----
+; following code is expected to get elided
 
 (testing "simple get"
   (oget #js {"key" "val"} "key"))
@@ -33,3 +35,12 @@
   (def o4 nil)
   (oget o4)
   (oget o4 :a :b :c))
+
+; ----
+; following code is expected get collapsed to simple console.log calls
+
+(testing "simple get with usage"
+  (.log js/console (oget #js {"key" "val"} "key")))
+
+(testing "simple miss with usage"
+  (.log js/console (oget #js {"key" "val"} "xxx")))

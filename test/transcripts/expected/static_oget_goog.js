@@ -49,3 +49,17 @@
 //     (oget o4)
 //     (oget o4 :a :b :c))
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+// SNIPPET #7:
+//   (testing "simple get with usage"
+//     (.log js/console (oget #js {"key" "val"} "key")))
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+console.log($goog$object$get$$("key"));
+
+// SNIPPET #8:
+//   (testing "simple miss with usage"
+//     (.log js/console (oget #js {"key" "val"} "xxx")))
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+console.log($goog$object$get$$("xxx"));
