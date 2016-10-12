@@ -10,18 +10,31 @@
 //    :output-to "test/resources/.compiled/ocall-static-core/main.js",
 //    :pseudo-names true}
 // ----------------------------------------------------------------------------------------------------------
-// COMPILER STDERR:
-//   WARNING: Use of undeclared Var oops.arena.ocall-static/ocall at line 13 /Users/darwin/code/cljs-oops/test/src/arena/oops/arena/ocall_static.cljs
-// ----------------------------------------------------------------------------------------------------------
 
 // SNIPPET #1:
 //   (testing "simple static ocall"
-//     (ocall #js {"f" (fn [] 42)} "f"))
+//     (ocall #js {"f" (fn [] 42)} "f" "p1" "p2"))
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-var $G__4$$ = {
+var $target_obj_13$$ = {
+    f: function() {
+      return 42
+    }
+  },
+  $call_info_14$$ = [$target_obj_13$$, $target_obj_13$$.f],
+  $fn_15$$ = $call_info_14$$[1];
+null != $fn_15$$ && $fn_15$$.call($call_info_14$$[0], "p1", "p2");
+
+// SNIPPET #2:
+//   (testing "retargeted static ocall"
+//     (ocall #js {"a" #js {"f" (fn [] 42)}} "a.f" "p1" "p2"))
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+var $call_info_16$$, $target_obj_5$$inline_6$$ = {
   f: function() {
     return 42
   }
 };
-$oops$arena$ocall_static$$.$ocall$.$cljs$core$IFn$_invoke$arity$2$ ? $oops$arena$ocall_static$$.$ocall$.$cljs$core$IFn$_invoke$arity$2$($G__4$$, "f") : $oops$arena$ocall_static$$.$ocall$.call(null, $G__4$$, "f");
+$call_info_16$$ = [$target_obj_5$$inline_6$$, $target_obj_5$$inline_6$$.f];
+var $fn_17$$ = $call_info_16$$[1];
+null != $fn_17$$ && $fn_17$$.call($call_info_16$$[0], "p1", "p2");

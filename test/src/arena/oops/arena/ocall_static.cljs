@@ -1,5 +1,5 @@
 (ns oops.arena.ocall-static
-  (:require [oops.core :refer [oget]]
+  (:require [oops.core :refer [ocall]]
             [oops.tools :refer [init-arena-test! testing]]))
 
 (init-arena-test!)
@@ -10,4 +10,7 @@
 ; following code is expected to get elided
 
 (testing "simple static ocall"
-  (ocall #js {"f" (fn [] 42)} "f"))
+  (ocall #js {"f" (fn [] 42)} "f" "p1" "p2"))
+
+(testing "retargeted static ocall"
+  (ocall #js {"a" #js {"f" (fn [] 42)}} "a.f" "p1" "p2"))
