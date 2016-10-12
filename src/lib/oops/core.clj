@@ -119,27 +119,33 @@
 (defn anything? [_] true)                                                                                                     ; TODO: use any? when we drop Clojure 1.8 support
 
 (defmacro api-spec [obj? args]
-  `(s/fspec :args (s/cat ~@(if (= obj? 1) [:obj anything?])
+  `(s/fspec :args (s/cat ~@(if obj? [:obj anything?])
                          ~@(if (symbol? args)
                              (var-get (resolve args))
                              args))
             :ret anything?))
 
+(defmacro o-api [args]
+  `(api-spec true ~args))
+
+(defmacro g-api [args]
+  `(api-spec false ~args))
+
 (def oget-args [:selector (s/* anything?)])
-(def oget-api (api-spec 1 oget-args))
-(def gget-api (api-spec 0 oget-args))
+(def oget-api (o-api oget-args))
+(def gget-api (g-api oget-args))
 
 (def oset-args [:selector (s/+ anything?) :val anything?])
-(def oset-api (api-spec 1 oset-args))
-(def gset-api (api-spec 0 oset-args))
+(def oset-api (o-api oset-args))
+(def gset-api (g-api oset-args))
 
 (def ocall-args [:selector anything? :args (s/* anything?)])
-(def ocall-api (api-spec 1 ocall-args))
-(def gcall-api (api-spec 0 ocall-args))
+(def ocall-api (o-api ocall-args))
+(def gcall-api (g-api ocall-args))
 
 (def oapply-args [:selector (s/+ anything?) :args sequential?])
-(def oapply-api (api-spec 1 oapply-args))
-(def gapply-api (api-spec 0 oapply-args))
+(def oapply-api (o-api oapply-args))
+(def gapply-api (g-api oapply-args))
 
 ; --- o-api
 
