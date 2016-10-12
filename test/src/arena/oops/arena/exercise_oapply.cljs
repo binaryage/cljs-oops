@@ -26,3 +26,9 @@
   (with-debug
     (oapply js/window "method" ["p1" "p2"])
     (oapply+ js/window (identity "method") ["p1" "p2"])))
+
+(testing "static oapply expansion with retargeting"
+  (oapply js/window "m1.m2" ["p1" "p2"]))
+
+(testing "dynamic oapply expansion with retargeting"
+  (oapply+ js/window (identity "m1.m2") ["p1" "p2"]))

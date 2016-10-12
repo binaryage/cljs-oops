@@ -26,3 +26,9 @@
   (with-debug
     (ocall js/window "method" "p1" "p2")
     (ocall+ js/window (identity "method") "p1" "p2")))
+
+(testing "static ocall expansion with retargeting"
+  (ocall js/window "m1.m2" "p1" "p2"))
+
+(testing "dynamic ocall expansion with retargeting"
+  (ocall+ js/window (identity "m1.m2") "p1" "p2"))

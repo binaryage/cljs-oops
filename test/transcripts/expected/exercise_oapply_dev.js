@@ -164,3 +164,54 @@ var result_2 = function() {
     oops.state._STAR_runtime_state_STAR_ = _STAR_runtime_state_STAR_5
   }
 }();
+
+// SNIPPET #6:
+//   (testing "static oapply expansion with retargeting"
+//     (oapply js/window "m1.m2" ["p1" "p2"]))
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+var target_obj_8 = window;
+var _STAR_runtime_state_STAR_6 = oops.state._STAR_runtime_state_STAR_;
+oops.state._STAR_runtime_state_STAR_ = oops.state.prepare_state.call(null, target_obj_8, new Error, function() {
+  arguments[0].apply(console, Array.prototype.slice.call(arguments, 1))
+});
+try {
+  var call_info_8 = function() {
+    var target_obj_9 = function() {
+      var next_obj_5 = oops.core.validate_object_access_dynamically.call(null, target_obj_8, 0, "m1", true) ? goog.object.get(target_obj_8, "m1") : null;
+      return next_obj_5
+    }();
+    return [target_obj_9, function() {
+      var next_obj_6 = oops.core.validate_object_access_dynamically.call(null, target_obj_9, 0, "m2", true) ? goog.object.get(target_obj_9, "m2") : null;
+      return next_obj_6
+    }()]
+  }();
+  var fn_8 = call_info_8[1];
+  if (oops.core.validate_fn_call_dynamically.call(null, fn_8, oops.state.get_last_access_modifier.call(null)))
+    if (!(fn_8 == null)) fn_8.apply(call_info_8[0], oops.helpers.to_native_array.call(null, new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, ["p1", "p2"], null)));
+    else;
+  else;
+} finally {
+  oops.state._STAR_runtime_state_STAR_ = _STAR_runtime_state_STAR_6
+}
+
+// SNIPPET #7:
+//   (testing "dynamic oapply expansion with retargeting"
+//     (oapply+ js/window (identity "m1.m2") ["p1" "p2"]))
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+var target_obj_10 = window;
+var _STAR_runtime_state_STAR_7 = oops.state._STAR_runtime_state_STAR_;
+oops.state._STAR_runtime_state_STAR_ = oops.state.prepare_state.call(null, target_obj_10, new Error, function() {
+  arguments[0].apply(console, Array.prototype.slice.call(arguments, 1))
+});
+try {
+  var call_info_9 = oops.core.get2_selector_dynamically.call(null, target_obj_10, cljs.core.identity.call(null, "m1.m2"));
+  var fn_9 = call_info_9[1];
+  if (oops.core.validate_fn_call_dynamically.call(null, fn_9, oops.state.get_last_access_modifier.call(null)))
+    if (!(fn_9 == null)) fn_9.apply(call_info_9[0], oops.helpers.to_native_array.call(null, new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, ["p1", "p2"], null)));
+    else;
+  else;
+} finally {
+  oops.state._STAR_runtime_state_STAR_ = _STAR_runtime_state_STAR_7
+};
