@@ -66,10 +66,10 @@ oops.state._STAR_runtime_state_STAR_ = oops.state.prepare_state.call(null, targe
 try {
   var next_obj_2 = oops.core.validate_object_access_dynamically.call(null, target_obj_3, 0, "k1", true) ? goog.object.get(target_obj_3, "k1") : null;
   var next_obj_3 = oops.core.validate_object_access_dynamically.call(null, next_obj_2, 0, "k2", true) ? goog.object.get(next_obj_2, "k2") : null;
-  var next_obj_4 = oops.core.validate_object_access_dynamically.call(null, next_obj_3, 0, "k3", true) ? goog.object.get(next_obj_3, "k3") : null
+  var next_obj_4 = oops.core.validate_object_access_dynamically.call(null, next_obj_3, 0, "k3", true) ? goog.object.get(next_obj_3,
+    "k3") : null
 } finally {
-  oops.state._STAR_runtime_state_STAR_ =
-    _STAR_runtime_state_STAR_3
+  oops.state._STAR_runtime_state_STAR_ = _STAR_runtime_state_STAR_3
 }
 
 // SNIPPET #4:

@@ -26,8 +26,8 @@ try {
     var ensured_obj_1 = next_obj_1 == null ? oops.core.punch_key_dynamically_BANG_.call(null, target_obj_1, "k1") : next_obj_1;
     return ensured_obj_1
   }();
-  if (oops.core.validate_object_access_dynamically.call(null, parent_obj_1, 2, "k2", true)) goog.object.set(parent_obj_1, "k2",
-    "val");
+  if (oops.core.validate_object_access_dynamically.call(null, parent_obj_1, 2, "k2", true)) goog.object.set(parent_obj_1,
+    "k2", "val");
   else;
 } finally {
   oops.state._STAR_runtime_state_STAR_ = _STAR_runtime_state_STAR_1
@@ -65,8 +65,8 @@ try {
     var ensured_obj_2 = next_obj_2 == null ? oops.core.punch_key_dynamically_BANG_.call(null, target_obj_3, "k1") : next_obj_2;
     return ensured_obj_2
   }();
-  if (oops.core.validate_object_access_dynamically.call(null, parent_obj_2, 2, "k2", true)) goog.object.set(parent_obj_2, "k2",
-    "val");
+  if (oops.core.validate_object_access_dynamically.call(null, parent_obj_2, 2, "k2", true)) goog.object.set(parent_obj_2,
+    "k2", "val");
   else;
 } finally {
   oops.state._STAR_runtime_state_STAR_ = _STAR_runtime_state_STAR_3
@@ -119,8 +119,7 @@ var result_2 = function() {
       else;
       return target_obj_6
     }();
-    if (captured_runtime_state_1 ===
-      oops.state._STAR_runtime_state_STAR_);
+    if (captured_runtime_state_1 === oops.state._STAR_runtime_state_STAR_);
     else throw new Error("Assert failed: (clojure.core/identical? captured-runtime-state-36 oops.state/*runtime-state*)");
   } finally {
     oops.state._STAR_runtime_state_STAR_ = _STAR_runtime_state_STAR_4
@@ -128,8 +127,8 @@ var result_2 = function() {
   var target_obj_7 = window;
   var _STAR_runtime_state_STAR_5 = oops.state._STAR_runtime_state_STAR_;
   oops.state._STAR_runtime_state_STAR_ = oops.state.prepare_state.call(null, target_obj_7, new Error, function() {
-    arguments[0].apply(console, Array.prototype.slice.call(arguments,
-      1))
+    arguments[0].apply(console,
+      Array.prototype.slice.call(arguments, 1))
   });
   try {
     var captured_runtime_state_2 = oops.state._STAR_runtime_state_STAR_;
