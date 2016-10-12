@@ -8,14 +8,14 @@
   :scm {:name "git"
         :url  "https://github.com/binaryage/cljs-oops"}
 
-  :dependencies [[org.clojure/clojure "1.9.0-alpha12" :scope "provided"]
+  :dependencies [[org.clojure/clojure "1.9.0-alpha13" :scope "provided"]
                  [org.clojure/clojurescript "1.9.229" :scope "provided"]
-                 [funcool/cuerdas "1.0.1"]
+                 [funcool/cuerdas "1.0.2"]
                  [environ "1.1.0"]
 
-                 [binaryage/devtools "0.8.1" :scope "test"]
-                 [binaryage/dirac "0.6.6" :scope "test"]
-                 [figwheel "0.5.7" :scope "test"]
+                 [binaryage/devtools "0.8.2" :scope "test"]
+                 [binaryage/dirac "0.7.1" :scope "test"]
+                 [figwheel "0.5.8" :scope "test"]
                  [org.clojure/tools.logging "0.3.1" :scope "test"]
                  [clj-logging-config "1.9.12" :scope "test"]
                  [clansi "1.0.0" :scope "test"]]
@@ -25,7 +25,7 @@
 
   :plugins [[lein-cljsbuild "1.1.4"]
             [lein-shell "0.5.0"]
-            [lein-figwheel "0.5.7"]]
+            [lein-figwheel "0.5.8"]]
 
   ; this is just for IntelliJ + Cursive to play well
   :source-paths ["src"]
@@ -54,7 +54,7 @@
 
              :clojure18
              {:dependencies [[org.clojure/clojure "1.8.0" :scope "provided"]
-                             [clojure-future-spec "1.9.0-alpha11" :scope "provided"]]}
+                             [clojure-future-spec "1.9.0-alpha13" :scope "provided"]]}
 
              :cooper
              {:plugins [[lein-cooper "1.2.2"]]}
