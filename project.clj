@@ -28,7 +28,7 @@
             [lein-figwheel "0.5.8"]]
 
   ; this is just for IntelliJ + Cursive to play well
-  :source-paths ["src"]
+  :source-paths ["src/lib"]
   :test-paths ["test/src"]
   :resource-paths ["test/resources"
                    "scripts"]
