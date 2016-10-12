@@ -296,6 +296,24 @@
       (is (= @counter 3))
       (ocall! sample-obj "add*-fn" 1 2 3 4)
       (is (= @counter 13))))
+  (testing "ocall should retarget this"
+    (let [who? (fn []
+                 (this-as this
+                   (aget this "whoami")))
+          obj #js {"whoami" "ROOT!"
+                   "f"      who?
+                   "a"      #js {"whoami" "A!"
+                                 "f"      who?}
+                   "b"      #js {"a" #js {"whoami" "BA!"
+                                          "f"      who?}}}]
+      ; static case
+      (is (= (ocall obj "f") "ROOT!"))
+      (is (= (ocall obj "a.f") "A!"))
+      (is (= (ocall obj "b.a.f") "BA!"))
+      ; dynamic case
+      (is (= (ocall obj (identity "f")) "ROOT!"))
+      (is (= (ocall obj (identity "a.f")) "A!"))
+      (is (= (ocall obj (identity "b.a.f")) "BA!"))))
   (testing "test errors when ocalling non-functions"
     (when-not-advanced-mode
       (presume-compiler-config {:runtime-expected-function-value :error})
@@ -344,6 +362,24 @@
       (is (= @counter 3))
       (oapply! sample-obj "add*-fn" (range 5))
       (is (= @counter 13))))
+  (testing "oapply should retarget this"
+    (let [who? (fn []
+                 (this-as this
+                   (aget this "whoami")))
+          obj #js {"whoami" "ROOT!"
+                   "f"      who?
+                   "a"      #js {"whoami" "A!"
+                                 "f"      who?}
+                   "b"      #js {"a" #js {"whoami" "BA!"
+                                          "f"      who?}}}]
+      ; static case
+      (is (= (oapply obj "f" []) "ROOT!"))
+      (is (= (oapply obj "a.f" []) "A!"))
+      (is (= (oapply obj "b.a.f" []) "BA!"))
+      ; dynamic case
+      (is (= (oapply obj (identity "f") []) "ROOT!"))
+      (is (= (oapply obj (identity "a.f") []) "A!"))
+      (is (= (oapply obj (identity "b.a.f") []) "BA!"))))
   (testing "test errors when oapplying to non-functions"
     (when-not-advanced-mode
       (presume-compiler-config {:runtime-expected-function-value :error})

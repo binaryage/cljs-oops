@@ -57,5 +57,8 @@
 (defn get-selector-dynamically [obj selector]
   (runtime/get-selector-dynamically obj selector))
 
+(defn get2-selector-dynamically [obj selector]
+  (runtime/get2-selector-dynamically obj selector))
+
 (defn set-selector-dynamically [obj selector val]
   (runtime/set-selector-dynamically obj selector val))

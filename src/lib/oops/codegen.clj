@@ -101,6 +101,17 @@
                                       ~next-obj-sym)]
                ~(gen-static-path-get ensured-obj-sym (rest path))))))))
 
+(defn gen-static-path-get2 [obj-sym path]
+  (if (< (count path) 2)
+    `(cljs.core/array ~obj-sym ~(gen-static-path-get obj-sym path))
+    (let [last-obj-path [(last path)]
+          target-obj-path (butlast path)
+          target-obj-sym (gensym "target-obj")
+          target-obj-get-code (gen-static-path-get obj-sym target-obj-path)
+          last-obj-get-code (gen-static-path-get target-obj-sym last-obj-path)]
+      `(let [~target-obj-sym ~target-obj-get-code]
+         (cljs.core/array ~target-obj-sym ~last-obj-get-code)))))
+
 (defn gen-dynamic-path-get [initial-obj-sym path]
   (debug-assert (symbol? initial-obj-sym))
   (let [path-sym (gensym "path")
@@ -128,12 +139,34 @@
                                (recur ~next-i (oops.core/punch-key-dynamically! ~obj-sym ~key-sym)))))
            ~obj-sym)))))
 
+(defn gen-dynamic-path-get2 [obj-sym path]
+  ; this should mimic gen-static-path-get2
+  ; note that dynamic paths are flat arrays of [modifier, key] values
+  (let [path-sym (gensym "path")
+        len-sym (gensym "len")
+        target-obj-sym (gensym "target-obj")
+        target-obj-path-code `(.slice ~path-sym 0 (- ~len-sym 2))
+        last-obj-path-code `(cljs.core/array (aget ~path-sym (- ~len-sym 2)) (aget ~path-sym (- ~len-sym 1)))]                ; not sure if .slice would be faster here
+    `(let [~path-sym ~path
+           ~len-sym (cljs.core/alength ~path-sym)]
+       (if (< ~len-sym 4)
+         (cljs.core/array ~obj-sym ~(gen-dynamic-path-get obj-sym path-sym))
+         (let [~target-obj-sym ~(gen-dynamic-path-get obj-sym target-obj-path-code)]
+           (cljs.core/array ~target-obj-sym ~(gen-dynamic-path-get target-obj-sym last-obj-path-code)))))))
+
 (defn gen-dynamic-selector-get [obj selector-list]
   (report-dynamic-selector-usage-if-needed! selector-list)
   (debug-assert (pos? (count selector-list)) "empty selector list should take static path")
   (case (count selector-list)
     1 `(oops.core/get-selector-dynamically ~obj ~(first selector-list))                                                       ; we want to unwrap selector wrapped in oget (in this case)
     `(oops.core/get-selector-dynamically ~obj ~(gen-selector-list selector-list))))
+
+(defn gen-dynamic-selector-get2 [obj selector-list]
+  (report-dynamic-selector-usage-if-needed! selector-list)
+  (debug-assert (pos? (count selector-list)) "empty selector list should take static path")
+  (case (count selector-list)
+    1 `(oops.core/get2-selector-dynamically ~obj ~(first selector-list))                                                      ; we want to unwrap selector wrapped in oget (in this case)
+    `(oops.core/get2-selector-dynamically ~obj ~(gen-selector-list selector-list))))
 
 (defn gen-dynamic-selector-validation [selector-sym]
   (debug-assert (symbol? selector-sym))
@@ -286,6 +319,12 @@
     (gen-static-path-get obj-sym (schema/check-static-path! path :get selector-list))
     (gen-dynamic-selector-get obj-sym selector-list)))
 
+(defn gen-oget2-impl [obj-sym selector-list]
+  (debug-assert (symbol? obj-sym))
+  (if-let [path (schema/selector->path selector-list)]
+    (gen-static-path-get2 obj-sym (schema/check-static-path! path :get selector-list))
+    (gen-dynamic-selector-get2 obj-sym selector-list)))
+
 (defn gen-oset-impl [obj-sym selector-list val]
   (debug-assert (symbol? obj-sym))
   (let [path (schema/selector->path selector-list)]
@@ -298,17 +337,21 @@
 (defn gen-ocall-impl [obj-sym selector-list args]
   (debug-assert (symbol? obj-sym))
   (let [fn-sym (gensym "fn")
+        call-info-sym (gensym "call-info")
         action `(if-not (nil? ~fn-sym)
-                  (.call ~fn-sym ~obj-sym ~@args))]
-    `(let [~fn-sym ~(gen-oget-impl obj-sym selector-list)]
+                  (.call ~fn-sym (aget ~call-info-sym 0) ~@args))]
+    `(let [~call-info-sym ~(gen-oget2-impl obj-sym selector-list)
+           ~fn-sym (aget ~call-info-sym 1)]
        ~(gen-dynamic-fn-call-validation-wrapper fn-sym action))))
 
 (defn gen-oapply-impl [obj-sym selector-list args]
   (debug-assert (symbol? obj-sym))
   (let [fn-sym (gensym "fn")
+        call-info-sym (gensym "call-info")
         action `(if-not (nil? ~fn-sym)
-                  (.apply ~fn-sym ~obj-sym (oops.helpers/to-native-array ~args)))]
-    `(let [~fn-sym ~(gen-oget-impl obj-sym selector-list)]
+                  (.apply ~fn-sym (aget ~call-info-sym 0) (oops.helpers/to-native-array ~args)))]
+    `(let [~call-info-sym ~(gen-oget2-impl obj-sym selector-list)
+           ~fn-sym (aget ~call-info-sym 1)]
        ~(gen-dynamic-fn-call-validation-wrapper fn-sym action))))
 
 ; -- shared macro bodies ----------------------------------------------------------------------------------------------------
