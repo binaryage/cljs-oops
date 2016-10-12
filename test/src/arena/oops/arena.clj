@@ -12,6 +12,8 @@
     (make-build-variants "oget_dynamic.cljs")
     (make-build-variants "ocall_static.cljs")
     (make-build-variants "ocall_dynamic.cljs")
+    (make-build-variants "oapply_static.cljs")
+    (make-build-variants "oapply_dynamic.cljs")
     [(make-build "oget_dev.cljs" "" {} {:optimizations :whitespace})
      (make-build "oset_dev.cljs" "" {} {:optimizations :whitespace})
      (make-build "ocall_dev.cljs" "" {} {:optimizations :whitespace})
