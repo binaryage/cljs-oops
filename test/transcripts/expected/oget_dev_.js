@@ -97,8 +97,7 @@ var result_2 = function() {
   try {
     var captured_runtime_state_1 = oops.state._STAR_runtime_state_STAR_;
     var result_3 = function() {
-      var next_obj_10 = oops.core.validate_object_access_dynamically.call(null,
-        target_obj_6, 0, "k1", true) ? target_obj_6["k1"] : null;
+      var next_obj_10 = oops.core.validate_object_access_dynamically.call(null, target_obj_6, 0, "k1", true) ? target_obj_6["k1"] : null;
       var next_obj_11 = oops.core.validate_object_access_dynamically.call(null, next_obj_10, 1, "k2", true) ? next_obj_10["k2"] : null;
       if (!(next_obj_11 == null)) {
         var next_obj_12 = oops.core.validate_object_access_dynamically.call(null, next_obj_11, 0, "k3", true) ? next_obj_11["k3"] : null;
@@ -117,8 +116,7 @@ var result_2 = function() {
   });
   try {
     var captured_runtime_state_2 = oops.state._STAR_runtime_state_STAR_;
-    var result_4 = oops.core.get_selector_dynamically.call(null,
-      target_obj_7, cljs.core.identity.call(null, "k1.?k2.k3"));
+    var result_4 = oops.core.get_selector_dynamically.call(null, target_obj_7, cljs.core.identity.call(null, "k1.?k2.k3"));
     if (captured_runtime_state_2 === oops.state._STAR_runtime_state_STAR_);
     else throw new Error("Assert failed: (clojure.core/identical? captured-runtime-state-51 oops.state/*runtime-state*)");
     return result_4
@@ -142,8 +140,7 @@ var target_obj_8 = function() {
     var next_obj_13 = oops.core.validate_object_access_dynamically.call(null, target_obj_9, 0, "k1", true) ? target_obj_9["k1"] : null;
     return next_obj_13
   } finally {
-    oops.state._STAR_runtime_state_STAR_ =
-      _STAR_runtime_state_STAR_6
+    oops.state._STAR_runtime_state_STAR_ = _STAR_runtime_state_STAR_6
   }
 }();
 var _STAR_runtime_state_STAR_7 = oops.state._STAR_runtime_state_STAR_;
@@ -173,8 +170,7 @@ var target_obj_10 = function() {
     var next_obj_16 = oops.core.validate_object_access_dynamically.call(null, target_obj_11, 0, "k1", true) ? target_obj_11["k1"] : null;
     return next_obj_16
   } finally {
-    oops.state._STAR_runtime_state_STAR_ =
-      _STAR_runtime_state_STAR_8
+    oops.state._STAR_runtime_state_STAR_ = _STAR_runtime_state_STAR_8
   }
 }();
 var _STAR_runtime_state_STAR_9 = oops.state._STAR_runtime_state_STAR_;
@@ -189,8 +185,7 @@ try {
       arguments[0].apply(console, Array.prototype.slice.call(arguments, 1))
     });
     try {
-      var next_obj_17 = oops.core.validate_object_access_dynamically.call(null, target_obj_12, 0, "k2", true) ? target_obj_12["k2"] :
-        null;
+      var next_obj_17 = oops.core.validate_object_access_dynamically.call(null, target_obj_12, 0, "k2", true) ? target_obj_12["k2"] : null;
       var next_obj_18 = oops.core.validate_object_access_dynamically.call(null, next_obj_17, 0, "k3", true) ? next_obj_17["k3"] : null;
       return next_obj_18
     } finally {
