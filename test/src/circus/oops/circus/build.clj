@@ -82,7 +82,30 @@
 (defn read-build-output [build]
   (let [output-path (get-in build [:options :output-to])]
     (try
-      (slurp output-path)
+      ; for some reason cljs compilations do not provide stable output - depends on tests order/filtering
+      ;
+      ; my post to #cljs-dev:
+      ;   just wondering if there is some other state outside cljs.env to be addressed to get reproducible builds,
+      ;   I have some tests checking cljs compiler output in different compilation modes:
+      ;     https://github.com/binaryage/cljs-oops/tree/master/test/transcripts/expected
+      ;   it works pretty well, the problem is when I decide to change order of the tests or filter some out,
+      ;   I get slightly different results, the generated code is still correct, but js-beautify will format/insert
+      ;   linebreaks to some other places for some reason
+      ;
+      ;   I just ran directory diff for two builds which happen to be different, and it looks that `gensym` and similar do not
+      ;   reset when calling new `compiler/build`, this is probably causing flakiness of my tests, because build depends on
+      ;   state of the system left from previous builds
+      ; ---
+      ;
+      ;   ah, nevermind, found the problem, because `gensym` and similar are not reset for each new build, we may end up with
+      ;   generated identifiers of different length, e.g. my-sym10 vs. my-sym12345, and this affects linebreaks of cljs
+      ;   output, the solution for me was to remove all linebreaks to normalize the output before processing it further
+      ;   that alone is not enough to get stable output, I also have to “reindex” all auto-gen and gensym’d symbols with
+      ;   stable indexing, but that I had to do anyways
+      ;
+      ; so here I canoninze file by removing all linebreaks and let js-beautify do its job later
+      (let [raw-output (slurp output-path)]
+        (string/replace raw-output #"\n" " "))
       (catch Exception e
         (str "Error reading output: " (.getMessage e))))))
 
