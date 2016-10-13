@@ -10,6 +10,8 @@
   (concat
     (make-build-variants "oget_static.cljs")
     (make-build-variants "oget_dynamic.cljs")
+    (make-build-variants "oset_static.cljs")
+    (make-build-variants "oset_dynamic.cljs")
     (make-build-variants "ocall_static.cljs")
     (make-build-variants "ocall_dynamic.cljs")
     (make-build-variants "oapply_static.cljs")
