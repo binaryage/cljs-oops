@@ -22,13 +22,13 @@ oops.state._STAR_runtime_state_STAR_ = oops.state.prepare_state.call(null, targe
 });
 try {
   var call_info_1 = [target_obj_1, function() {
-    var next_obj_1 = oops.core.validate_object_access_dynamically.call(null, target_obj_1, 0, "method", true) ? goog.object.get(target_obj_1, "method") : null;
+    var next_obj_1 = oops.core.validate_object_access_dynamically.call(null, target_obj_1, 0, "method", true) ? target_obj_1["method"] : null;
     return next_obj_1
   }()];
   var fn_1 = call_info_1[1];
   if (oops.core.validate_fn_call_dynamically.call(null, fn_1, oops.state.get_last_access_modifier.call(null)))
-    if (!(fn_1 == null)) fn_1.call(call_info_1[0],
-      "p1", "p2");
+    if (!(fn_1 == null)) fn_1.call(call_info_1[0], "p1",
+      "p2");
     else;
   else;
 } finally {
@@ -68,13 +68,13 @@ oops.state._STAR_runtime_state_STAR_ = oops.state.prepare_state.call(null, targe
 });
 try {
   var call_info_3 = [target_obj_3, function() {
-    var next_obj_2 = oops.core.validate_object_access_dynamically.call(null, target_obj_3, 0, "method", true) ? goog.object.get(target_obj_3, "method") : null;
+    var next_obj_2 = oops.core.validate_object_access_dynamically.call(null, target_obj_3, 0, "method", true) ? target_obj_3["method"] : null;
     return next_obj_2
   }()];
   var fn_3 = call_info_3[1];
   if (oops.core.validate_fn_call_dynamically.call(null, fn_3, oops.state.get_last_access_modifier.call(null)))
-    if (!(fn_3 == null)) fn_3.call(call_info_3[0],
-      "p1", "p2");
+    if (!(fn_3 == null)) fn_3.call(call_info_3[0], "p1",
+      "p2");
     else;
   else;
 } finally {
@@ -91,7 +91,7 @@ try {
 var result_1 = function() {
   var target_obj_4 = window;
   var call_info_4 = [target_obj_4, function() {
-    var next_obj_3 = goog.object.get(target_obj_4, "method");
+    var next_obj_3 = target_obj_4["method"];
     return next_obj_3
   }()];
   var fn_4 = call_info_4[1];
@@ -123,7 +123,7 @@ var result_2 = function() {
     var result_3 = function() {
       var call_info_6 = [target_obj_6,
         function() {
-          var next_obj_4 = oops.core.validate_object_access_dynamically.call(null, target_obj_6, 0, "method", true) ? goog.object.get(target_obj_6, "method") : null;
+          var next_obj_4 = oops.core.validate_object_access_dynamically.call(null, target_obj_6, 0, "method", true) ? target_obj_6["method"] : null;
           return next_obj_4
         }()
       ];
@@ -133,8 +133,7 @@ var result_2 = function() {
         else return null;
       else return null
     }();
-    if (captured_runtime_state_1 ===
-      oops.state._STAR_runtime_state_STAR_);
+    if (captured_runtime_state_1 === oops.state._STAR_runtime_state_STAR_);
     else throw new Error("Assert failed: (clojure.core/identical? captured-runtime-state-45 oops.state/*runtime-state*)");
   } finally {
     oops.state._STAR_runtime_state_STAR_ = _STAR_runtime_state_STAR_4
@@ -142,11 +141,11 @@ var result_2 = function() {
   var target_obj_7 = window;
   var _STAR_runtime_state_STAR_5 = oops.state._STAR_runtime_state_STAR_;
   oops.state._STAR_runtime_state_STAR_ = oops.state.prepare_state.call(null, target_obj_7, new Error, function() {
-    arguments[0].apply(console, Array.prototype.slice.call(arguments,
-      1))
+    arguments[0].apply(console, Array.prototype.slice.call(arguments, 1))
   });
   try {
-    var captured_runtime_state_2 = oops.state._STAR_runtime_state_STAR_;
+    var captured_runtime_state_2 =
+      oops.state._STAR_runtime_state_STAR_;
     var result_4 = function() {
       var call_info_7 = oops.core.get_selector_call_info_dynamically.call(null, target_obj_7, cljs.core.identity.call(null, "method"));
       var fn_7 = call_info_7[1];
@@ -155,8 +154,7 @@ var result_2 = function() {
         else return null;
       else return null
     }();
-    if (captured_runtime_state_2 ===
-      oops.state._STAR_runtime_state_STAR_);
+    if (captured_runtime_state_2 === oops.state._STAR_runtime_state_STAR_);
     else throw new Error("Assert failed: (clojure.core/identical? captured-runtime-state-54 oops.state/*runtime-state*)");
     return result_4
   } finally {
@@ -177,17 +175,17 @@ oops.state._STAR_runtime_state_STAR_ = oops.state.prepare_state.call(null, targe
 try {
   var call_info_8 = function() {
     var target_obj_9 = function() {
-      var next_obj_5 = oops.core.validate_object_access_dynamically.call(null, target_obj_8, 0, "m1", true) ? goog.object.get(target_obj_8, "m1") : null;
+      var next_obj_5 = oops.core.validate_object_access_dynamically.call(null, target_obj_8, 0, "m1", true) ? target_obj_8["m1"] : null;
       return next_obj_5
     }();
     return [target_obj_9, function() {
-      var next_obj_6 = oops.core.validate_object_access_dynamically.call(null, target_obj_9, 0, "m2", true) ? goog.object.get(target_obj_9, "m2") : null;
+      var next_obj_6 = oops.core.validate_object_access_dynamically.call(null, target_obj_9, 0, "m2", true) ? target_obj_9["m2"] : null;
       return next_obj_6
     }()]
   }();
-  var fn_8 =
-    call_info_8[1];
-  if (oops.core.validate_fn_call_dynamically.call(null, fn_8, oops.state.get_last_access_modifier.call(null)))
+  var fn_8 = call_info_8[1];
+  if (oops.core.validate_fn_call_dynamically.call(null,
+      fn_8, oops.state.get_last_access_modifier.call(null)))
     if (!(fn_8 == null)) fn_8.call(call_info_8[0], "p1", "p2");
     else;
   else;
