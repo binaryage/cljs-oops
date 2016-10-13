@@ -21,7 +21,7 @@
         (clansi/style (str "! " (.getMessage e)) :red)))))
 
 (defn js-beautify-version []
-  (let [options-args ["--version" "--wrap-line-length" "10000"]]                                                              ; default wrap-line-length=0 behaves randomly
+  (let [options-args ["--version"]]
     (try
       (let [result (apply shell/sh "js-beautify" options-args)]
         (if-not (empty? (:err result))
