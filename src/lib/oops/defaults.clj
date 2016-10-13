@@ -7,8 +7,8 @@
 (def config                                                                                                                   ; falsy below means 'nil' or 'false'
   {; -- compiler config -----------------------------------------------------------------------------------------------------
    :diagnostics                                true                                                                           ; #{true falsy}
-   :key-get                                    :goog                                                                          ; #{:core :goog}
-   :key-set                                    :goog                                                                          ; #{:core :goog}
+   :key-get                                    :core                                                                          ; #{:core :goog}
+   :key-set                                    :core                                                                          ; #{:core :goog}
    :strict-punching                            true                                                                           ; #{true falsy}
    :skip-config-validation                     false                                                                          ; #{true falsy}
    :macroexpand-selectors                      true                                                                           ; #{true falsy}
