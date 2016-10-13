@@ -16,7 +16,7 @@
 //     (oapply+ #js {"f" (fn [] 42)} (identity "f") ["p1" "p2"]))
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-var $call_info_9$$ = $oops$core$get2_selector_dynamically$$({
+var $call_info_9$$ = $oops$core$get_selector_call_info_dynamically$$({
     f: function() {
       return 42
     }
@@ -29,7 +29,7 @@ null != $fn_10$$ && $fn_10$$.apply($call_info_9$$[0], $oops$helpers$to_native_ar
 //     (oapply+ #js {"a" #js {"f" (fn [] 42)}} (identity "a.f") ["p1" "p2"]))
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-var $call_info_11$$ = $oops$core$get2_selector_dynamically$$({
+var $call_info_11$$ = $oops$core$get_selector_call_info_dynamically$$({
     a: {
       f: function() {
         return 42

@@ -101,7 +101,7 @@
                                       ~next-obj-sym)]
                ~(gen-static-path-get ensured-obj-sym (rest path))))))))
 
-(defn gen-static-path-get2 [obj-sym path]
+(defn gen-static-path-call-info [obj-sym path]
   (if (< (count path) 2)
     `(cljs.core/array ~obj-sym ~(gen-static-path-get obj-sym path))
     (let [last-obj-path [(last path)]
@@ -139,8 +139,8 @@
                                (recur ~next-i (oops.core/punch-key-dynamically! ~obj-sym ~key-sym)))))
            ~obj-sym)))))
 
-(defn gen-dynamic-path-get2 [obj-sym path]
-  ; this should mimic gen-static-path-get2
+(defn gen-dynamic-path-call-info [obj-sym path]
+  ; this should mimic gen-static-path-call-info
   ; note that dynamic paths are flat arrays of [modifier, key] values
   (let [path-sym (gensym "path")
         len-sym (gensym "len")
@@ -165,8 +165,8 @@
 (defn gen-dynamic-selector-get [obj selector-list]
   (gen-dynamic-selector-get* obj selector-list 'oops.core/get-selector-dynamically))
 
-(defn gen-dynamic-selector-get2 [obj selector-list]
-  (gen-dynamic-selector-get* obj selector-list 'oops.core/get2-selector-dynamically))
+(defn gen-dynamic-selector-call-info [obj selector-list]
+  (gen-dynamic-selector-get* obj selector-list 'oops.core/get-selector-call-info-dynamically))
 
 (defn gen-dynamic-selector-validation [selector-sym]
   (debug-assert (symbol? selector-sym))
@@ -319,11 +319,11 @@
     (gen-static-path-get obj-sym (schema/check-static-path! path :get selector-list))
     (gen-dynamic-selector-get obj-sym selector-list)))
 
-(defn gen-oget2-impl [obj-sym selector-list]
+(defn gen-get-call-info-impl [obj-sym selector-list]
   (debug-assert (symbol? obj-sym))
   (if-let [path (schema/selector->path selector-list)]
-    (gen-static-path-get2 obj-sym (schema/check-static-path! path :get selector-list))
-    (gen-dynamic-selector-get2 obj-sym selector-list)))
+    (gen-static-path-call-info obj-sym (schema/check-static-path! path :get selector-list))
+    (gen-dynamic-selector-call-info obj-sym selector-list)))
 
 (defn gen-oset-impl [obj-sym selector-list val]
   (debug-assert (symbol? obj-sym))
@@ -336,7 +336,7 @@
 
 (defn gen-callable [obj-sym selector-list fn-sym call-info-sym action]
   (debug-assert (symbol? obj-sym))
-  `(let [~call-info-sym ~(gen-oget2-impl obj-sym selector-list)
+  `(let [~call-info-sym ~(gen-get-call-info-impl obj-sym selector-list)
          ~fn-sym (aget ~call-info-sym 1)]
      ~(gen-dynamic-fn-call-validation-wrapper fn-sym action)))
 

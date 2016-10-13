@@ -46,7 +46,7 @@ oops.state._STAR_runtime_state_STAR_ = oops.state.prepare_state.call(null, targe
   arguments[0].apply(console, Array.prototype.slice.call(arguments, 1))
 });
 try {
-  var call_info_2 = oops.core.get2_selector_dynamically.call(null, target_obj_2, cljs.core.identity.call(null, "method"));
+  var call_info_2 = oops.core.get_selector_call_info_dynamically.call(null, target_obj_2, cljs.core.identity.call(null, "method"));
   var fn_2 = call_info_2[1];
   if (oops.core.validate_fn_call_dynamically.call(null, fn_2, oops.state.get_last_access_modifier.call(null)))
     if (!(fn_2 == null)) fn_2.call(call_info_2[0], "p1", "p2");
@@ -98,7 +98,7 @@ var result_1 = function() {
   if (!(fn_4 == null)) fn_4.call(call_info_4[0], "p1", "p2");
   else;
   var target_obj_5 = window;
-  var call_info_5 = oops.core.get2_selector_dynamically.call(null, target_obj_5, cljs.core.identity.call(null,
+  var call_info_5 = oops.core.get_selector_call_info_dynamically.call(null, target_obj_5, cljs.core.identity.call(null,
     "method"));
   var fn_5 = call_info_5[1];
   if (!(fn_5 == null)) return fn_5.call(call_info_5[0], "p1", "p2");
@@ -148,7 +148,7 @@ var result_2 = function() {
   try {
     var captured_runtime_state_2 = oops.state._STAR_runtime_state_STAR_;
     var result_4 = function() {
-      var call_info_7 = oops.core.get2_selector_dynamically.call(null, target_obj_7, cljs.core.identity.call(null, "method"));
+      var call_info_7 = oops.core.get_selector_call_info_dynamically.call(null, target_obj_7, cljs.core.identity.call(null, "method"));
       var fn_7 = call_info_7[1];
       if (oops.core.validate_fn_call_dynamically.call(null, fn_7, oops.state.get_last_access_modifier.call(null)))
         if (!(fn_7 == null)) return fn_7.call(call_info_7[0], "p1", "p2");
@@ -206,7 +206,7 @@ oops.state._STAR_runtime_state_STAR_ = oops.state.prepare_state.call(null, targe
   arguments[0].apply(console, Array.prototype.slice.call(arguments, 1))
 });
 try {
-  var call_info_9 = oops.core.get2_selector_dynamically.call(null, target_obj_10, cljs.core.identity.call(null, "m1.m2"));
+  var call_info_9 = oops.core.get_selector_call_info_dynamically.call(null, target_obj_10, cljs.core.identity.call(null, "m1.m2"));
   var fn_9 = call_info_9[1];
   if (oops.core.validate_fn_call_dynamically.call(null, fn_9, oops.state.get_last_access_modifier.call(null)))
     if (!(fn_9 == null)) fn_9.call(call_info_9[0], "p1", "p2");

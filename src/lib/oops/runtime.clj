@@ -94,11 +94,11 @@
   (let [path-code (gen-checked-build-path selector-sym (gen-op-get))]
     (gen-dynamic-selector-validation-wrapper selector-sym (gen-dynamic-path-get obj-sym path-code))))
 
-(defmacro get2-selector-dynamically [obj-sym selector-sym]
+(defmacro get-selector-call-info-dynamically [obj-sym selector-sym]
   (debug-assert (symbol? obj-sym))
   (debug-assert (symbol? selector-sym))
   (let [path-code (gen-checked-build-path selector-sym (gen-op-get))]
-    (gen-dynamic-selector-validation-wrapper selector-sym (gen-dynamic-path-get2 obj-sym path-code))))
+    (gen-dynamic-selector-validation-wrapper selector-sym (gen-dynamic-path-call-info obj-sym path-code))))
 
 (defmacro set-selector-dynamically [obj-sym selector-sym val-sym]
   (debug-assert (symbol? obj-sym))
