@@ -30,8 +30,8 @@
   ; this is just for IntelliJ + Cursive to play well
   :source-paths ["src/lib"]
   :test-paths ["test/src"]
-  :resource-paths ["test/resources"
-                   "scripts"]
+  :resource-paths ^:replace ["test/resources"
+                             "scripts"]
 
   :cljsbuild {:builds {}}                                                                                                     ; prevent https://github.com/emezeske/lein-cljsbuild/issues/413
 
