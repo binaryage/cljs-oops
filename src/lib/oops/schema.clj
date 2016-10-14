@@ -11,14 +11,14 @@
 
 ; --- path utils ------------------------------------------------------------------------------------------------------------
 
-(defn unescape-specials [s]
+(defn unescape-modifiers [s]
   (string/replace s #"^\\([?!])" "$1"))
 
 (defn parse-selector-element [element-str]
   (case (first element-str)
     \? [soft-access (.substring element-str 1)]
     \! [punch-access (.substring element-str 1)]
-    [dot-access (unescape-specials element-str)]))
+    [dot-access (unescape-modifiers element-str)]))
 
 (defn unescape-dots [s]
   (string/replace s #"\\\." "."))
@@ -53,27 +53,27 @@
 (defn coerce-nested-selectors [destured-selector]
   (postwalk coerce-selector-node destured-selector))
 
-(defn standalone-special? [item]
+(defn standalone-modifier? [item]
   (and (pos? (first item))
        (empty? (second item))))
 
-(defn detect-standalone-special [state item]
-  (if (standalone-special? item)
-    (update state :pending-special #(or % item))                                                                              ; in case of multiple standalone modifiers in a row, the left-most one wins
+(defn detect-standalone-modifier [state item]
+  (if (standalone-modifier? item)
+    (update state :pending-modifier #(or % item))                                                                             ; in case of multiple standalone modifiers in a row, the left-most one wins
     (update state :result conj item)))
 
-(defn merge-standalone-special [special-item following-item]
-  (list (first special-item) (second following-item)))
+(defn merge-standalone-modifier [modifier-item following-item]
+  (list (first modifier-item) (second following-item)))
 
-(defn merge-standalone-specials [items]
+(defn merge-standalone-modifiers [items]
   (let [* (fn [state item]
-            (if-let [pending-special (:pending-special state)]
-              (let [merged-item (merge-standalone-special pending-special item)
-                    state (assoc state :pending-special nil)]
-                (detect-standalone-special state merged-item))
-              (detect-standalone-special state item)))
-        init-state {:result          []
-                    :pending-special nil}
+            (if-let [pending-modifier (:pending-modifier state)]
+              (let [merged-item (merge-standalone-modifier pending-modifier item)
+                    state (assoc state :pending-modifier nil)]
+                (detect-standalone-modifier state merged-item))
+              (detect-standalone-modifier state item)))
+        init-state {:result           []
+                    :pending-modifier nil}
         processed-items (reduce * init-state items)]
     (:result processed-items)))
 
@@ -85,7 +85,7 @@
                     (coerce-nested-selectors)
                     (flatten)
                     (partition 2)
-                    (merge-standalone-specials)
+                    (merge-standalone-modifiers)
                     (map vec)))]
     (debug-assert (or (nil? path) (s/valid? ::sdefs/obj-path path)))
     path))

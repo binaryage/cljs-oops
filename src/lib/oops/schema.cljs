@@ -14,7 +14,7 @@
 (def re-all-escaped-dots (js/RegExp. "\\\\\\." "g"))
 (def re-all-escaped-dot-markers (js/RegExp. "####ESCAPED-DOT####" "g"))
 
-(defn unescape-specials [s]
+(defn unescape-modifiers [s]
   (.replace s #"^\\([?!])" "$1"))
 
 (defn parse-selector-element! [element-str arr]
@@ -28,7 +28,7 @@
             (.push arr (.substring element-str 1)))
       (do
         (.push arr (get-dot-access))
-        (.push arr (unescape-specials element-str))))))
+        (.push arr (unescape-modifiers element-str))))))
 
 (defn unescape-dots [s]
   (.replace s re-all-escaped-dot-markers "."))
@@ -53,28 +53,28 @@
           (coerce-key-dynamically! item arr))
         (recur (next items))))))
 
-(defn standalone-special? [arr i]
+(defn standalone-modifier? [arr i]
   (and (pos? (aget arr i))
        (= "" (aget arr (inc i)))))
 
-(defn merge-standalone-special! [arr i]
+(defn merge-standalone-modifier! [arr i]
   (aset arr (+ i 2) (aget arr i))                                                                                             ; transfer modifier
   (.splice arr i 2))                                                                                                          ; remove standalone item
 
-(defn merge-standalone-specials! [arr]
+(defn merge-standalone-modifiers! [arr]
   (let [len (alength arr)]
     (loop [i (- len 2)]                                                                                                       ; -2 because it makes no sense to potentially merge last item
       (let [finger (- i 2)]
         (if (neg? finger)
           arr
           (do
-            (if (standalone-special? arr finger)
-              (merge-standalone-special! arr finger))
+            (if (standalone-modifier? arr finger)
+              (merge-standalone-modifier! arr finger))
             (recur finger)))))))
 
 (defn prepare-path! [selector arr]
   (collect-coerced-keys-into-array! selector arr)
-  (merge-standalone-specials! arr))
+  (merge-standalone-modifiers! arr))
 
 (defn prepare-simple-path! [key arr]
   (coerce-key-dynamically! key arr))

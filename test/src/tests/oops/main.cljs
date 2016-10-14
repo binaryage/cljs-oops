@@ -171,7 +171,7 @@
           "prop\\.1.k3\\..some" "val"
           "\\.\\..\\.x\\." "."
           "\\.\\\\." "x")))
-    (testing "static specials escaping"
+    (testing "static modifiers escaping"
       (let [o #js {"?key"   "v"
                    "nested" #js {"!k2" "v2"}}]
         (are [key expected] (= (oget o key) expected)
@@ -179,7 +179,7 @@
           ["nested" "\\!k2"] "v2"
           "nested.\\!k2" "v2"
           ["nested" ".\\!k2"] "v2")))
-    (testing "dynamic specials escaping"
+    (testing "dynamic modifiers escaping"
       (let [o #js {"?key"   "v"
                    "nested" #js {"!k2" "v2"}}]
         (are [key expected] (= (oget o (identity key)) expected)
