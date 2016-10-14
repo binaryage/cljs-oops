@@ -1,13 +1,14 @@
 (ns oops.compiler
   "Provides utils for interaction with cljs compiler. Beware! HACKS ahead!"
   (:refer-clojure :exclude [macroexpand])
-  (:require [cljs.analyzer]
+  (:require [clojure.walk :refer [prewalk]]
+            [clojure.set :as set]
+            [cljs.analyzer]
             [cljs.closure]
             [cljs.env]
             [oops.state :as state]
             [oops.messages :refer [messages-registered? register-messages]]
-            [oops.debug :refer [debug-assert]]
-            [clojure.set :as set]))
+            [oops.debug :refer [debug-assert]]))
 
 ; -- helpers ----------------------------------------------------------------------------------------------------------------
 
@@ -20,16 +21,17 @@
 ; -- cljs macro expanding ---------------------------------------------------------------------------------------------------
 
 (defn macroexpand* [env form]
-  (if-not (and (seq? form) (seq form))
-    form
-    (let [expanded-form (cljs.analyzer/macroexpand-1 env form)]
-      (if (identical? form expanded-form)
-        expanded-form
-        (macroexpand* env expanded-form)))))
+  (let [expanded-form (cljs.analyzer/macroexpand-1 env form)]
+    (if (identical? form expanded-form)
+      expanded-form
+      (recur env expanded-form))))
+
+(defn macroexpand-all* [env form]
+  (prewalk (fn [x] (if (seq? x) (macroexpand* env x) x)) form))
 
 (defn macroexpand [form]
   (debug-assert oops.state/*invocation-env*)
-  (macroexpand* oops.state/*invocation-env* form))
+  (macroexpand-all* oops.state/*invocation-env* form))
 
 ; -- compiler context -------------------------------------------------------------------------------------------------------
 

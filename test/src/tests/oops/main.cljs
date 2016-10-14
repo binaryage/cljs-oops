@@ -39,6 +39,8 @@
           "non-existent" nil
           "key" "val"
           "@#$%fancy key^&*" "fancy-val"
+          (macro-identity "key") "val"
+          (macro-identity ["nested" (macro-identity (macro-identity "nested-key1"))]) "nk1"
           ["nested" "nested-key2"] 2)))
     (testing "simple dynamic get"
       (with-runtime-config {:missing-object-key false}
@@ -507,6 +509,7 @@
       (let [recorder (atom)]
         (with-stderr-recording recorder
           (oget (js-obj) (macro-identity "?x"))
+          (oget (js-obj) ["?a" (macro-identity (macro-identity "?x"))])
           (oset! (js-obj) (macro-identity "!x") (macro-identity "val"))
           (ocall (js-obj "f" identity) (macro-identity "f") (macro-identity "p"))
           (oapply (js-obj "f" identity) (macro-identity "f") (macro-identity ["p"])))
