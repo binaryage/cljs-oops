@@ -238,8 +238,9 @@
         "!aaa" "aaa"
         ["!" "x"] "x"                                                                                                         ; standalone modifier
         ["!" (macro-identity "y")] "y"                                                                                        ; standalone modifier + macro expansion
+        ["!" ["?" "z"]] "z"                                                                                                   ; ! overrides ?
         ["!z1" "!z2" "!z3"] "z1.z2.z3")
-      (is (= (js/JSON.stringify sample-obj) "{\"nested\":{\"xxx\":\"val\"},\"aaa\":\"val\",\"x\":\"val\",\"y\":\"val\",\"z1\":{\"z2\":{\"z3\":\"val\"}}}"))))
+      (is (= (js/JSON.stringify sample-obj) "{\"nested\":{\"xxx\":\"val\"},\"aaa\":\"val\",\"x\":\"val\",\"y\":\"val\",\"z\":\"val\",\"z1\":{\"z2\":{\"z3\":\"val\"}}}"))))
   (testing "dynamic punching set!"
     (let [sample-obj #js {"nested" #js {}}]
       (are [s1 s2] (= (oget+ (oset!+ sample-obj (identity s1) "val") s2) "val")
@@ -247,8 +248,9 @@
         "!aaa" "aaa"
         ["!" "x"] "x"                                                                                                         ; standalone modifier
         ["!" (macro-identity "y")] "y"                                                                                        ; standalone modifier + macro expansion
+        ["!" ["?" "z"]] "z"                                                                                                   ; ! overrides ?
         ["!z1" "!z2" "!z3"] "z1.z2.z3")
-      (is (= (js/JSON.stringify sample-obj) "{\"nested\":{\"xxx\":\"val\"},\"aaa\":\"val\",\"x\":\"val\",\"y\":\"val\",\"z1\":{\"z2\":{\"z3\":\"val\"}}}"))))
+      (is (= (js/JSON.stringify sample-obj) "{\"nested\":{\"xxx\":\"val\"},\"aaa\":\"val\",\"x\":\"val\",\"y\":\"val\",\"z\":\"val\",\"z1\":{\"z2\":{\"z3\":\"val\"}}}"))))
   (testing "punching set! with custom child-factory"
     (let [sample-obj #js {"nested" #js {}}
           counter (volatile! nil)]
