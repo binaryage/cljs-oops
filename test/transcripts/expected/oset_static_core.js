@@ -26,8 +26,8 @@ var $target_obj_10$$ = window,
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 var $target_obj_11$$ = window,
-  $next_obj_5$$inline_7$$ = $target_obj_11$$.k1;
-(null == $next_obj_5$$inline_7$$ ? $oops$core$punch_key_dynamically_BANG_$$.$cljs$core$IFn$_invoke$arity$4$ ? $oops$core$punch_key_dynamically_BANG_$$.$cljs$core$IFn$_invoke$arity$4$($target_obj_11$$, "k1") : $oops$core$punch_key_dynamically_BANG_$$.call(null, $target_obj_11$$, "k1") : $next_obj_5$$inline_7$$).k2 = "val";
+  $next_obj_6$$inline_7$$ = $target_obj_11$$.k1;
+(null == $next_obj_6$$inline_7$$ ? $oops$core$punch_key_dynamically_BANG_$$.$cljs$core$IFn$_invoke$arity$4$ ? $oops$core$punch_key_dynamically_BANG_$$.$cljs$core$IFn$_invoke$arity$4$($target_obj_11$$, "k1") : $oops$core$punch_key_dynamically_BANG_$$.call(null, $target_obj_11$$, "k1") : $next_obj_6$$inline_7$$).k2 = "val";
 
 // SNIPPET #3:
 //   (testing "static oset! expansion without punching"
