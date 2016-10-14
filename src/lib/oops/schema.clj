@@ -59,7 +59,7 @@
 
 (defn detect-standalone-special [state item]
   (if (standalone-special? item)
-    (assoc state :pending-special item)
+    (update state :pending-special #(or % item))                                                                              ; in case of multiple standalone modifiers in a row, the left-most one wins
     (update state :result conj item)))
 
 (defn merge-standalone-special [special-item following-item]
