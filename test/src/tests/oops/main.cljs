@@ -233,11 +233,13 @@
       (is (= (js/JSON.stringify sample-obj) "{\"nested\":{\"key2\":\"val\"},\"key\":\"val\"}"))))
   (testing "static punching set!"
     (let [sample-obj #js {"nested" #js {}}]
-      (are [s1 s2] (= (oget+ (oset!+ sample-obj s1 "val") s2) "val")
+      (are [s1 s2] (= (oget+ (oset! sample-obj s1 "val") s2) "val")
         ".!nested.!xxx" "nested.xxx"
         "!aaa" "aaa"
+        ["!" "x"] "x"                                                                                                         ; standalone modifier
+        ["!" (macro-identity "y")] "y"                                                                                        ; standalone modifier + macro expansion
         ["!z1" "!z2" "!z3"] "z1.z2.z3")
-      (is (= (js/JSON.stringify sample-obj) "{\"nested\":{\"xxx\":\"val\"},\"aaa\":\"val\",\"z1\":{\"z2\":{\"z3\":\"val\"}}}"))))
+      (is (= (js/JSON.stringify sample-obj) "{\"nested\":{\"xxx\":\"val\"},\"aaa\":\"val\",\"x\":\"val\",\"y\":\"val\",\"z1\":{\"z2\":{\"z3\":\"val\"}}}"))))
   (testing "dynamic punching set!"
     (let [sample-obj #js {"nested" #js {}}]
       (are [s1 s2] (= (oget+ (oset!+ sample-obj (identity s1) "val") s2) "val")

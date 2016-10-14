@@ -53,6 +53,30 @@
 (defn coerce-nested-selectors [destured-selector]
   (postwalk coerce-selector-node destured-selector))
 
+(defn standalone-special? [item]
+  (and (pos? (first item))
+       (empty? (second item))))
+
+(defn detect-standalone-special [state item]
+  (if (standalone-special? item)
+    (assoc state :pending-special item)
+    (update state :result conj item)))
+
+(defn merge-standalone-special [special-item following-item]
+  (list (first special-item) (second following-item)))
+
+(defn merge-standalone-specials [items]
+  (let [* (fn [state item]
+            (if-let [pending-special (:pending-special state)]
+              (let [merged-item (merge-standalone-special pending-special item)
+                    state (assoc state :pending-special nil)]
+                (detect-standalone-special state merged-item))
+              (detect-standalone-special state item)))
+        init-state {:result          []
+                    :pending-special nil}
+        processed-items (reduce * init-state items)]
+    (:result processed-items)))
+
 (defn build-selector-path [destructured-selector]
   {:post [(or (nil? %) (s/valid? ::sdefs/obj-path %))]}
   (let [path (if-not (= destructured-selector ::s/invalid)
@@ -61,6 +85,7 @@
                     (coerce-nested-selectors)
                     (flatten)
                     (partition 2)
+                    (merge-standalone-specials)
                     (map vec)))]
     (debug-assert (or (nil? path) (s/valid? ::sdefs/obj-path path)))
     path))
