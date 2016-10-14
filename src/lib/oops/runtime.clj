@@ -56,11 +56,11 @@
   (debug-assert (symbol? selector-sym))
   (let [atomic-case (let [path-sym (gensym "selector-path")]
                       `(let [~path-sym (cljs.core/array)]
-                         (oops.schema/coerce-key-dynamically! ~selector-sym ~path-sym)
+                         (oops.schema/prepare-simple-path! ~selector-sym ~path-sym)
                          ~path-sym))
         collection-case (let [path-sym (gensym "selector-path")]
                           `(let [~path-sym (cljs.core/array)]
-                             (oops.schema/collect-coerced-keys-into-array! ~selector-sym ~path-sym)
+                             (oops.schema/prepare-path! ~selector-sym ~path-sym)
                              ~path-sym))
         build-path-code `(cond
                            (or (string? ~selector-sym) (keyword? ~selector-sym)) ~atomic-case
