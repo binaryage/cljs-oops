@@ -514,7 +514,9 @@
         (with-stderr-recording recorder
           (oget (js-obj) (macro-identity "?x"))
           (oget (js-obj) ["?a" (macro-identity (macro-identity "?x"))])
+          (oget (js-obj) ["?" "a" "?" (macro-identity (macro-identity "x"))])
           (oset! (js-obj) (macro-identity "!x") (macro-identity "val"))
+          (oset! (js-obj) ["!" (macro-identity "x")] (macro-identity "val"))
           (ocall (js-obj "f" identity) (macro-identity "f") (macro-identity "p"))
           (oapply (js-obj "f" identity) (macro-identity "f") (macro-identity ["p"])))
         (is (empty? @recorder) "expected no warnings about dynamic selectors"))))
