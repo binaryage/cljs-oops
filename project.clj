@@ -43,7 +43,7 @@
              [:nuke-aliases
               {:dependencies   ~(let [project-str (or
                                                     (try (slurp "project.clj") (catch Throwable _ nil))
-                                                    (try (slurp "/Users/darwin/code/cljs-devtools/project.clj") (catch Throwable _ nil)))
+                                                    (try (slurp "/Users/darwin/code/cljs-oops/project.clj") (catch Throwable _ nil)))
                                       project (->> project-str read-string (drop 3) (apply hash-map))
                                       test-dep? #(->> % (drop 2) (apply hash-map) :scope (= "test"))
                                       non-test-deps (remove test-dep? (:dependencies project))]
