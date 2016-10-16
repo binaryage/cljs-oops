@@ -12,6 +12,7 @@
                  [org.clojure/clojurescript "1.9.229" :scope "provided"]
                  [funcool/cuerdas "1.0.2"]
                  [environ "1.1.0"]
+                 [binaryage/env-config "0.1.0"]
 
                  [binaryage/devtools "0.8.2" :scope "test"]
                  [binaryage/dirac "0.7.1" :scope "test"]

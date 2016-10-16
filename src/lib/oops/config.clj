@@ -3,12 +3,15 @@
   (:refer-clojure :exclude [gensym])
   (:require [cljs.env]
             [clojure.spec :as s]
+            [env-config.core :as env-config]
             [oops.state]
             [oops.helpers :as helpers :refer [gensym]]
             [oops.defaults :as defaults]))
 
 ; this is for testing, see with-compiler-config macro below
 (def adhoc-config-overrides (volatile! {}))
+
+(def ^:dynamic env-config-prefix "oops")
 
 ; -- helpers ----------------------------------------------------------------------------------------------------------------
 
@@ -26,8 +29,15 @@
   (if cljs.env/*compiler*
     (get-in @cljs.env/*compiler* [:options :external-config :oops/config])))                                                  ; https://github.com/bhauman/lein-figwheel/commit/80f7306bf5e6bd1330287a6f3cc259ff645d899b
 
+(defn get-env-vars []
+  (-> {}
+      (into (System/getenv))
+      (into (System/getProperties))))
+
 (defn read-env-config []
-  {})                                                                                                                         ; TODO: write a library for this
+  (env-config/make-config-with-logging env-config-prefix (get-env-vars)))
+
+(def memoized-read-env-config (memoize read-env-config))
 
 (def last-printed-config-explanation-str (volatile! nil))
 
@@ -50,9 +60,9 @@
             (print-invalid-config-warning explanation-str (helpers/pprint-code-str config))))))))
 
 (defn ^:dynamic get-compiler-config []
-  (let [config (merge (prepare-default-config)
-                      (read-project-config)
-                      (read-env-config)
+  (let [config (merge (prepare-default-config)                                                                                ; must not be memoized! touches cljs.env/*compiler*
+                      (read-project-config)                                                                                   ; must not be memoized! touches cljs.env/*compiler*
+                      (memoized-read-env-config)
                       (get-adhoc-config-overrides))]
     (validate-config-and-report-problems-if-needed! config)
     config))
