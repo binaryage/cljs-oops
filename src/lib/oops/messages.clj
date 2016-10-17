@@ -30,8 +30,12 @@
 (defmacro gen-oops-message-prefix []
   *oops-message-prefix*)
 
+(def static-macros
+  '#{oget oset! ocall oapply ocall! oapply!
+     gget gset! gcall gapply gcall! gapply!})
+
 (defn static-macro? [command]
-  (contains? #{'oget 'oset! 'ocall 'oapply 'ocall! 'oapply!} command))
+  (contains? static-macros command))
 
 ; -- compile-time error/warning messages (in hooked cljs compiler) ----------------------------------------------------------
 
