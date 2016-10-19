@@ -121,7 +121,7 @@
 ; -- runtime macros ---------------------------------------------------------------------------------------------------------
 
 (defmacro with-runtime-config [config & body]
-  `(binding [*runtime-config* (merge (get-current-runtime-config) ~config)]
+  `(binding [oops.config/*runtime-config* (merge (oops.config/get-current-runtime-config) ~config)]
      ~@body))
 
 (defmacro with-child-factory [factory-fn & body]
@@ -129,7 +129,7 @@
      ~@body))
 
 (defmacro gen-runtime-config [& [config]]
-  (get-runtime-config config))
+  (oops.config/get-runtime-config config))
 
 ; -- icing ------------------------------------------------------------------------------------------------------------------
 
