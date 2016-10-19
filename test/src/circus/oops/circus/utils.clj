@@ -7,7 +7,7 @@
             [clojure.tools.logging :as log]
             [clojure.pprint :refer [pprint]]
             [oops.tools :as tools])
-  (:import (java.util.regex Matcher)))
+  (:import (java.util.regex Matcher Pattern)))
 
 (defn produce-diff [path1 path2]
   (let [options-args ["-U" "5"]
@@ -131,7 +131,7 @@
                   identifier (nth group 1)
                   new-normalizer-state (register-counter-if-needed normalizer-state name identifier)
                   massaged-name (str identifier "$$$" (get-counter-for-name new-normalizer-state name))                       ; $$$ is a marker so we don't conflict with name candidates for future replacement
-                  pattern (re-pattern (str name "([^0-9]?)"))                                                                 ; we want to prevent replacing partial matches, eg. id_1 to mess with id_100
+                  pattern (re-pattern (str (Pattern/quote name) "([^0-9]?)"))                                                 ; we want to prevent replacing partial matches, eg. id_1 to mess with id_100
                   replacement (str (Matcher/quoteReplacement massaged-name) "$1")
                   new-content (string/replace content pattern replacement)]
               [new-content new-normalizer-state]))
