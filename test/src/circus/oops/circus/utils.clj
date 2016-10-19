@@ -123,6 +123,15 @@
               [new-content new-normalizer-state]))]
     (reduce * [content normalizer-state] (re-seq #"\d+_\d+" content))))
 
+(defn normalize-inlines [[content normalizer-state]]
+  "The goal here is to rename all generated <NUM>$$inline_<NUM> identifiers with stable numbering."
+  (let [* (fn [[content normalizer-state] needle]
+            (let [replacement (str (get-counter normalizer-state))
+                  new-normalizer-state (register-mapping-if-needed normalizer-state needle replacement)
+                  new-content (string/replace content needle (get-mapping new-normalizer-state needle))]
+              [new-content new-normalizer-state]))]
+    (reduce * [content normalizer-state] (re-seq #"\d+\$\$inline_\d+" content))))
+
 (defn linearize-numbering [[content normalizer-state]]
   "The goal here is to rename all generated <IDENTIFIER>_<NUM> to linear numbering for each distinct identifier."
   (let [names (distinct (re-seq #"[a-zA-Z0-9_$]+_\d+" content))
@@ -141,6 +150,12 @@
                   new-content (string/replace content (str identifier "$$$") identifier)]
               [new-content normalizer-state]))]
     (reduce + (reduce * [content normalizer-state] names) names)))
+
+(defn drop-multi-dollars [[content normalizer-state]]
+  [(string/replace content #"\$\$+" "") normalizer-state])
+
+(defn drop-leading-dollars [[content normalizer-state]]
+  [(string/replace content #"([^0-9a-zA-Z_])\$" "$1") normalizer-state])
 
 (defn safe-spit [path content]
   (io/make-parents path)
@@ -207,7 +222,10 @@
                                                (normalize-identifiers)
                                                (normalize-gensyms)
                                                (normalize-twins)
-                                               (linearize-numbering))]
+                                               (normalize-inlines)
+                                               (linearize-numbering)
+                                               (drop-multi-dollars)
+                                               (drop-leading-dollars))]
     (log/debug "normalizer state:\n" (pprint-str normalizer-state 10000))
     stabilized-code))
 
