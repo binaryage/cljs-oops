@@ -15,7 +15,7 @@
                  [binaryage/env-config "0.1.0"]
 
                  [binaryage/devtools "0.8.2" :scope "test"]
-                 [binaryage/dirac "0.7.1" :scope "test"]
+                 [binaryage/dirac "0.7.2" :scope "test"]
                  [figwheel "0.5.8" :scope "test"]
                  [org.clojure/tools.logging "0.3.1" :scope "test"]
                  [clj-logging-config "1.9.12" :scope "test"]
