@@ -9,7 +9,7 @@
         :url  "https://github.com/binaryage/cljs-oops"}
 
   :dependencies [[org.clojure/clojure "1.9.0-alpha13" :scope "provided"]
-                 [org.clojure/clojurescript "1.9.229" :scope "provided"]
+                 [org.clojure/clojurescript "1.9.293" :scope "provided"]
                  [funcool/cuerdas "1.0.2"]
                  [environ "1.1.0"]
                  [binaryage/env-config "0.1.0"]
