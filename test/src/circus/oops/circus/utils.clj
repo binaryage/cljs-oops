@@ -157,6 +157,15 @@
 (defn drop-leading-dollars [[content normalizer-state]]
   [(string/replace content #"([^0-9a-zA-Z_])\$" "$1") normalizer-state])
 
+(defn humanize-oops-ns [[content normalizer-state]]
+  [(string/replace content #"oops\$(.*?)\$" "oops.$1.") normalizer-state])
+
+(defn humanize-cljs-core-ns [[content normalizer-state]]
+  [(string/replace content #"cljs\$core\$" "cljs.core.") normalizer-state])
+
+(defn humanize-goog-ns [[content normalizer-state]]
+  [(string/replace content #"goog\$(.*?)\$" "goog.$1.") normalizer-state])
+
 (defn safe-spit [path content]
   (io/make-parents path)
   (spit path content))
@@ -225,7 +234,10 @@
                                                (normalize-inlines)
                                                (linearize-numbering)
                                                (drop-multi-dollars)
-                                               (drop-leading-dollars))]
+                                               (drop-leading-dollars)
+                                               (humanize-oops-ns)
+                                               (humanize-goog-ns)
+                                               (humanize-cljs-core-ns))]
     (log/debug "normalizer state:\n" (pprint-str normalizer-state 10000))
     stabilized-code))
 
