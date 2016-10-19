@@ -18,14 +18,14 @@
 //     (oget+ #js {"key" "val"} (return-this-key-with-side-effect "key")))
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-$oops$core$get_selector_dynamically$$({
+oops.core.get_selector_dynamically({
   key: "val"
 }, "key");
-$oops$core$get_selector_dynamically$$({
+oops.core.get_selector_dynamically({
   key: "val"
 }, "key");
 window.x = "dirty";
-$oops$core$get_selector_dynamically$$({
+oops.core.get_selector_dynamically({
   key: "val"
 }, "key");
 
@@ -34,7 +34,7 @@ $oops$core$get_selector_dynamically$$({
 //     (oget+ #js {"key" "val"} (return-this-key "xxx")))
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-$oops$core$get_selector_dynamically$$({
+oops.core.get_selector_dynamically({
   key: "val"
 }, "xxx");
 
@@ -45,25 +45,25 @@ $oops$core$get_selector_dynamically$$({
 //     (oget+ o1 (return-this-key "key") (return-this-key "nested"))
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-$oops$core$get_selector_dynamically$$({
+oops.core.get_selector_dynamically({
   key: "val",
   nested: {
     "nested-key": "nested-val"
   }
 }, ["key", "nested"]);
-$oops$core$get_selector_dynamically$$({
+oops.core.get_selector_dynamically({
   key: "val",
   nested: {
     "nested-key": "nested-val"
   }
-}, new $cljs$core$PersistentVector$$(null, 2, 5, $cljs$core$PersistentVector$EMPTY_NODE$$, ["key", "nested"], null));
-$oops$core$get_selector_dynamically$$({
+}, new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector$EMPTY_NODE, ["key", "nested"], null));
+oops.core.get_selector_dynamically({
   key: "val",
   nested: {
     "nested-key": "nested-val"
   }
-}, ["key", new $cljs$core$PersistentVector$$(null, 1, 5, $cljs$core$PersistentVector$EMPTY_NODE$$, ["nested"], null)]);
-$oops$core$get_selector_dynamically$$({
+}, ["key", new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector$EMPTY_NODE, ["nested"], null)]);
+oops.core.get_selector_dynamically({
   key: "val",
   nested: {
     "nested-key": "nested-val"

@@ -16,16 +16,16 @@
 //     (gcall "f" "p1" "p2"))
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-var $call_info_11$$ = [this, this.f],
-  $fn_12$$ = $call_info_11$$[1];
-null != $fn_12$$ && $fn_12$$.call($call_info_11$$[0], "p1", "p2");
+var call_info_1 = [this, this.f],
+  fn_1 = call_info_1[1];
+null != fn_1 && fn_1.call(call_info_1[0], "p1", "p2");
 
 // SNIPPET #2:
 //   (testing "retargeted static gcall"
 //     (gcall "a.f" "p1" "p2"))
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-var $call_info_13$$, $target_obj_4$$inline_5$$ = this.a;
-$call_info_13$$ = [$target_obj_4$$inline_5$$, $target_obj_4$$inline_5$$.f];
-var $fn_14$$ = $call_info_13$$[1];
-null != $fn_14$$ && $fn_14$$.call($call_info_13$$[0], "p1", "p2");
+var call_info_2, target_obj_1 = this.a;
+call_info_2 = [target_obj_1, target_obj_1.f];
+var fn_2 = call_info_2[1];
+null != fn_2 && fn_2.call(call_info_2[0], "p1", "p2");

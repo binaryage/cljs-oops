@@ -16,11 +16,11 @@
 //     (oset!+ js/window (identity "!k1.!k2") "val"))
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-$oops$core$set_selector_dynamically$$("!k1.!k2");
+oops.core.set_selector_dynamically("!k1.!k2");
 
 // SNIPPET #2:
 //   (testing "dynamic oset! without punching"
 //     (oset!+ js/window (identity "k1.k2.k3") "val"))
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-$oops$core$set_selector_dynamically$$("k1.k2.k3");
+oops.core.set_selector_dynamically("k1.k2.k3");
