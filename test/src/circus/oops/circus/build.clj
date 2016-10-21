@@ -72,7 +72,7 @@
     (str "test/transcripts/" kind "/" filename (if-not (empty? variant) (str "_" variant)) ".js")))
 
 (defn get-actual-transcript-path [build]
-  (get-transcript-path "actual" build))
+  (get-transcript-path "_actual_" build))
 
 (defn get-expected-transcript-path [build]
   (get-transcript-path "expected" build))
