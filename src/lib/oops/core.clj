@@ -1,6 +1,5 @@
 (ns oops.core
   "Public macros to be consumed via core.cljs."
-  (:refer-clojure :exclude [gensym])
   (:require [clojure.spec :as s]
             [oops.codegen :refer [gen-oget gen-oset gen-ocall gen-oapply]]
             [oops.compiler :refer [with-compiler-context! with-suppressed-reporting!]]))
