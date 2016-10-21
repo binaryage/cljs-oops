@@ -1,12 +1,12 @@
 // Clojure v1.9.0-alpha13, ClojureScript v1.9.293, js-beautify v1.6.4
 // ----------------------------------------------------------------------------------------------------------
 // COMPILER CONFIG:
-//   arena/ocall_dev.cljs []
+//   arena/ocall_dev.cljs
 //   {:elide-asserts false,
 //    :main oops.arena.ocall-dev,
 //    :optimizations :whitespace,
-//    :output-dir "test/resources/.compiled/ocall-dev-/_workdir",
-//    :output-to "test/resources/.compiled/ocall-dev-/main.js",
+//    :output-dir "test/resources/.compiled/ocall-dev/_workdir",
+//    :output-to "test/resources/.compiled/ocall-dev/main.js",
 //    :pseudo-names true}
 // ----------------------------------------------------------------------------------------------------------
 

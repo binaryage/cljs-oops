@@ -19,7 +19,7 @@
 
 (defn build-options [main variant config & [overrides]]
   (assert main (str "main must be specified!"))
-  (let [out (str (last (string/split main #"\.")) "-" variant)
+  (let [out (str (last (string/split main #"\.")) (if-not (empty? variant) (str "-" variant)))
         compiler-config (merge {:pseudo-names  true
                                 :elide-asserts true
                                 :optimizations :advanced
@@ -53,7 +53,7 @@
 
 (defn get-build-name [build]
   (let [{:keys [source variant]} build]
-    (str (string/replace source #"test\/src\/arena\/oops\/" "") " [" variant "]")))
+    (str (string/replace source #"test\/src\/arena\/oops\/" "") (if-not (empty? variant) (str " [" variant "]")))))
 
 (defn make-build-info [build]
   (str (get-build-name build) "\n"
@@ -69,7 +69,7 @@
 (defn get-transcript-path [kind build]
   (let [{:keys [source variant]} build
         filename (extract-filename-from-source-path source)]
-    (str "test/transcripts/" kind "/" filename "_" variant ".js")))
+    (str "test/transcripts/" kind "/" filename (if-not (empty? variant) (str "_" variant)) ".js")))
 
 (defn get-actual-transcript-path [build]
   (get-transcript-path "actual" build))
