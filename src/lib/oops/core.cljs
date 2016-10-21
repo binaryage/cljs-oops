@@ -30,7 +30,7 @@
 (defn ^:dynamic report-warning-dynamically [msg data]
   (runtime/report-warning-dynamically msg data))
 
-(defn ^:dynnamic report-if-needed-dynamically [msg-id & [info]]
+(defn ^:dynamic report-if-needed-dynamically [msg-id & [info]]
   (runtime/report-if-needed-dynamically msg-id info))
 
 ; -- runtime support for macros ---------------------------------------------------------------------------------------------
