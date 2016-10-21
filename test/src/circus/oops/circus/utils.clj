@@ -267,8 +267,8 @@
 
 (defn replace-absolute-paths [text]
   (-> text
-      (string/replace #"/.*?/test/src/" "/<absolute-path>/test/src")
-      (string/replace #"/.*?/src/lib/" "/<absolute-path>/src/lib")))
+      (string/replace #"/.*?/test/src/" "/<absolute-path>/test/src/")
+      (string/replace #"/.*?/src/lib/" "/<absolute-path>/src/lib/")))
 
 (defn post-process-compiler-output [text]
   (-> text
