@@ -11,9 +11,9 @@
   :dependencies [[org.clojure/clojure "1.9.0-alpha13" :scope "provided"]
                  [org.clojure/clojurescript "1.9.293" :scope "provided"]
                  [funcool/cuerdas "1.0.2"]
-                 [environ "1.1.0"]
                  [binaryage/env-config "0.1.0"]
 
+                 [environ "1.1.0" :scope "test"]
                  [binaryage/devtools "0.8.2" :scope "test"]
                  [binaryage/dirac "0.7.2" :scope "test"]
                  [figwheel "0.5.8" :scope "test"]
