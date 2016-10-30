@@ -208,11 +208,21 @@ See example in [cljs-oops-sample][12] project.
 
 ### FAQ
 
-#### Isn't accessing properties by string names slower?
+> Isn't accessing properties by string names slower?
 
-> Well, only if the strings are computed dynamically at runtime. In case of string literals Javascript parser can see them
-  and there should be no reason to treat them differently than dot properties. But you don't have to worry about this. 
-  Google Closure compiler rewrites string literals to dot property access whenever possible.
+Well, only if the strings are computed dynamically at runtime. In case of string literals Javascript parser can see them
+and there should be no reason to treat them differently than dot properties. But you don't have to worry about this. 
+Google Closure compiler rewrites string literals to dot property access whenever possible.
+
+> Should I use cljs-oops with Closure Library (e.g. goog.something namespace)?
+
+No! Use oops only for interop with external code which is not part of your :advanced build. 
+That means for all code where you would normally need to write externs. 
+
+Closure Library is compatible with advanced compilation and identifiers get properly minified during compilation. 
+You don't have to write any externs for it, so you don't have to use oops with it.
+ 
+For better understanding please [read this detailed article][20] by Luke VanderHart.
 
 [1]: http://cljs.github.io/api/syntax/dot
 [2]: https://github.com/clojure/clojurescript/wiki/Advanced-Compilation
@@ -233,3 +243,4 @@ See example in [cljs-oops-sample][12] project.
 [17]: http://cljs.github.io/api/cljs.core/aset
 [18]: http://dev.clojure.org/jira/browse/CLJS-1507
 [19]: http://valve.github.io/blog/2013/07/13/existential-operator-in-coffeescript/
+[20]: http://lukevanderhart.com/2011/09/30/using-javascript-and-clojurescript.html
