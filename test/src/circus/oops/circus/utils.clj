@@ -166,6 +166,9 @@
 (defn humanize-goog-ns [[content normalizer-state]]
   [(string/replace content #"goog\$(.*?)\$" "goog.$1.") normalizer-state])
 
+(defn replace-jscomp [[content normalizer-state]]
+  [(string/replace content #"\$jscomp\$" (string/re-quote-replacement "$$")) normalizer-state])
+
 (defn safe-spit [path content]
   (io/make-parents path)
   (spit path content))
@@ -228,6 +231,7 @@
                            (unwrap-snippets)
                            (replace-tagged-literals))
         [stabilized-code normalizer-state] (-> [unwrapped-code (make-empty-normalizer-state)]
+                                               (replace-jscomp)
                                                (normalize-identifiers)
                                                (normalize-gensyms)
                                                (normalize-twins)

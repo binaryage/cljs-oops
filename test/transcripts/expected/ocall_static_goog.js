@@ -30,13 +30,13 @@ null != fn_1 && fn_1.call(call_info_1[0], "p1", "p2");
 //     (ocall #js {"a" #js {"f" (fn [] 42)}} "a.f" "p1" "p2"))
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-var call_info_2, target_obj_5$jscomp$inline_1 = goog.object.get({
+var call_info_2, target_obj_2 = goog.object.get({
   a: {
     f: function() {
       return 42
     }
   }
 }, "a");
-call_info_2 = [target_obj_5$jscomp$inline_1, goog.object.get(target_obj_5$jscomp$inline_1, "f")];
+call_info_2 = [target_obj_2, goog.object.get(target_obj_2, "f")];
 var fn_2 = call_info_2[1];
 null != fn_2 && fn_2.call(call_info_2[0], "p1", "p2");
