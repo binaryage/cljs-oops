@@ -1,4 +1,4 @@
-// Clojure v1.9.0-alpha13, ClojureScript v1.9.293, js-beautify v1.6.4
+// Clojure v1.9.0-alpha14, ClojureScript v1.9.456, js-beautify v1.6.8
 // ----------------------------------------------------------------------------------------------------------
 // COMPILER CONFIG:
 //   arena/gcall_static.cljs [core]
@@ -25,7 +25,7 @@ null != fn_1 && fn_1.call(call_info_1[0], "p1", "p2");
 //     (gcall "a.f" "p1" "p2"))
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-var call_info_2, target_obj_1 = this.a;
-call_info_2 = [target_obj_1, target_obj_1.f];
+var call_info_2, target_obj_4$jscomp$inline_1 = this.a;
+call_info_2 = [target_obj_4$jscomp$inline_1, target_obj_4$jscomp$inline_1.f];
 var fn_2 = call_info_2[1];
 null != fn_2 && fn_2.call(call_info_2[0], "p1", "p2");

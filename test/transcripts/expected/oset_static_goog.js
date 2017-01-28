@@ -1,4 +1,4 @@
-// Clojure v1.9.0-alpha13, ClojureScript v1.9.293, js-beautify v1.6.4
+// Clojure v1.9.0-alpha14, ClojureScript v1.9.456, js-beautify v1.6.8
 // ----------------------------------------------------------------------------------------------------------
 // COMPILER CONFIG:
 //   arena/oset_static.cljs [goog]
@@ -17,8 +17,8 @@
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 var target_obj_1 = window,
-  next_obj_1 = goog.object.get(target_obj_1);
-(null == next_obj_1 ? oops.core.punch_key_dynamically_BANG_.cljs.core.IFn$_invoke$arity$4$ ? oops.core.punch_key_dynamically_BANG_.cljs.core.IFn$_invoke$arity$4$(target_obj_1, "k1") : oops.core.punch_key_dynamically_BANG_.call(null, target_obj_1, "k1") : next_obj_1).k2 = "val";
+  next_obj_4$jscomp$inline_1 = goog.object.get(target_obj_1);
+(null == next_obj_4$jscomp$inline_1 ? oops.core.punch_key_dynamically_BANG_.cljs.core.IFn$_invoke$arity$4$ ? oops.core.punch_key_dynamically_BANG_.cljs.core.IFn$_invoke$arity$4$(target_obj_1, "k1") : oops.core.punch_key_dynamically_BANG_.call(null, target_obj_1, "k1") : next_obj_4$jscomp$inline_1).k2 = "val";
 
 // SNIPPET #2:
 //   (testing "oset! expansion with macro-generated params should be static"
@@ -26,8 +26,8 @@ var target_obj_1 = window,
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 var target_obj_2 = window,
-  next_obj_2 = goog.object.get(target_obj_2);
-(null == next_obj_2 ? oops.core.punch_key_dynamically_BANG_.cljs.core.IFn$_invoke$arity$4$ ? oops.core.punch_key_dynamically_BANG_.cljs.core.IFn$_invoke$arity$4$(target_obj_2, "k1") : oops.core.punch_key_dynamically_BANG_.call(null, target_obj_2, "k1") : next_obj_2).k2 = "val";
+  next_obj_6$jscomp$inline_1 = goog.object.get(target_obj_2);
+(null == next_obj_6$jscomp$inline_1 ? oops.core.punch_key_dynamically_BANG_.cljs.core.IFn$_invoke$arity$4$ ? oops.core.punch_key_dynamically_BANG_.cljs.core.IFn$_invoke$arity$4$(target_obj_2, "k1") : oops.core.punch_key_dynamically_BANG_.call(null, target_obj_2, "k1") : next_obj_6$jscomp$inline_1).k2 = "val";
 
 // SNIPPET #3:
 //   (testing "static oset! expansion without punching"
