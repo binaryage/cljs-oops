@@ -9,13 +9,13 @@
         :url  "https://github.com/binaryage/cljs-oops"}
 
   :dependencies [[org.clojure/clojure "1.9.0-alpha14" :scope "provided"]
-                 [org.clojure/clojurescript "1.9.473" :scope "provided"]
+                 [org.clojure/clojurescript "1.9.494" :scope "provided"]
                  [funcool/cuerdas "2.0.3"]
                  [binaryage/env-config "0.1.1"]
 
                  [environ "1.1.0" :scope "test"]
-                 [binaryage/devtools "0.9.0" :scope "test"]
-                 [binaryage/dirac "1.1.3" :scope "test"]
+                 [binaryage/devtools "0.9.2" :scope "test"]
+                 [binaryage/dirac "1.1.6" :scope "test"]
                  [figwheel "0.5.9" :scope "test"]
                  [org.clojure/tools.logging "0.3.1" :scope "test"]
                  [clj-logging-config "1.9.12" :scope "test"]
@@ -24,7 +24,7 @@
   :clean-targets ^{:protect false} ["target"
                                     "test/resources/.compiled"]
 
-  :plugins [[lein-cljsbuild "1.1.4"]
+  :plugins [[lein-cljsbuild "1.1.5"]
             [lein-shell "0.5.0"]
             [lein-figwheel "0.5.9"]]
 
