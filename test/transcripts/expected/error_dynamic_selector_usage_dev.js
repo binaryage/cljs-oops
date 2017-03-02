@@ -1,4 +1,4 @@
-// Clojure v1.9.0-alpha14, ClojureScript v1.9.494, js-beautify v1.6.8
+// Clojure v1.9.0-alpha14, ClojureScript v1.9.494, js-beautify v1.6.11
 // ----------------------------------------------------------------------------------------------------------
 // COMPILER CONFIG:
 //   arena/error_dynamic_selector_usage.cljs [dev]
