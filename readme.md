@@ -35,9 +35,9 @@ Add these new power-macros to your tool belt:
  
 Let's see some code examples first and then discuss the concepts:
 
-<a href="https://dl.dropboxusercontent.com/u/559047/cljs-oops-intro-oget.png"><img src="https://dl.dropboxusercontent.com/u/559047/cljs-oops-intro-oget.png"></a>
+<a href="https://box.binaryage.com/cljs-oops-intro-oget.png"><img src="https://box.binaryage.com/cljs-oops-intro-oget.png"></a>
 
-<a href="https://dl.dropboxusercontent.com/u/559047/cljs-oops-intro-oset.png"><img src="https://dl.dropboxusercontent.com/u/559047/cljs-oops-intro-oset.png"></a>
+<a href="https://box.binaryage.com/cljs-oops-intro-oset.png"><img src="https://box.binaryage.com/cljs-oops-intro-oset.png"></a>
 
 ### Installation
 
