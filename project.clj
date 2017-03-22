@@ -145,8 +145,8 @@
 
   :aliases {"test"                 ["do"
                                     ["clean"]
-                                    ["shell" "scripts/run-tests.sh"]]
-            "run-all-tests"        ["shell" "scripts/run-all-tests.sh"]
+                                    ["shell" "scripts/test.sh"]]
+            "test-all"             ["shell" "scripts/test-all.sh"]
             "dev-functional-tests" ["shell" "scripts/dev-functional-tests.sh"]
             "run-functional-tests" ["do"
                                     ["clean"]
