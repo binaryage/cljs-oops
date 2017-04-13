@@ -15,7 +15,8 @@
 
 (defn post-process-build-options [options]
   (cond-> options
-          (not= :advanced (:optimizations options)) (assoc :elide-asserts false)))
+          (not= :advanced (:optimizations options)) (assoc :elide-asserts false)
+          true (assoc-in [:external-config :devtools/config :silence-optimizations-warning] true)))
 
 (defn build-options [main variant config & [overrides]]
   (assert main (str "main must be specified!"))

@@ -109,7 +109,8 @@
                                                    :main            oops.runner
                                                    :pseudo-names    true
                                                    :optimizations   :advanced
-                                                   :external-config {:oops/config {:debug   true
+                                                   :external-config {:devtools/config {:silence-optimizations-warning true}
+                                                                     :oops/config {:debug   true
                                                                                    :key-get :core
                                                                                    :key-set :core}}}}}}}
              :testing-basic-oadvanced-goog
@@ -124,7 +125,8 @@
                                                    :main            oops.runner
                                                    :pseudo-names    true
                                                    :optimizations   :advanced
-                                                   :external-config {:oops/config {:debug   true
+                                                   :external-config {:devtools/config {:silence-optimizations-warning true}
+                                                                     :oops/config {:debug   true
                                                                                    :key-get :goog
                                                                                    :key-set :goog}}}}}}}
 
