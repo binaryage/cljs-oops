@@ -206,6 +206,10 @@ Anyways, look at possible configuration options in [defaults.clj][11].
 As you can see you can provide your own config overrides in ClojureScript compiler options map via `:external-config > :oops/config`.
 See example in [cljs-oops-sample][12] project.
 
+### Recommended links
+
+  * [Navigating ClojureScript's Fire Swamps](https://www.youtube.com/watch?v=tpXfASdPteI) by [Peter Schuck](https://github.com/spinningtopsofdoom)
+
 ### FAQ
 
 > Isn't accessing properties by string names slower?
