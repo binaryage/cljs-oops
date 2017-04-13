@@ -14,7 +14,7 @@
                  [binaryage/env-config "0.2.0"]
 
                  [environ "1.1.0" :scope "test"]
-                 [binaryage/devtools "0.9.2" :scope "test"]
+                 [binaryage/devtools "0.9.3" :scope "test"]
                  [binaryage/dirac "RELEASE" :scope "test" :upgrade false]
                  [figwheel "0.5.10" :scope "test"]
                  [org.clojure/tools.logging "0.3.1" :scope "test"]
