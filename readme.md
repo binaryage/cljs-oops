@@ -5,7 +5,7 @@
 [![Travis](https://img.shields.io/travis/binaryage/cljs-oops.svg)](https://travis-ci.org/binaryage/cljs-oops) 
 [![Sample Project](https://img.shields.io/badge/project-example-ff69b4.svg)](https://github.com/binaryage/cljs-oops-sample)
 
-This is a ClojureScript library providing a few essential macros for operating with native Javascript objects.
+This is a ClojureScript library providing a few essential macros for operating with native Javascript objects ("oops" stands for "Object OPerationS").
 
 **TOC** 
 | **[Object operations](#object-operations)** 
