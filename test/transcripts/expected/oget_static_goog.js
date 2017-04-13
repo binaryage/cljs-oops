@@ -1,4 +1,4 @@
-// Clojure v1.9.0-alpha15, ClojureScript v1.9.494, js-beautify v1.6.12
+// Clojure v1.9.0-alpha15, ClojureScript v1.9.518, js-beautify v1.6.12
 // ----------------------------------------------------------------------------------------------------------
 // COMPILER CONFIG:
 //   arena/oget_static.cljs [goog]
