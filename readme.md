@@ -228,6 +228,15 @@ You don't have to write any externs for it, so you don't have to use oops with i
  
 For better understanding please [read this detailed article][20] by Luke VanderHart.
 
+> How this approach compares to [ClojureScript externs inference][21]?
+
+Externs inference is very recent feature and looks promising. It was introduced after I put all the effort into developing
+this library so my opinion is biased :-). I personally still prefer investing time into building light-weight ClojureScript 
+wrapper libraries using string-names than dealing with externs (even if they are auto-inferred).
+
+I would recommend watching [Navigating ClojureScript's Fire Swamps](https://www.youtube.com/watch?v=tpXfASdPteI) by [Peter Schuck](https://github.com/spinningtopsofdoom)
+where he compares both methods.
+
 [1]: http://cljs.github.io/api/syntax/dot
 [2]: https://github.com/clojure/clojurescript/wiki/Advanced-Compilation
 [3]: https://github.com/clojure/clojurescript/wiki/Compiler-Options#optimizations
@@ -248,3 +257,4 @@ For better understanding please [read this detailed article][20] by Luke VanderH
 [18]: http://dev.clojure.org/jira/browse/CLJS-1507
 [19]: http://valve.github.io/blog/2013/07/13/existential-operator-in-coffeescript/
 [20]: http://lukevanderhart.com/2011/09/30/using-javascript-and-clojurescript.html
+[21]: https://clojurescript.org/guides/externs
