@@ -3,6 +3,8 @@
 // COMPILER CONFIG:
 //   arena/warnings.cljs [dev]
 //   {:elide-asserts false,
+//    :external-config
+//    #:devtools{:config {:silence-optimizations-warning true}},
 //    :main oops.arena.warnings,
 //    :optimizations :whitespace,
 //    :output-dir "test/resources/.compiled/warnings-dev/_workdir",

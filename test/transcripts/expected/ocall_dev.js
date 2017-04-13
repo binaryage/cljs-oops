@@ -3,6 +3,8 @@
 // COMPILER CONFIG:
 //   arena/ocall_dev.cljs
 //   {:elide-asserts false,
+//    :external-config
+//    #:devtools{:config {:silence-optimizations-warning true}},
 //    :main oops.arena.ocall-dev,
 //    :optimizations :whitespace,
 //    :output-dir "test/resources/.compiled/ocall-dev/_workdir",

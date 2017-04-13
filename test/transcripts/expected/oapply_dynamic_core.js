@@ -3,7 +3,9 @@
 // COMPILER CONFIG:
 //   arena/oapply_dynamic.cljs [core]
 //   {:elide-asserts true,
-//    :external-config #:oops{:config {:key-set :core, :key-get :core}},
+//    :external-config
+//    {:oops/config {:key-set :core, :key-get :core},
+//     :devtools/config {:silence-optimizations-warning true}},
 //    :main oops.arena.oapply-dynamic,
 //    :optimizations :advanced,
 //    :output-dir "test/resources/.compiled/oapply-dynamic-core/_workdir",

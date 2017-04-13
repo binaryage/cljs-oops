@@ -3,7 +3,9 @@
 // COMPILER CONFIG:
 //   arena/oapply_static.cljs [core]
 //   {:elide-asserts true,
-//    :external-config #:oops{:config {:key-set :core, :key-get :core}},
+//    :external-config
+//    {:oops/config {:key-set :core, :key-get :core},
+//     :devtools/config {:silence-optimizations-warning true}},
 //    :main oops.arena.oapply-static,
 //    :optimizations :advanced,
 //    :output-dir "test/resources/.compiled/oapply-static-core/_workdir",

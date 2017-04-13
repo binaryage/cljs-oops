@@ -3,7 +3,9 @@
 // COMPILER CONFIG:
 //   arena/gcall_dynamic.cljs [goog]
 //   {:elide-asserts true,
-//    :external-config #:oops{:config {:key-set :goog, :key-get :goog}},
+//    :external-config
+//    {:oops/config {:key-set :goog, :key-get :goog},
+//     :devtools/config {:silence-optimizations-warning true}},
 //    :main oops.arena.gcall-dynamic,
 //    :optimizations :advanced,
 //    :output-dir "test/resources/.compiled/gcall-dynamic-goog/_workdir",

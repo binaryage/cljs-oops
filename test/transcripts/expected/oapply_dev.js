@@ -3,6 +3,8 @@
 // COMPILER CONFIG:
 //   arena/oapply_dev.cljs
 //   {:elide-asserts false,
+//    :external-config
+//    #:devtools{:config {:silence-optimizations-warning true}},
 //    :main oops.arena.oapply-dev,
 //    :optimizations :whitespace,
 //    :output-dir "test/resources/.compiled/oapply-dev/_workdir",

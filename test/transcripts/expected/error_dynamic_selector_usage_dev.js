@@ -3,7 +3,9 @@
 // COMPILER CONFIG:
 //   arena/error_dynamic_selector_usage.cljs [dev]
 //   {:elide-asserts false,
-//    :external-config #:oops{:config {:dynamic-selector-usage :error}},
+//    :external-config
+//    {:oops/config {:dynamic-selector-usage :error},
+//     :devtools/config {:silence-optimizations-warning true}},
 //    :main oops.arena.error-dynamic-selector-usage,
 //    :optimizations :whitespace,
 //    :output-dir

@@ -3,6 +3,8 @@
 // COMPILER CONFIG:
 //   arena/oget_dev.cljs
 //   {:elide-asserts false,
+//    :external-config
+//    #:devtools{:config {:silence-optimizations-warning true}},
 //    :main oops.arena.oget-dev,
 //    :optimizations :whitespace,
 //    :output-dir "test/resources/.compiled/oget-dev/_workdir",

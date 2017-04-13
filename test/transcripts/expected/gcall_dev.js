@@ -3,6 +3,8 @@
 // COMPILER CONFIG:
 //   arena/gcall_dev.cljs
 //   {:elide-asserts false,
+//    :external-config
+//    #:devtools{:config {:silence-optimizations-warning true}},
 //    :main oops.arena.gcall-dev,
 //    :optimizations :whitespace,
 //    :output-dir "test/resources/.compiled/gcall-dev/_workdir",

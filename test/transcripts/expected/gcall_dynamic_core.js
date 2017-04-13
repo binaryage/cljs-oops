@@ -3,7 +3,9 @@
 // COMPILER CONFIG:
 //   arena/gcall_dynamic.cljs [core]
 //   {:elide-asserts true,
-//    :external-config #:oops{:config {:key-set :core, :key-get :core}},
+//    :external-config
+//    {:oops/config {:key-set :core, :key-get :core},
+//     :devtools/config {:silence-optimizations-warning true}},
 //    :main oops.arena.gcall-dynamic,
 //    :optimizations :advanced,
 //    :output-dir "test/resources/.compiled/gcall-dynamic-core/_workdir",
