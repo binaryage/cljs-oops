@@ -171,8 +171,8 @@
 (defn gen-dynamic-selector-validation [selector-sym]
   (debug-assert (symbol? selector-sym))
   (let [explanation-sym (gensym "explanation")]
-    `(if-not (clojure.spec/valid? :oops.sdefs/obj-selector ~selector-sym)
-       (let [~explanation-sym (clojure.spec/explain-data :oops.sdefs/obj-selector ~selector-sym)]
+    `(if-not (clojure.spec.alpha/valid? :oops.sdefs/obj-selector ~selector-sym)
+       (let [~explanation-sym (clojure.spec.alpha/explain-data :oops.sdefs/obj-selector ~selector-sym)]
          ~(gen-report-if-needed :invalid-selector `{:selector    ~selector-sym
                                                     :explanation ~explanation-sym}))
        true)))

@@ -11,6 +11,6 @@
 ; [2] https://github.com/binaryage/cljs-oops/blob/master/src/lib/oops/sdefs.cljs
 
 (defmacro native-array-aware-* [pred-form]
-  `(clojure.spec/or :regex (clojure.spec/* ~pred-form)
+  `(clojure.spec.alpha/or :regex (clojure.spec.alpha/* ~pred-form)
                     :native-array #(and (cljs.core/array? %)
-                                        (cljs.core/every? (partial clojure.spec/valid? ~pred-form) %))))
+                                        (cljs.core/every? (partial clojure.spec.alpha/valid? ~pred-form) %))))

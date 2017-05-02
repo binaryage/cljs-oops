@@ -2,7 +2,7 @@
   "Code supporting static (compile-time) configuration. See defaults.clj for config map."
   (:refer-clojure :exclude [gensym])
   (:require [cljs.env]
-            [clojure.spec :as s]
+            [clojure.spec.alpha :as s]
             [env-config.core :as env-config]
             [oops.state]
             [oops.helpers :as helpers :refer [gensym]]

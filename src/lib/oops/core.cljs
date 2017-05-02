@@ -13,7 +13,7 @@
   Read about usage: https://github.com/binaryage/cljs-oops"
   (:require-macros [oops.core]
                    [oops.runtime :as runtime])
-  (:require [clojure.spec]
+  (:require [clojure.spec.alpha]
             [goog.object]
             [oops.sdefs]
             [oops.state]

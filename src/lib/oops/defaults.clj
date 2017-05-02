@@ -2,7 +2,7 @@
   "Default configuration + specs."
   (:require [cljs.env]
             [oops.state]
-            [clojure.spec :as s]))
+            [clojure.spec.alpha :as s]))
 
 (def config                                                                                                                   ; falsy below means 'nil' or 'false'
   {; -- compiler config -----------------------------------------------------------------------------------------------------

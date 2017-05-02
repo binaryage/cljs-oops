@@ -1,6 +1,6 @@
 (ns oops.schema
   "The code for compile-time conversion of selectors to paths. Uses clojure.spec to do the heavy-lifting."
-  (:require [clojure.spec :as s]
+  (:require [clojure.spec.alpha :as s]
             [clojure.walk :refer [postwalk]]
             [clojure.string :as string]
             [oops.config :as config]

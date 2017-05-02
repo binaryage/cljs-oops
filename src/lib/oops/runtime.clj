@@ -67,7 +67,7 @@
                            :else ~collection-case)]
     (if (config/debug?)
       `(let [path# ~build-path-code]
-         (assert (clojure.spec/valid? :oops.sdefs/obj-path path#))
+         (assert (clojure.spec.alpha/valid? :oops.sdefs/obj-path path#))
          path#)
       build-path-code)))
 

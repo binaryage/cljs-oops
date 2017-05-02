@@ -1,6 +1,6 @@
 (ns oops.sdefs
   "Spec definitions for our static code."
-  (:require [clojure.spec :as s]
+  (:require [clojure.spec.alpha :as s]
             [oops.constants :refer [dot-access soft-access punch-access]]))
 
 ; --- specs -----------------------------------------------------------------------------------------------------------------

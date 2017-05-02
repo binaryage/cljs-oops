@@ -8,7 +8,7 @@
   :scm {:name "git"
         :url  "https://github.com/binaryage/cljs-oops"}
 
-  :dependencies [[org.clojure/clojure "1.9.0-alpha15" :scope "provided"]
+  :dependencies [[org.clojure/clojure "1.9.0-alpha16" :scope "provided"]
                  [org.clojure/clojurescript "1.9.521" :scope "provided"]
                  [funcool/cuerdas "2.0.3"]
                  [binaryage/env-config "0.2.0"]
