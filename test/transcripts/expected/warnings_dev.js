@@ -1,4 +1,4 @@
-// Clojure v1.9.0-alpha15, ClojureScript v1.9.521, js-beautify v1.6.12
+// Clojure v1.9.0-alpha16, ClojureScript v1.9.542, js-beautify v1.6.14
 // ----------------------------------------------------------------------------------------------------------
 // COMPILER CONFIG:
 //   arena/warnings.cljs [dev]
@@ -12,11 +12,11 @@
 //    :pseudo-names true}
 // ----------------------------------------------------------------------------------------------------------
 // COMPILER STDERR:
-//   WARNING: Oops, Unexpected dynamic selector usage (consider using oget+) at line 15 test/src/arena/oops/arena/warnings.cljs
-//   WARNING: Oops, Unexpected nil target object at line 18 test/src/arena/oops/arena/warnings.cljs
-//   WARNING: Oops, Unexpected empty selector at line 21 test/src/arena/oops/arena/warnings.cljs
-//   WARNING: Oops, Unexpected empty selector at line 22 test/src/arena/oops/arena/warnings.cljs
-//   WARNING: Oops, Unexpected empty selector at line 23 test/src/arena/oops/arena/warnings.cljs
+//   WARNING: Oops, Unexpected dynamic selector usage (consider using oget+) at line 15 <absolute-path>/test/src/arena/oops/arena/warnings.cljs
+//   WARNING: Oops, Unexpected nil target object at line 18 <absolute-path>/test/src/arena/oops/arena/warnings.cljs
+//   WARNING: Oops, Unexpected empty selector at line 21 <absolute-path>/test/src/arena/oops/arena/warnings.cljs
+//   WARNING: Oops, Unexpected empty selector at line 22 <absolute-path>/test/src/arena/oops/arena/warnings.cljs
+//   WARNING: Oops, Unexpected empty selector at line 23 <absolute-path>/test/src/arena/oops/arena/warnings.cljs
 // ----------------------------------------------------------------------------------------------------------
 
 // SNIPPET #1:

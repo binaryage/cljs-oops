@@ -1,4 +1,4 @@
-// Clojure v1.9.0-alpha15, ClojureScript v1.9.521, js-beautify v1.6.12
+// Clojure v1.9.0-alpha16, ClojureScript v1.9.542, js-beautify v1.6.14
 // ----------------------------------------------------------------------------------------------------------
 // COMPILER CONFIG:
 //   arena/error_dynamic_selector_usage.cljs [dev]
@@ -15,7 +15,7 @@
 //    :pseudo-names true}
 // ----------------------------------------------------------------------------------------------------------
 // COMPILER STDERR:
-//   THROWN: clojure.lang.ExceptionInfo: failed compiling file:test/src/arena/oops/arena/error_dynamic_selector_usage.cljs
-//   Caused by: clojure.lang.ExceptionInfo: Oops, Unexpected dynamic selector usage (consider using oget+) at line 8 test/src/arena/oops/arena/error_dynamic_selector_usage.cljs
+//   THROWN: clojure.lang.ExceptionInfo: failed compiling file:/Users/darwin/code/cljs-oops/test/src/arena/oops/arena/error_dynamic_selector_usage.cljs
+//   Caused by: clojure.lang.ExceptionInfo: Oops, Unexpected dynamic selector usage (consider using oget+) at line 8 <absolute-path>/test/src/arena/oops/arena/error_dynamic_selector_usage.cljs
 // ----------------------------------------------------------------------------------------------------------
 // NO GENERATED CODE
