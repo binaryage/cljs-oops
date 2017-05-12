@@ -1,12 +1,13 @@
 sudo: true
 dist: trusty
 language: clojure
+
 notifications:
   email:
   - antonin@hildebrand.cz
   hipchat:
     rooms:
-      secure: EqNuux+6kcgVUV5eO12uQaEPseekXq9W0B/Ml2ujCEvSX2D0l8ot1TuBtAfj09UEEdOFz7hgE4aUnZU66EL7siUf0wefXFlQRatPOyhCSMk+NsCTOST/Y9E22atzjtxTQs8GiafCHbRu9HfLKWKG09A90w4+NAxZeoZSc9i46ThNzXeLAc4SYx1ZVPQb0FM8SxgL3vKAdpiu1yo/j/4/OGgSiZxiMHfsnJRkhwv8xc5gFe4+vKhOuKwhO+OrQOjrBGgICkmaZZWMqX7GubvajPxITcu7C8z9SKUd3WR+l2bLxEJDLw0R0xmSQFdDgX/s0riT9RRdSVF9Ybc0yejqnZh6U8UrOx3qOA1BiTBCbVVlnh7bpDEO3A9nxfaZTc3oBW4/93vO9wGJUepsobylBsHp8OrhugKn23b7BDLI8is+oj8Gai6/FIkOw4cCapU5Q3XMwcSL1h+ryTsGbU995UndRWcsPop2cYN8xHXPfXIn4vGuNLRjvpIvGN9VapC1xxn6hKuotGpL6FJzRs9fb9Dp9QbSGQ+JtDvsdXO0Ysih0rFCjEUJODfHbUQULxEaOweAb/YS2Ty07LE57+Cu0fJW7fGXyPDjocvZ7Dmr4wv355iIhiihPrAitEaxAxtRto5nU9c68c62tlTvFKvvPq91D81FpxTvq33Q3Iq2nVU=
+      secure: OgyY9xrTyOK8AAP6EenA3PbGHyTrqBi8sK7+2c8KsZHIdGLBOAFSV2/kQhIOmW02cbxSmoyWfc4/bGXQQLdJJL4Srb1zMGtvzlU4tnh2e+U23KiHxnfiW+Qna8flEtc1np1vIxR3aUroXRcrPE00X8ntFZb16oixpYQlUxat91gYwR80Nu8JjU+5mtpuvnaYMo/o2bR69Y/SaRu5bEm4kF/QJC2pmLvG7pTJIXDjttCWXq6XTxD+Oy/3D9iIdw6kn3DzE0xCh4R1a/g6mwdW8ar/4ccd5IH+4sthK/j2vVyLv/dKeESDNo7Bs7ByaYpUv/8nKt6Nb5fCQSP50MYJOwNu+ttL6tazL8yR1f25aXKr3DBQpwEecQ5Qc7lWtQm4mKOqmbOoGucTP7qvEz+qaL9WU0u7k+HDcJJndDsaFN2cc4IMuoCp9c249GorwqsiKqf/qCgyrkdQSW34AeDIpI7agHJJNG4Twcvooh2PqpLbkUXIhGyCZ2zJID3sigFplTkBq9mnOsSlXRrMGLcsiuvPDsjcv27zJ/8ksr7QeCDbVAfwS+B6iin4v30GexCSTlM9hPW2lJJ+fLoR3a04c61HYV35j38CEU+jL27hKJeqtyrqfuuYTjB2UE4JJYY+rYjM+yArUo/apne3rqyc6Jqdf/6JMPK7TzJp5ZCBczY=
     template:
     - '<a href="%{build_url}">%{repository}#%{build_number}</a>: %{message} (<a href="%{compare_url}">changes</a>)'
     format: html
