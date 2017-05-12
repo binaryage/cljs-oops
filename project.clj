@@ -52,7 +52,7 @@
 
              :clojure18
              {:dependencies [[org.clojure/clojure "1.8.0" :scope "provided" :upgrade false]
-                             [clojure-future-spec "1.9.0-alpha15" :scope "provided"]]}
+                             [clojure-future-spec "1.9.0-alpha16-1" :scope "provided"]]}
 
              :cooper
              {:plugins [[lein-cooper "1.2.2"]]}
