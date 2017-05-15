@@ -20,11 +20,13 @@
 
 ; -- cljs macro expanding ---------------------------------------------------------------------------------------------------
 
+(declare macroexpand-all*)
+
 (defn macroexpand* [env form]
   (let [expanded-form (cljs.analyzer/macroexpand-1 env form)]
     (if (identical? form expanded-form)
       expanded-form
-      (recur env expanded-form))))
+      (macroexpand-all* env expanded-form))))
 
 (defn macroexpand-all* [env form]
   (prewalk (fn [x] (if (seq? x) (macroexpand* env x) x)) form))
