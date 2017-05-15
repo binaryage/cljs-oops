@@ -53,13 +53,18 @@
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // SNIPPET #7:
+//   (testing "oget expansion with macro-generated params should be static"
+//     (oget js/window (macro-identity "k1.?k2.k3") (macro-identity :k4)))
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+// SNIPPET #8:
 //   (testing "simple get with usage"
 //     (.log js/console (oget #js {"key" "val"} "key")))
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 console.log(goog.object.get("key"));
 
-// SNIPPET #8:
+// SNIPPET #9:
 //   (testing "simple miss with usage"
 //     (.log js/console (oget #js {"key" "val"} "xxx")))
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

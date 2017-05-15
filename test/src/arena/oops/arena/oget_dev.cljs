@@ -15,7 +15,7 @@
   (oget+ js/window (identity "k1.?k2.k3")))
 
 (testing "oget expansion with macro-generated params should be static"
-  (oget js/window (macro-identity "k1.?k2.k3")))
+  (oget js/window (macro-identity "k1.?k2.k3") (macro-identity :k4)))
 
 (testing "oget expansion with disabled diagnostics"
   (without-diagnostics

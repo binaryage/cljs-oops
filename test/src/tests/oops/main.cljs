@@ -40,6 +40,7 @@
           "key" "val"
           "@#$%fancy key^&*" "fancy-val"
           (macro-identity "key") "val"
+          (macro-identity :key) "val"
           (macro-identity ["nested" (macro-identity (macro-identity "nested-key1"))]) "nk1"
           ["nested" "nested-key2"] 2)))
     (testing "simple dynamic get"

@@ -1,4 +1,5 @@
 (ns oops.arena.oget-static
+  (:require-macros [oops.arena.macros :refer [macro-identity]])
   (:require [oops.core :refer [oget]]
             [oops.tools :refer [init-arena-test! testing]]))
 
@@ -35,6 +36,9 @@
   (def o4 nil)
   (oget o4)
   (oget o4 :a :b :c))
+
+(testing "oget expansion with macro-generated params should be static"
+  (oget js/window (macro-identity "k1.?k2.k3") (macro-identity :k4)))
 
 ; ----
 ; following code is expected get collapsed to simple console.log calls
