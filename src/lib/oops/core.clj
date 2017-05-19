@@ -73,40 +73,40 @@
 ; -- convenience g-macros ---------------------------------------------------------------------------------------------------
 
 (defmacro gget [& args]
-  `(oops.core/oget js/goog.global ~@args))
+  `(oops.core/oget goog/global ~@args))
 
 (defmacro gget+ [& args]
-  `(oops.core/oget+ js/goog.global ~@args))
+  `(oops.core/oget+ goog/global ~@args))
 
 (defmacro gset! [& args]
-  `(oops.core/oset! js/goog.global ~@args))
+  `(oops.core/oset! goog/global ~@args))
 
 (defmacro gset!+ [& args]
-  `(oops.core/oset!+ js/goog.global ~@args))
+  `(oops.core/oset!+ goog/global ~@args))
 
 (defmacro gcall [& args]
-  `(oops.core/ocall js/goog.global ~@args))
+  `(oops.core/ocall goog/global ~@args))
 
 (defmacro gcall+ [& args]
-  `(oops.core/ocall+ js/goog.global ~@args))
+  `(oops.core/ocall+ goog/global ~@args))
 
 (defmacro gapply [& args]
-  `(oops.core/oapply js/goog.global ~@args))
+  `(oops.core/oapply goog/global ~@args))
 
 (defmacro gapply+ [& args]
-  `(oops.core/oapply+ js/goog.global ~@args))
+  `(oops.core/oapply+ goog/global ~@args))
 
 (defmacro gcall! [& args]
-  `(oops.core/ocall! js/goog.global ~@args))
+  `(oops.core/ocall! goog/global ~@args))
 
 (defmacro gcall!+ [& args]
-  `(oops.core/ocall!+ js/goog.global ~@args))
+  `(oops.core/ocall!+ goog/global ~@args))
 
 (defmacro gapply! [& args]
-  `(oops.core/oapply! js/goog.global ~@args))
+  `(oops.core/oapply! goog/global ~@args))
 
 (defmacro gapply!+ [& args]
-  `(oops.core/oapply!+ js/goog.global ~@args))
+  `(oops.core/oapply!+ goog/global ~@args))
 
 ; -- specs for our macro apis -----------------------------------------------------------------------------------------------
 ;
