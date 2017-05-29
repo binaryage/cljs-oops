@@ -1,4 +1,4 @@
-// Clojure v1.9.0-alpha16, ClojureScript v1.9.542, js-beautify v1.6.14
+// Clojure v1.9.0-alpha16, ClojureScript v1.9.562, js-beautify v1.6.14
 // ----------------------------------------------------------------------------------------------------------
 // COMPILER CONFIG:
 //   arena/oset_static.cljs [core]
