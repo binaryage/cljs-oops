@@ -9,7 +9,7 @@
         :url  "https://github.com/binaryage/cljs-oops"}
 
   :dependencies [[org.clojure/clojure "1.9.0-alpha16" :scope "provided"]
-                 [org.clojure/clojurescript "1.9.542" :scope "provided"]
+                 [org.clojure/clojurescript "1.9.562" :scope "provided"]
                  [funcool/cuerdas "2.0.3"]
                  [binaryage/env-config "0.2.0"]
 
@@ -110,9 +110,9 @@
                                                    :pseudo-names    true
                                                    :optimizations   :advanced
                                                    :external-config {:devtools/config {:silence-optimizations-warning true}
-                                                                     :oops/config {:debug   true
-                                                                                   :key-get :core
-                                                                                   :key-set :core}}}}}}}
+                                                                     :oops/config     {:debug   true
+                                                                                       :key-get :core
+                                                                                       :key-set :core}}}}}}}
              :testing-basic-oadvanced-goog
              {:cljsbuild {:builds {:basic-oadvanced-goog
                                    {:source-paths ["src/lib"
@@ -126,9 +126,9 @@
                                                    :pseudo-names    true
                                                    :optimizations   :advanced
                                                    :external-config {:devtools/config {:silence-optimizations-warning true}
-                                                                     :oops/config {:debug   true
-                                                                                   :key-get :goog
-                                                                                   :key-set :goog}}}}}}}
+                                                                     :oops/config     {:debug   true
+                                                                                       :key-get :goog
+                                                                                       :key-set :goog}}}}}}}
 
              :auto-testing
              {:cljsbuild {:builds {:basic-onone          {:notify-command ["scripts/rerun-tests.sh" "basic_onone"]}
