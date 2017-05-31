@@ -74,7 +74,7 @@
 
 (defn install-build-wrapper-if-needed! []
   ; this feels way too hacky, know a better way how to achieve this?
-  (if (nil? @original-build-fn)
+  (when (nil? @original-build-fn)
     (vreset! original-build-fn cljs.closure/build)
     (alter-var-root #'cljs.closure/build (constantly build-wrapper))))
 
