@@ -32,3 +32,9 @@
 
 (testing "dynamic ocall expansion with retargeting"
   (ocall+ js/window (identity "m1.m2") "p1" "p2"))
+
+(testing "threading macro with ocall, see issue #12"
+  (let [o #js {"e" #js {"f" (fn [x] #js {"g"  (fn [y z] (+ x y z))})}}]
+    (-> o
+        (ocall "e.f" 1)
+        (ocall "g" 2 3))))

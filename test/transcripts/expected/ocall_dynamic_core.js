@@ -40,3 +40,28 @@ var call_info_2 = oops.core.get_selector_call_info_dynamically({
   }, "a.f"),
   fn_2 = call_info_2[1];
 null != fn_2 && fn_2.call(call_info_2[0], "p1", "p2");
+
+// SNIPPET #3:
+//   (testing "threading macro with dynamic ocall, see issue #12"
+//     (let [o #js {"e" #js {"f" (fn [x] #js {"g" (fn [y z] (+ x y z))})}}]
+//       (-> o
+//           (ocall+ (identity "e.f") 1)
+//           (ocall+ (identity "g") 2 3))))
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+var target_obj_1, call_info_3 = oops.core.get_selector_call_info_dynamically({
+    e: {
+      f: function(x8) {
+        return {
+          g: function(y9, z10) {
+            return x8 + y9 + z10
+          }
+        }
+      }
+    }
+  }, "e.f"),
+  fn_3 = call_info_3[1];
+target_obj_1 = null != fn_3 ? fn_3.call(call_info_3[0], 1) : null;
+var call_info_4 = oops.core.get_selector_call_info_dynamically(target_obj_1, "g"),
+  fn_4 = call_info_4[1];
+null != fn_4 && fn_4.call(call_info_4[0], 2, 3);

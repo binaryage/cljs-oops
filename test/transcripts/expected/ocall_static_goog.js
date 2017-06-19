@@ -42,3 +42,29 @@ var call_info_2, target_obj_2 = goog.object.get({
 call_info_2 = [target_obj_2, goog.object.get(target_obj_2, "f")];
 var fn_2 = call_info_2[1];
 null != fn_2 && fn_2.call(call_info_2[0], "p1", "p2");
+
+// SNIPPET #3:
+//   (testing "threading macro with static ocall, see issue #12"
+//     (let [o #js {"e" #js {"f" (fn [x] #js {"g" (fn [y z] (+ x y z))})}}]
+//       (-> o
+//           (ocall "e.f" 1)
+//           (ocall "g" 2 3))))
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+var target_obj_3, call_info_3, target_obj_4 = goog.object.get({
+  e: {
+    f: function(x13) {
+      return {
+        g: function(y14, z15) {
+          return x13 + y14 + z15
+        }
+      }
+    }
+  }
+}, "e");
+call_info_3 = [target_obj_4, goog.object.get(target_obj_4, "f")];
+var fn_3 = call_info_3[1];
+target_obj_3 = null != fn_3 ? fn_3.call(call_info_3[0], 1) : null;
+var call_info_4 = [target_obj_3, goog.object.get(target_obj_3, "g")],
+  fn_4 = call_info_4[1];
+null != fn_4 && fn_4.call(call_info_4[0], 2, 3);

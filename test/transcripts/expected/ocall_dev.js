@@ -207,4 +207,67 @@ try {
   else;
 } finally {
   oops.state._STAR_runtime_state_STAR_ = _STAR_runtime_state_STAR_7
+}
+
+// SNIPPET #8:
+//   (testing "threading macro with ocall, see issue #12"
+//     (let [o #js {"e" #js {"f" (fn [x] #js {"g"  (fn [y z] (+ x y z))})}}]
+//       (-> o
+//           (ocall "e.f" 1)
+//           (ocall "g" 2 3))))
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+var o_1 = {
+  "e": {
+    "f": function(x) {
+      return {
+        "g": function(y, z) {
+          return x + y + z
+        }
+      }
+    }
+  }
+};
+var target_obj_11 = function() {
+  var target_obj_12 = o_1;
+  var _STAR_runtime_state_STAR_8 = oops.state._STAR_runtime_state_STAR_;
+  oops.state._STAR_runtime_state_STAR_ = oops.state.prepare_state.call(null, target_obj_12, new Error, function() {
+    arguments[0].apply(console, Array.prototype.slice.call(arguments, 1))
+  });
+  try {
+    var call_info_10 = function() {
+      var target_obj_13 = function() {
+        var next_obj_7 = oops.core.validate_object_access_dynamically.call(null, target_obj_12, 0, "e", true) ? target_obj_12["e"] : null;
+        return next_obj_7
+      }();
+      return [target_obj_13, function() {
+        var next_obj_8 = oops.core.validate_object_access_dynamically.call(null, target_obj_13, 0, "f", true) ? target_obj_13["f"] : null;
+        return next_obj_8
+      }()]
+    }();
+    var fn_10 = call_info_10[1];
+    if (oops.core.validate_fn_call_dynamically.call(null, fn_10, oops.state.get_last_access_modifier.call(null)))
+      if (!(fn_10 == null)) return fn_10.call(call_info_10[0], 1);
+      else return null;
+    else return null
+  } finally {
+    oops.state._STAR_runtime_state_STAR_ = _STAR_runtime_state_STAR_8
+  }
+}();
+var _STAR_runtime_state_STAR_9 = oops.state._STAR_runtime_state_STAR_;
+oops.state._STAR_runtime_state_STAR_ = oops.state.prepare_state.call(null, target_obj_11, new Error, function() {
+  arguments[0].apply(console, Array.prototype.slice.call(arguments, 1))
+});
+try {
+  var call_info_11 = [target_obj_11, function() {
+    var next_obj_9 = oops.core.validate_object_access_dynamically.call(null, target_obj_11, 0, "g", true) ? target_obj_11["g"] : null;
+    return next_obj_9
+  }()];
+  var fn_11 = call_info_11[1];
+  if (oops.core.validate_fn_call_dynamically.call(null, fn_11, oops.state.get_last_access_modifier.call(null)))
+    if (!(fn_11 == null)) fn_11.call(call_info_11[0], 2, 3);
+    else;
+  else;
+} finally {
+  oops.state._STAR_runtime_state_STAR_ = _STAR_runtime_state_STAR_9
 };
