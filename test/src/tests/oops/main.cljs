@@ -325,6 +325,14 @@
       (is (= (ocall obj (identity "f")) "ROOT!"))
       (is (= (ocall obj (identity "a.f")) "A!"))
       (is (= (ocall obj (identity "b.a.f")) "BA!"))))
+  (testing "threading macro with ocall"
+    (let [o #js {"e" #js {"f" (fn [x] #js {"g" (fn [y z] (+ x y z))})}}]
+      (is (= (-> o
+                 (ocall "e.f" 1)
+                 (ocall "g" 2 3)) 6)
+          (= (-> o
+                 (ocall (identity "e.f") 1)
+                 (ocall (identity "g") 2 3)) 6))))
   (testing "test errors when ocalling non-functions"
     (when-not-advanced-mode
       (presume-compiler-config {:runtime-expected-function-value :error})
