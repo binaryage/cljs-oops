@@ -521,7 +521,7 @@
   (testing "selectors should macro-expand before processed"
     (with-compiler-config {:dynamic-selector-usage :warn
                            :diagnostics            true}
-      (let [recorder (atom)]
+      (let [recorder (atom [])]
         (with-stderr-recording recorder
           (oget (js-obj) (macro-identity "?x"))
           (oget (js-obj) ["?a" (macro-identity (macro-identity "?x"))])
@@ -535,7 +535,7 @@
     (with-compiler-config {:dynamic-selector-usage :warn
                            :diagnostics            true
                            :macroexpand-selectors  false}
-      (let [recorder (atom)]
+      (let [recorder (atom [])]
         (with-stderr-recording recorder
           (oget (js-obj) (macro-identity "?x"))
           (oset! (js-obj) (macro-identity "!x") (macro-identity "val"))
@@ -548,7 +548,7 @@
   (testing "invalid punching selectors (static)"
     (with-compiler-config {:static-unexpected-punching-selector :warn
                            :diagnostics                         true}
-      (let [recorder (atom)]
+      (let [recorder (atom [])]
         (with-stderr-recording recorder
           (oget (js-obj) "!x")
           (oset! (js-obj) "!x" "val")                                                                                         ; no warning
@@ -560,7 +560,7 @@
     (testing "invalid punching selectors (dynamic)"
       (with-compiler-config {:runtime-unexpected-punching-selector :warn
                              :diagnostics                          true}
-        (let [recorder (atom)]
+        (let [recorder (atom [])]
           (with-console-recording recorder
             (oget+ (js-obj) (identity "!x"))
             (oset!+ (js-obj) (identity "!x") "val")                                                                           ; no warning
@@ -571,7 +571,7 @@
   (testing "invalid soft selectors (static)"
     (with-compiler-config {:static-unexpected-soft-selector :warn
                            :diagnostics                     true}
-      (let [recorder (atom)]
+      (let [recorder (atom [])]
         (with-stderr-recording recorder
           (oget (js-obj) "?x")                                                                                                ; no warning
           (oset! (js-obj) "?x" "val")
@@ -584,7 +584,7 @@
     (testing "invalid soft selectors (dynamic)"
       (with-compiler-config {:runtime-unexpected-soft-selector :warn
                              :diagnostics                      true}
-        (let [recorder (atom)]
+        (let [recorder (atom [])]
           (with-console-recording recorder
             (oget+ (js-obj) (identity "?x"))                                                                                  ; no warning
             (oset!+ (js-obj) (identity "?x") "val")

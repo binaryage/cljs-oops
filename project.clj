@@ -8,8 +8,8 @@
   :scm {:name "git"
         :url  "https://github.com/binaryage/cljs-oops"}
 
-  :dependencies [[org.clojure/clojure "1.9.0-alpha16" :scope "provided"]
-                 [org.clojure/clojurescript "1.9.562" :scope "provided"]
+  :dependencies [[org.clojure/clojure "1.9.0-alpha17" :scope "provided"]
+                 [org.clojure/clojurescript "1.9.660" :scope "provided"]
                  [funcool/cuerdas "2.0.3"]
                  [binaryage/env-config "0.2.0"]
 
@@ -17,7 +17,7 @@
                  [binaryage/devtools "0.9.4" :scope "test"]
                  [binaryage/dirac "RELEASE" :scope "test" :upgrade false]
                  [figwheel "0.5.10" :scope "test"]
-                 [org.clojure/tools.logging "0.3.1" :scope "test"]
+                 [org.clojure/tools.logging "0.4.0" :scope "test"]
                  [clj-logging-config "1.9.12" :scope "test"]
                  [clansi "1.0.0" :scope "test"]]
 
@@ -52,7 +52,7 @@
 
              :clojure18
              {:dependencies [[org.clojure/clojure "1.8.0" :scope "provided" :upgrade false]
-                             [clojure-future-spec "1.9.0-alpha16-1" :scope "provided"]]}
+                             [clojure-future-spec "1.9.0-alpha17" :scope "provided"]]}
 
              :cooper
              {:plugins [[lein-cooper "1.2.2"]]}
