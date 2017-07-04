@@ -52,12 +52,12 @@
 
 (defn gen-key-get [obj key]
   (case (config/key-get-mode)
-    :core `(cljs.core/aget ~obj ~key)                                                                                         ; => `(~'js* "(~{}[~{}])" ~obj ~key)
+    :core `(~'js* "(~{}[~{}])" ~obj ~key)                                                                                     ; using aget could raise a warning, see CLJS-2148
     :goog `(goog.object/get ~obj ~key)))
 
 (defn gen-key-set [obj key val]
   (case (config/key-set-mode)
-    :core `(cljs.core/aset ~obj ~key ~val)                                                                                    ; => `(~'js* "(~{}[~{}] = ~{})" ~obj ~key ~val)
+    :core `(~'js* "(~{}[~{}] = ~{})" ~obj ~key ~val)                                                                          ; using aset could raise a warning, see CLJS-2148
     :goog `(goog.object/set ~obj ~key ~val)))
 
 (defn gen-dynamic-object-access-validation-wrapper [obj-sym mode key check-key? body]
