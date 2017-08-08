@@ -41,8 +41,8 @@
     [(coerce-key (second node))]
     node))
 
-(defn coerce-selector-keys [destured-selector]
-  (postwalk coerce-key-node destured-selector))
+(defn coerce-selector-keys [destructured-selector]
+  (postwalk coerce-key-node destructured-selector))
 
 (defn coerce-selector-node [node]
   (if (and (sequential? node)
@@ -50,8 +50,8 @@
     (vector (second node))
     node))
 
-(defn coerce-nested-selectors [destured-selector]
-  (postwalk coerce-selector-node destured-selector))
+(defn coerce-nested-selectors [destructured-selector]
+  (postwalk coerce-selector-node destructured-selector))
 
 (defn standalone-modifier? [item]
   (and (pos? (first item))

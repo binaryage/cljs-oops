@@ -1,5 +1,5 @@
 (ns oops.state
-  "Here we gather runtime state. For perfomance/code-gen reasons we keep everything under one JS array."
+  "Here we gather runtime state. For performance/code-gen reasons we keep everything under one JS array."
   (:require-macros [oops.debug :refer [debug-assert]]
                    [oops.constants :as constants])
   (:require [oops.helpers :refer [repurpose-error]]

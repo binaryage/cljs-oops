@@ -11,7 +11,7 @@
 (s/def ::obj-selector (s/or :key ::obj-key
                             :selector (native-array-aware-* ::obj-selector)))
 
-; note: ::obj-path is a native array for perfomance reasons
+; note: ::obj-path is a native array for performance reasons
 ;       it is not a sequence of tuples, but it is flat sequence of pairs mode-key
 ;       for an example clj path [[0 "key1"] [0 "key2"] ...]
 ;       the equivalent cljs path is [0 "key1" 0 "key2"]

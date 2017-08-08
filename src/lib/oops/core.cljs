@@ -1,5 +1,5 @@
 (ns oops.core
-  "The main namespace to be consumend by library users from ClojureScript.
+  "The main namespace to be consumed by library users from ClojureScript.
   Provides core macros via core.clj and runtime support (see runtime.clj).
 
     (ns your-project.namespace

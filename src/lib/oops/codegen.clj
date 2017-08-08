@@ -294,7 +294,7 @@
       body-code
       (let [console-reporter (list 'js* console-reporter-template)
             call-site-error `(js/Error.)]
-        ; it is imporant to keep console-reporter and call-site-error inline so we get proper call-site location and line number
+        ; it is important to keep console-reporter and call-site-error inline so we get proper call-site location and line number
         `(binding [oops.state/*runtime-state* (oops.state/prepare-state ~obj-sym ~call-site-error ~console-reporter)]
            ~(gen-debug-runtime-state-consistency-check body-code))))))
 

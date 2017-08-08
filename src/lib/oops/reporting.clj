@@ -8,7 +8,7 @@
 
 ; -- reporting --------------------------------------------------------------------------------------------------------------
 
-(defn supress-reporting? [type]
+(defn suppress-reporting? [type]
   (boolean (get-in oops.state/*invocation-opts* [:suppress-reporting type])))
 
 (defn report! [type & [info]]
@@ -19,13 +19,13 @@
 
 (defn report-if-needed! [type & [info]]
   (if (config/diagnostics?)
-    (if-not (supress-reporting? type)
+    (if-not (suppress-reporting? type)
       (report! type info))))
 
 (defn report-offending-selector-if-needed! [offending-selector type & [info]]
   (debug-assert offending-selector)
   (if (config/diagnostics?)
-    (if-not (supress-reporting? type)
+    (if-not (suppress-reporting? type)
       (let [point-to-offending-selector (into {} (filter second (select-keys (meta offending-selector) [:line :column])))]
         ; note that sometimes param meta could be missing, we don't alter state/*invocation-env* in that case
         (binding [state/*invocation-env* (merge state/*invocation-env* point-to-offending-selector)]
