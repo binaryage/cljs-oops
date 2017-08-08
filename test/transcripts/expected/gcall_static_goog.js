@@ -1,4 +1,4 @@
-// Clojure v1.9.0-alpha17, ClojureScript v1.9.660, js-beautify v1.6.14
+// Clojure v1.9.0-alpha17, ClojureScript v1.9.854, js-beautify v1.6.14
 // ----------------------------------------------------------------------------------------------------------
 // COMPILER CONFIG:
 //   arena/gcall_static.cljs [goog]
