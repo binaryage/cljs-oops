@@ -107,7 +107,9 @@
             "s"
             42
             true
-            false))))
+            false
+            Atom
+            (atom 0)))))
     (when-not-advanced-mode
       (testing "with {:error-reporting-mode :console} object access validation should report errors to console"
         (with-runtime-config {:error-reporting :console}
@@ -119,13 +121,17 @@
                 "s"
                 42
                 true
-                false))
+                false
+                Atom
+                (atom 0)))
             (is (= @recorder ["ERROR: (\"Oops, Unexpected object value (nil)\" {:path \"\", :flavor \"nil\", :obj nil})"
                               "ERROR: (\"Oops, Unexpected object value (undefined)\" {:path \"\", :flavor \"undefined\", :obj nil})"
                               "ERROR: (\"Oops, Unexpected object value (string)\" {:path \"\", :flavor \"string\", :obj \"s\"})"
                               "ERROR: (\"Oops, Unexpected object value (number)\" {:path \"\", :flavor \"number\", :obj 42})"
                               "ERROR: (\"Oops, Unexpected object value (boolean)\" {:path \"\", :flavor \"boolean\", :obj true})"
-                              "ERROR: (\"Oops, Unexpected object value (boolean)\" {:path \"\", :flavor \"boolean\", :obj false})"])))
+                              "ERROR: (\"Oops, Unexpected object value (boolean)\" {:path \"\", :flavor \"boolean\", :obj false})"
+                              "ERROR: (\"Oops, Unexpected object value (cljs type)\" {:path \"\", :flavor \"cljs type\", :obj cljs.core/Atom})"
+                              "ERROR: (\"Oops, Unexpected object value (cljs instance)\" {:path \"\", :flavor \"cljs instance\", :obj #object [cljs.core.Atom {:val 0}]})"])))
           (let [recorder (atom [])]
             (with-console-recording recorder
               (are [o] (= (oget (js-obj "k1" o) "k1" "k2") nil)
