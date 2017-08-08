@@ -19,6 +19,9 @@
 
 ; -- helper code generators -------------------------------------------------------------------------------------------------
 
+(defn gen-suppress-reporting? [msg-id]
+  `(contains? (oops.config/get-suppress-reporting) ~msg-id))
+
 (defn gen-report-if-needed [msg-id & [info]]
   (debug-assert (keyword? msg-id))
   `(oops.core/report-if-needed-dynamically ~msg-id ~info))
@@ -34,9 +37,11 @@
                :path   (oops.state/get-key-path-str)
                :flavor ~flavor}
         reporting-code (gen-report-if-needed :unexpected-object-value info)]
-    `(do
-       ~reporting-code
-       ~soft?)))
+    `(if ~(gen-suppress-reporting? :unexpected-object-value)
+       true                                                                                                                   ; see https://github.com/binaryage/cljs-oops/issues/13
+       (do
+         ~reporting-code
+         ~soft?))))
 
 (defn gen-dynamic-object-access-validation [obj-sym mode-sym]
   (debug-assert (symbol? obj-sym))
@@ -292,9 +297,6 @@
         ; it is imporant to keep console-reporter and call-site-error inline so we get proper call-site location and line number
         `(binding [oops.state/*runtime-state* (oops.state/prepare-state ~obj-sym ~call-site-error ~console-reporter)]
            ~(gen-debug-runtime-state-consistency-check body-code))))))
-
-(defn gen-supress-reporting? [msg-id]
-  `(contains? (oops.config/get-suppress-reporting) ~msg-id))
 
 (defn gen-check-key-access [obj-sym mode-sym key]
   (debug-assert (symbol? obj-sym))
