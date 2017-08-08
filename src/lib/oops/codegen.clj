@@ -26,29 +26,36 @@
 (defn gen-selector-list [items]
   `(cljs.core/array ~@items))
 
-(defn gen-object-access-validation-error [obj-sym flavor]
+(defn gen-object-access-validation-error [obj-sym flavor soft?]
   (debug-assert (symbol? obj-sym))
-  (gen-report-if-needed :unexpected-object-value `{:obj    (oops.state/get-target-object)
-                                                   :path   (oops.state/get-key-path-str)
-                                                   :flavor ~flavor}))
+  (debug-assert (string? flavor))
+  (debug-assert (instance? Boolean soft?))
+  (let [info `{:obj    (oops.state/get-target-object)
+               :path   (oops.state/get-key-path-str)
+               :flavor ~flavor}
+        reporting-code (gen-report-if-needed :unexpected-object-value info)]
+    `(do
+       ~reporting-code
+       ~soft?)))
 
 (defn gen-dynamic-object-access-validation [obj-sym mode-sym]
   (debug-assert (symbol? obj-sym))
   (debug-assert (symbol? mode-sym))
-  `(cond
-     (and (= ~mode-sym ~dot-access) (cljs.core/undefined? ~obj-sym)) ~(gen-object-access-validation-error obj-sym "undefined")
-     (and (= ~mode-sym ~dot-access) (cljs.core/nil? ~obj-sym)) ~(gen-object-access-validation-error obj-sym "nil")
-     (goog/isBoolean ~obj-sym) ~(gen-object-access-validation-error obj-sym "boolean")
-     (goog/isNumber ~obj-sym) ~(gen-object-access-validation-error obj-sym "number")
-     (goog/isString ~obj-sym) ~(gen-object-access-validation-error obj-sym "string")
-     (not (goog/isObject ~obj-sym)) ~(gen-object-access-validation-error obj-sym "non-object")
-     (goog/isDateLike ~obj-sym) ~(gen-object-access-validation-error obj-sym "date-like")
-     (oops.helpers/cljs-type? ~obj-sym) ~(gen-object-access-validation-error obj-sym "cljs type")
-     (oops.helpers/cljs-instance? ~obj-sym) ~(gen-object-access-validation-error obj-sym "cljs instance")
-     ; note: constructors are functions and sometimes it is handy to oget some stuff from them
-     ; (goog/isFunction ~obj-sym) ~(gen-object-access-validation-error obj-sym "function")
-     ; note: it makes sense to use arrays as target objects, selectors can use numeric indices
-     :else true))
+  (let [dot-access? `(= ~mode-sym ~dot-access)]
+    `(cond
+       (and ~dot-access? (cljs.core/undefined? ~obj-sym)) ~(gen-object-access-validation-error obj-sym "undefined" false)
+       (and ~dot-access? (cljs.core/nil? ~obj-sym)) ~(gen-object-access-validation-error obj-sym "nil" false)
+       (goog/isBoolean ~obj-sym) ~(gen-object-access-validation-error obj-sym "boolean" false)
+       (goog/isNumber ~obj-sym) ~(gen-object-access-validation-error obj-sym "number" false)
+       (goog/isString ~obj-sym) ~(gen-object-access-validation-error obj-sym "string" false)
+       (not (goog/isObject ~obj-sym)) ~(gen-object-access-validation-error obj-sym "non-object" false)
+       (goog/isDateLike ~obj-sym) ~(gen-object-access-validation-error obj-sym "date-like" true)
+       (oops.helpers/cljs-type? ~obj-sym) ~(gen-object-access-validation-error obj-sym "cljs type" true)
+       (oops.helpers/cljs-instance? ~obj-sym) ~(gen-object-access-validation-error obj-sym "cljs instance" true)
+       ; note: constructors are functions and sometimes it is handy to oget some stuff from them
+       ; (goog/isFunction ~obj-sym) ~(gen-object-access-validation-error obj-sym "function")
+       ; note: it makes sense to use arrays as target objects, selectors can use numeric indices
+       :else true)))
 
 (defn gen-key-get [obj key]
   (case (config/key-get-mode)
