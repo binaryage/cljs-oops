@@ -6,8 +6,7 @@
             [cljs.build.api :as compiler]
             [environ.core :refer [env]]
             [oops.circus.utils :refer :all]
-            [oops.circus.config :as config]
-            [cljs.util :as cljs-util])
+            [oops.circus.config :as config])
   (:import (java.io File StringWriter)))
 
 (def section-separator
@@ -62,7 +61,6 @@
 
 (defn get-environment-info []
   (str "Clojure v" (clojure-version) ", "
-       "ClojureScript v" (cljs-util/clojurescript-version) ", "
        "js-beautify v" (js-beautify-version)))
 
 ; -- transcripts ------------------------------------------------------------------------------------------------------------
