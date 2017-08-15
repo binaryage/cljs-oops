@@ -12,7 +12,7 @@
   :dependencies [[org.clojure/clojure "1.9.0-alpha17" :scope "provided"]
                  [org.clojure/clojurescript ~clojurescript-version :scope "provided"]
                  [funcool/cuerdas "2.0.3"]
-                 [binaryage/env-config "0.2.1"]
+                 [binaryage/env-config "0.2.2"]
 
                  [environ "1.1.0" :scope "test"]
                  [binaryage/devtools "0.9.4" :scope "test"]
