@@ -78,5 +78,6 @@
 ; -- entry point ------------------------------------------------------------------------------------------------------------
 
 (enable-console-print!)
+(println "ClojureScript version:" *clojurescript-version*)
 (case (.-selectedTestSuite js/window)
   (run-normal-tests))

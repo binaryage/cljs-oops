@@ -1,3 +1,4 @@
+(def clojurescript-version (or (System/getenv "CANARY_CLOJURESCRIPT_VERSION") "1.9.854"))
 (defproject binaryage/oops "0.5.6"
   :description "ClojureScript macros for convenient Javascript object access."
   :url "https://github.com/binaryage/cljs-oops"
@@ -9,7 +10,7 @@
         :url  "https://github.com/binaryage/cljs-oops"}
 
   :dependencies [[org.clojure/clojure "1.9.0-alpha17" :scope "provided"]
-                 [org.clojure/clojurescript "1.9.854" :scope "provided"]
+                 [org.clojure/clojurescript ~clojurescript-version :scope "provided"]
                  [funcool/cuerdas "2.0.3"]
                  [binaryage/env-config "0.2.1"]
 
