@@ -76,7 +76,7 @@
        (take-while #(not (empty? %)))
        (cuerdas/unlines)))
 
-(defn extrac-code-snippet-from-env [env]
+(defn extract-code-snippet-from-env [env]
   (let [ns-name (str (get-in env [:ns :name]))
         _ (assert ns-name)
         line (get env :line)
@@ -150,7 +150,7 @@
                      :code  ~code-string})))
 
 (defmacro testing [_title & body]
-  (let [code (extrac-code-snippet-from-env &env)
+  (let [code (extract-code-snippet-from-env &env)
         snippet-str (str "SNIPPET:" (encode code))]
     `(do
        ~(gen-marker snippet-str)
