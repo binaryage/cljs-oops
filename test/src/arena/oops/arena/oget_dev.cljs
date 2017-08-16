@@ -2,7 +2,7 @@
   (:require-macros [oops.arena.macros :refer [macro-identity]])
   (:require [oops.core :refer [oget oget+]]
             [oops.config :refer [without-diagnostics with-debug]]
-            [oops.tools :refer [init-arena-test! testing]]))
+            [oops.tools :refer [init-arena-test! done-arena-test! testing]]))
 
 (init-arena-test!)
 
@@ -32,3 +32,5 @@
 
 (testing "nested dynamic oget expansion"
   (oget+ (oget js/window "k1") (oget js/window "k2.k3")))
+
+(done-arena-test!)

@@ -2,7 +2,7 @@
   (:require-macros [oops.arena.macros :refer [macro-identity]])
   (:require [oops.core :refer [ocall ocall+]]
             [oops.config :refer [without-diagnostics with-debug]]
-            [oops.tools :refer [init-arena-test! testing]]))
+            [oops.tools :refer [init-arena-test! done-arena-test! testing]]))
 
 (init-arena-test!)
 
@@ -38,3 +38,5 @@
     (-> o
         (ocall "e.f" 1)
         (ocall "g" 2 3))))
+
+(done-arena-test!)

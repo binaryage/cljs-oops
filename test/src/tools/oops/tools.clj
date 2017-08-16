@@ -21,11 +21,17 @@
 (defn gen-marker [s]
   `(.log js/console ~(str "-12345-" s "-54321-")))
 
-(defn get-arena-separator []
+(defn get-arena-start-separator []
   "--- compiled main namespace starts here ---")
 
-(defn gen-arena-separator []
-  (gen-marker (get-arena-separator)))
+(defn get-arena-end-separator []
+  "--- compiled main namespace ends here ---")
+
+(defn gen-arena-start-separator []
+  (gen-marker (get-arena-start-separator)))
+
+(defn gen-arena-end-separator []
+  (gen-marker (get-arena-end-separator)))
 
 (defn gen-devtools-if-needed []
   (if-not (= (env :oops-elide-devtools) "1")
@@ -129,7 +135,11 @@
 (defmacro init-arena-test! []
   `(do
      ~(gen-devtools-if-needed)
-     ~(gen-arena-separator)))
+     ~(gen-arena-start-separator)))
+
+(defmacro done-arena-test! []
+  `(do
+     ~(gen-arena-end-separator)))
 
 (defmacro runonce [& body]
   (let [code (cons 'do body)

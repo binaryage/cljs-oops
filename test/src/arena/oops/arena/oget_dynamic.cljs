@@ -1,6 +1,6 @@
 (ns oops.arena.oget-dynamic
   (:require [oops.core :refer [oget+]]
-            [oops.tools :refer [init-arena-test! testing]]))
+            [oops.tools :refer [init-arena-test! done-arena-test! testing]]))
 
 (init-arena-test!)
 
@@ -37,3 +37,5 @@
   (def o4 #js {"key"    "val"
                "nested" #js {"nested-key" "nested-val"}})
   (oget+ o4 #js ["key" "nested"]))
+
+(done-arena-test!)

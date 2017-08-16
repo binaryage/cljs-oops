@@ -1,6 +1,6 @@
 (ns oops.arena.ocall-dynamic
   (:require [oops.core :refer [ocall+]]
-            [oops.tools :refer [init-arena-test! testing]]))
+            [oops.tools :refer [init-arena-test! done-arena-test! testing]]))
 
 (init-arena-test!)
 
@@ -17,3 +17,5 @@
     (-> o
         (ocall+ (identity "e.f") 1)
         (ocall+ (identity "g") 2 3))))
+
+(done-arena-test!)

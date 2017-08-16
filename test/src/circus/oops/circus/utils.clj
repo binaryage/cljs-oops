@@ -48,11 +48,15 @@
     (string/replace s #"\n\n+" "\n\n")))
 
 (defn extract-relevant-output [content]
-  (let [separator (tools/get-arena-separator)]
-    (if-let [separator-index (string/last-index-of content separator)]
-      (let [semicolon-index (or (string/index-of content ";" separator-index) separator-index)
-            relevant-content (.substring content (+ semicolon-index 1))]
-        relevant-content))))
+  (let [start-separator (tools/get-arena-start-separator)
+        end-separator (tools/get-arena-end-separator)]
+    (if-some [start-separator-index (string/last-index-of content start-separator)]
+      (let [semicolon-index (or (string/index-of content ";" start-separator-index) start-separator-index)
+            content (.substring content (inc semicolon-index))]
+        (if-some [end-separator-index (string/index-of content end-separator)]
+          (let [content (.substring content 0 end-separator-index)
+                semicolon-index (or (string/last-index-of content "console") 0)]                                              ; see gen-marker
+            (.substring content 0 semicolon-index)))))))
 
 (defn make-empty-normalizer-state []
   {:counter     1

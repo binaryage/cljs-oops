@@ -1,6 +1,6 @@
 (ns oops.arena.gcall-dynamic
   (:require [oops.core :refer [gcall+]]
-            [oops.tools :refer [init-arena-test! testing]]))
+            [oops.tools :refer [init-arena-test! done-arena-test! testing]]))
 
 (init-arena-test!)
 
@@ -11,3 +11,5 @@
 
 (testing "retageted dynamic gcall"
   (gcall+ (identity "a.f") "p1" "p2"))
+
+(done-arena-test!)

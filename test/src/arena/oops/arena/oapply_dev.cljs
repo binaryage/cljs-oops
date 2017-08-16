@@ -2,7 +2,7 @@
   (:require-macros [oops.arena.macros :refer [macro-identity]])
   (:require [oops.core :refer [oapply oapply+]]
             [oops.config :refer [without-diagnostics with-debug]]
-            [oops.tools :refer [init-arena-test! testing]]))
+            [oops.tools :refer [init-arena-test! done-arena-test! testing]]))
 
 (init-arena-test!)
 
@@ -32,3 +32,5 @@
 
 (testing "dynamic oapply expansion with retargeting"
   (oapply+ js/window (identity "m1.m2") ["p1" "p2"]))
+
+(done-arena-test!)

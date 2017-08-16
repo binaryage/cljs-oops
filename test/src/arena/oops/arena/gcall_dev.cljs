@@ -2,7 +2,7 @@
   (:require-macros [oops.arena.macros :refer [macro-identity]])
   (:require [oops.core :refer [gcall gcall+]]
             [oops.config :refer [without-diagnostics with-debug]]
-            [oops.tools :refer [init-arena-test! testing]]))
+            [oops.tools :refer [init-arena-test! done-arena-test! testing]]))
 
 (init-arena-test!)
 
@@ -32,3 +32,5 @@
 
 (testing "dynamic gcall expansion with retargeting"
   (gcall+ (identity "m1.m2") "p1" "p2"))
+
+(done-arena-test!)

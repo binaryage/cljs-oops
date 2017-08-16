@@ -2,7 +2,7 @@
   (:require-macros [oops.arena.macros :refer [macro-identity]])
   (:require [oops.core :refer [oset! oset!+]]
             [oops.config :refer [without-diagnostics with-debug]]
-            [oops.tools :refer [init-arena-test! testing]]))
+            [oops.tools :refer [init-arena-test! done-arena-test! testing]]))
 
 (init-arena-test!)
 
@@ -13,3 +13,5 @@
 
 (testing "dynamic oset! without punching"
   (oset!+ js/window (identity "k1.k2.k3") "val"))
+
+(done-arena-test!)
