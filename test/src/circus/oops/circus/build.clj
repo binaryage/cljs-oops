@@ -60,8 +60,7 @@
        (pprint-str (into (sorted-map) (:options build)))))
 
 (defn get-environment-info []
-  (str "Clojure v" (clojure-version) ", "
-       "js-beautify v" (js-beautify-version)))
+  (str "js-beautify v" (js-beautify-version)))
 
 ; -- transcripts ------------------------------------------------------------------------------------------------------------
 
