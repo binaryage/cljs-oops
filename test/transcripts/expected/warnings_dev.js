@@ -1,4 +1,4 @@
-// Clojure v1.9.0-alpha17, js-beautify v1.6.14
+// js-beautify v1.6.14
 // ----------------------------------------------------------------------------------------------------------
 // COMPILER CONFIG:
 //   arena/warnings.cljs [dev]
@@ -109,4 +109,4 @@ oops.state._STAR_runtime_state_STAR_ = oops.state.prepare_state.call(null, targe
 });
 try {} finally {
   oops.state._STAR_runtime_state_STAR_ = _STAR_runtime_state_STAR_6
-};
+}

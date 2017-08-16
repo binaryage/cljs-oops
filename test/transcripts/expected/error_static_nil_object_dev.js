@@ -1,4 +1,4 @@
-// Clojure v1.9.0-alpha17, js-beautify v1.6.14
+// js-beautify v1.6.14
 // ----------------------------------------------------------------------------------------------------------
 // COMPILER CONFIG:
 //   arena/error_static_nil_object.cljs [dev]
