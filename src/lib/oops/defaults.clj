@@ -51,6 +51,7 @@
 
 ; please note that we want this code to be co-located with default config for easier maintenance
 ; but formally we want config spec to reside in oops.config namespace
+(create-ns 'oops.config)
 (alias 'config 'oops.config)
 
 ; -- config helpers ---------------------------------------------------------------------------------------------------------
