@@ -6,6 +6,7 @@
                                gget gset! gcall! gapply! gcall gapply
                                gget+ gset!+ gcall!+ gapply!+ gcall+ gapply+]]
             [oops.config :refer [with-runtime-config with-compiler-config with-child-factory update-current-runtime-config!]]
+            [oops.helpers :refer [unchecked-aget]]
             [oops.tools
              :refer [with-captured-console presume-runtime-config]
              :refer-macros [init-test!
@@ -316,7 +317,7 @@
   (testing "ocall should retarget this"
     (let [who? (fn []
                  (this-as this
-                   (aget this "whoami")))
+                   (unchecked-aget this "whoami")))
           obj #js {"whoami" "ROOT!"
                    "f"      who?
                    "a"      #js {"whoami" "A!"
@@ -390,7 +391,7 @@
   (testing "oapply should retarget this"
     (let [who? (fn []
                  (this-as this
-                   (aget this "whoami")))
+                   (unchecked-aget this "whoami")))
           obj #js {"whoami" "ROOT!"
                    "f"      who?
                    "a"      #js {"whoami" "A!"
@@ -713,7 +714,7 @@
   (testing "gcall should retarget this"
     (let [who? (fn []
                  (this-as this
-                   (aget this "whoami")))
+                   (unchecked-aget this "whoami")))
           obj #js {"whoami" "ROOT!"
                    "f"      who?
                    "a"      #js {"whoami" "A!"
@@ -752,7 +753,7 @@
   (testing "gapply should retarget this"
     (let [who? (fn []
                  (this-as this
-                   (aget this "whoami")))
+                   (unchecked-aget this "whoami")))
           obj #js {"whoami" "ROOT!"
                    "f"      who?
                    "a"      #js {"whoami" "A!"

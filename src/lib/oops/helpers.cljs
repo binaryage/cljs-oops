@@ -1,13 +1,13 @@
 (ns oops.helpers
   "Various helpers to be available to our code at runtime."
-  (:require-macros [oops.helpers]
+  (:require-macros [oops.helpers :refer [unchecked-aget]]
                    [oops.debug :refer [debug-assert]]))
 
 (defn is-prototype? [o]
   (identical? (.-prototype (.-constructor o)) o))
 
 (defn get-constructor [o]
-  (aget o "constructor"))
+  (unchecked-aget o "constructor"))
 
 ; IRC #clojurescript @ freenode.net on 2015-01-27:
 ; [13:40:09] darwin_: Hi, what is the best way to test if I'm handled ClojureScript data value or plain javascript object?
@@ -17,7 +17,7 @@
 (defn cljs-type? [f]
   (and (goog/isObject f)                                                                                                      ; see http://stackoverflow.com/a/22482737/84283
        (not (is-prototype? f))
-       (aget f "cljs$lang$type")))
+       (unchecked-aget f "cljs$lang$type")))
 
 (defn cljs-instance? [value]
   (and (goog/isObject value)                                                                                                  ; see http://stackoverflow.com/a/22482737/84283

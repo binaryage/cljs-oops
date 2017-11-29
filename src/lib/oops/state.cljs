@@ -2,7 +2,7 @@
   "Here we gather runtime state. For performance/code-gen reasons we keep everything under one JS array."
   (:require-macros [oops.debug :refer [debug-assert]]
                    [oops.constants :as constants])
-  (:require [oops.helpers :refer [repurpose-error]]
+  (:require [oops.helpers :refer [repurpose-error unchecked-aget]]
             [oops.config :as config]))
 
 (def ^:dynamic *runtime-state*)
@@ -30,32 +30,32 @@
 
 (defn get-target-object []
   (debug-assert *runtime-state*)
-  (let [current-target-object (aget *runtime-state* (constants/target-object-idx))]
+  (let [current-target-object (unchecked-aget *runtime-state* (constants/target-object-idx))]
     current-target-object))
 
 (defn get-console-reporter []
   (debug-assert *runtime-state*)
-  (let [console-reporter (aget *runtime-state* (constants/console-reporter-idx))]
+  (let [console-reporter (unchecked-aget *runtime-state* (constants/console-reporter-idx))]
     (debug-assert (fn? console-reporter))
     console-reporter))
 
 (defn get-call-site-error []
   (debug-assert *runtime-state*)
-  (let [call-site-error (aget *runtime-state* (constants/call-site-error-idx))]
+  (let [call-site-error (unchecked-aget *runtime-state* (constants/call-site-error-idx))]
     (debug-assert (instance? js/Error call-site-error))
     call-site-error))
 
 (defn add-key-to-current-path! [key]
   (debug-assert (string? key))
   (debug-assert *runtime-state*)
-  (let [current-key-path (aget *runtime-state* (constants/key-path-idx))]
+  (let [current-key-path (unchecked-aget *runtime-state* (constants/key-path-idx))]
     (debug-assert (array? current-key-path))
     (.push current-key-path key)
     current-key-path))
 
 (defn get-key-path []
   (debug-assert *runtime-state*)
-  (let [current-key-path (aget *runtime-state* (constants/key-path-idx))]
+  (let [current-key-path (unchecked-aget *runtime-state* (constants/key-path-idx))]
     (debug-assert (array? current-key-path))
     current-key-path))
 
@@ -65,7 +65,7 @@
 
 (defn get-last-access-modifier []
   (debug-assert *runtime-state*)
-  (aget *runtime-state* (constants/last-access-modifier-idx)))
+  (unchecked-aget *runtime-state* (constants/last-access-modifier-idx)))
 
 (defn set-last-access-modifier! [mode]
   (debug-assert *runtime-state*)
@@ -73,7 +73,7 @@
 
 (defn ^boolean was-error-reported? []
   (debug-assert *runtime-state*)
-  (let [error-reported? (aget *runtime-state* (constants/error-reported-idx))]
+  (let [error-reported? (unchecked-aget *runtime-state* (constants/error-reported-idx))]
     (debug-assert (boolean? error-reported?))
     error-reported?))
 

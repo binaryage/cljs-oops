@@ -3,10 +3,11 @@
   (:require-macros [oops.schema]
                    [oops.constants :refer [get-dot-access get-soft-access get-punch-access
                                            gen-op-get gen-op-set]]
+                   [oops.helpers :refer [unchecked-aget]]
                    [oops.debug :refer [debug-assert]]))
 
 ; implementation here should mimic static versions in schema.clj
-; for perfomance reasons we don't reuse the same code on cljs side
+; for performance reasons we don't reuse the same code on cljs side
 
 ; --- path utils ------------------------------------------------------------------------------------------------------------
 
@@ -54,11 +55,11 @@
         (recur (next items))))))
 
 (defn standalone-modifier? [arr i]
-  (and (pos? (aget arr i))
-       (= "" (aget arr (inc i)))))
+  (and (pos? (unchecked-aget arr i))
+       (= "" (unchecked-aget arr (inc i)))))
 
 (defn merge-standalone-modifier! [arr i]
-  (aset arr (+ i 2) (aget arr i))                                                                                             ; transfer modifier
+  (aset arr (+ i 2) (unchecked-aget arr i))                                                                                   ; transfer modifier
   (.splice arr i 2))                                                                                                          ; remove standalone item
 
 (defn merge-standalone-modifiers! [arr]

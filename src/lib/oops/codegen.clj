@@ -139,8 +139,8 @@
        (loop [~i-sym 0
               ~obj-sym ~initial-obj-sym]
          (if (< ~i-sym ~len-sym)
-           (let [~mode-sym (aget ~path-sym ~i-sym)
-                 ~key-sym (aget ~path-sym (inc ~i-sym))
+           (let [~mode-sym (oops.helpers/unchecked-aget ~path-sym ~i-sym)
+                 ~key-sym (oops.helpers/unchecked-aget ~path-sym (inc ~i-sym))
                  ~next-obj-sym (oops.core/get-key-dynamically ~obj-sym ~key-sym ~mode-sym)]
              (case ~mode-sym
                ~dot-access (recur ~next-i ~next-obj-sym)
@@ -158,7 +158,9 @@
         len-sym (gensym "len")
         target-obj-sym (gensym "target-obj")
         target-obj-path-code `(.slice ~path-sym 0 (- ~len-sym 2))
-        last-obj-path-code `(cljs.core/array (aget ~path-sym (- ~len-sym 2)) (aget ~path-sym (- ~len-sym 1)))]                ; not sure if .slice would be faster here
+        last-obj-path-code `(cljs.core/array
+                              (oops.helpers/unchecked-aget ~path-sym (- ~len-sym 2))
+                              (oops.helpers/unchecked-aget ~path-sym (- ~len-sym 1)))]                                        ; not sure if .slice would be faster here
     `(let [~path-sym ~path
            ~len-sym (cljs.core/alength ~path-sym)]
        (if (< ~len-sym 4)
@@ -231,8 +233,8 @@
     `(let [~path-sym ~path
            ~len-sym (cljs.core/alength ~path-sym)
            ~parent-obj-path-sym (.slice ~path-sym 0 (- ~len-sym 2))
-           ~key-sym (aget ~path-sym (- ~len-sym 1))
-           ~mode-sym (aget ~path-sym (- ~len-sym 2))
+           ~key-sym (oops.helpers/unchecked-aget ~path-sym (- ~len-sym 1))
+           ~mode-sym (oops.helpers/unchecked-aget ~path-sym (- ~len-sym 2))
            ~parent-obj-sym ~(gen-dynamic-path-get obj-sym parent-obj-path-sym)]
        (oops.core/set-key-dynamically ~parent-obj-sym ~key-sym ~val ~mode-sym))))
 
@@ -242,17 +244,17 @@
 (defn gen-reported-data [data]
   `(let [data# ~data]
      (or (if (oops.config/use-envelope?)
-           (if-let [devtools# (cljs.core/aget goog/global "devtools")]
-             (if-let [toolbox# (cljs.core/aget devtools# "toolbox")]
-               (if-let [envelope# (cljs.core/aget toolbox# "envelope")]
+           (if-let [devtools# (oops.helpers/unchecked-aget goog/global "devtools")]
+             (if-let [toolbox# (oops.helpers/unchecked-aget devtools# "toolbox")]
+               (if-let [envelope# (oops.helpers/unchecked-aget toolbox# "envelope")]
                  (if (cljs.core/fn? envelope#)
                    (envelope# data# "details"))))))
          data#)))
 
 (defn gen-console-method [kind]
   (case kind
-    :error `(aget js/console "error")
-    :warning `(aget js/console "warn")))
+    :error `(oops.helpers/unchecked-aget js/console "error")
+    :warning `(oops.helpers/unchecked-aget js/console "warn")))
 
 (defn gen-report-runtime-message [kind msg data]
   (debug-assert (contains? #{:error :warning} kind))
@@ -346,21 +348,21 @@
 (defn gen-callable [obj-sym selector-list fn-sym call-info-sym action]
   (debug-assert (symbol? obj-sym))
   `(let [~call-info-sym ~(gen-get-call-info-impl obj-sym selector-list)
-         ~fn-sym (aget ~call-info-sym 1)]
+         ~fn-sym (oops.helpers/unchecked-aget ~call-info-sym 1)]
      ~(gen-dynamic-fn-call-validation-wrapper fn-sym action)))
 
 (defn gen-ocall-impl [obj-sym selector-list args]
   (let [fn-sym (gensym "fn")
         call-info-sym (gensym "call-info")
         action `(if-not (nil? ~fn-sym)
-                  (.call ~fn-sym (aget ~call-info-sym 0) ~@args))]
+                  (.call ~fn-sym (oops.helpers/unchecked-aget ~call-info-sym 0) ~@args))]
     (gen-callable obj-sym selector-list fn-sym call-info-sym action)))
 
 (defn gen-oapply-impl [obj-sym selector-list args]
   (let [fn-sym (gensym "fn")
         call-info-sym (gensym "call-info")
         action `(if-not (nil? ~fn-sym)
-                  (.apply ~fn-sym (aget ~call-info-sym 0) (oops.helpers/to-native-array ~args)))]
+                  (.apply ~fn-sym (oops.helpers/unchecked-aget ~call-info-sym 0) (oops.helpers/to-native-array ~args)))]
     (gen-callable obj-sym selector-list fn-sym call-info-sym action)))
 
 ; -- shared macro bodies ----------------------------------------------------------------------------------------------------

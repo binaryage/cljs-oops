@@ -2,6 +2,7 @@
   (:require-macros [oops.tools])
   (:require [cljs.test :refer-macros [deftest testing is are run-tests use-fixtures]]
             [oops.config :as config]
+            [oops.helpers :refer [unchecked-aget unchecked-aset]]
             [devtools.core]))
 
 ; -- console recording ------------------------------------------------------------------------------------------------------
@@ -25,10 +26,10 @@
       (.apply orig-fn js/console (to-array args)))))
 
 (defn store-console-api []
-  {"log"   (aget js/window "console" "log")
-   "warn"  (aget js/window "console" "warn")
-   "info"  (aget js/window "console" "info")
-   "error" (aget js/window "console" "error")})
+  {"log"   (unchecked-aget js/window "console" "log")
+   "warn"  (unchecked-aget js/window "console" "warn")
+   "info"  (unchecked-aget js/window "console" "info")
+   "error" (unchecked-aget js/window "console" "error")})
 
 (defn captured-console-api [original-api]
   {"log"   (partial console-handler (get original-api "log") "LOG: ")
@@ -37,10 +38,10 @@
    "error" (partial console-handler (get original-api "error") "ERROR: ")})
 
 (defn set-console-api! [api]
-  (aset js/window "console" "log" (get api "log"))
-  (aset js/window "console" "warn" (get api "warn"))
-  (aset js/window "console" "info" (get api "info"))
-  (aset js/window "console" "error" (get api "error")))
+  (unchecked-aset js/window "console" "log" (get api "log"))
+  (unchecked-aset js/window "console" "warn" (get api "warn"))
+  (unchecked-aset js/window "console" "info" (get api "info"))
+  (unchecked-aset js/window "console" "error" (get api "error")))
 
 (defonce original-console-api (atom nil))
 

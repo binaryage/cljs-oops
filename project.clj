@@ -93,6 +93,7 @@
                                                    :asset-path      ".compiled/basic_onone"
                                                    :main            oops.runner
                                                    :optimizations   :none
+                                                   :checked-arrays  :warn                                                     ; see https://github.com/binaryage/cljs-oops/issues/14
                                                    :external-config {:devtools/config {:dont-detect-custom-formatters true}
                                                                      :oops/config     {:debug                    true
                                                                                        :dynamic-selector-usage   false
@@ -110,6 +111,7 @@
                                                    :main            oops.runner
                                                    :pseudo-names    true
                                                    :optimizations   :advanced
+                                                   :checked-arrays  :warn                                                     ; see https://github.com/binaryage/cljs-oops/issues/14
                                                    :external-config {:devtools/config {:silence-optimizations-warning true}
                                                                      :oops/config     {:debug   true
                                                                                        :key-get :core
@@ -126,6 +128,7 @@
                                                    :main            oops.runner
                                                    :pseudo-names    true
                                                    :optimizations   :advanced
+                                                   :checked-arrays  :warn                                                     ; see https://github.com/binaryage/cljs-oops/issues/14
                                                    :external-config {:devtools/config {:silence-optimizations-warning true}
                                                                      :oops/config     {:debug   true
                                                                                        :key-get :goog
