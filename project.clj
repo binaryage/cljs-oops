@@ -1,5 +1,5 @@
 (def clojurescript-version (or (System/getenv "CANARY_CLOJURESCRIPT_VERSION") "1.9.946"))
-(defproject binaryage/oops "0.5.6"
+(defproject binaryage/oops "0.5.7"
   :description "ClojureScript macros for convenient Javascript object access."
   :url "https://github.com/binaryage/cljs-oops"
   :license {:name         "MIT License"
