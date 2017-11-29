@@ -1,5 +1,5 @@
 (def clojurescript-version (or (System/getenv "CANARY_CLOJURESCRIPT_VERSION") "1.9.946"))
-(def lib-deps
+(def required-deps
   [['funcool/cuerdas "2.0.4"]
    ['binaryage/env-config "0.2.2"]])
 (def provided-deps
@@ -13,7 +13,8 @@
    ['org.clojure/tools.logging "0.4.0" :scope "test"]
    ['clj-logging-config "1.9.12" :scope "test"]
    ['clansi "1.0.0" :scope "test"]])
-(def all-deps (concat provided-deps lib-deps test-deps))
+(def lib-deps (concat provided-deps required-deps))
+(def all-deps (concat lib-deps test-deps))
 (defproject binaryage/oops "0.5.8"
   :description "ClojureScript macros for convenient Javascript object access."
   :url "https://github.com/binaryage/cljs-oops"
