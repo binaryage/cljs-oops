@@ -1,4 +1,4 @@
-(def clojurescript-version (or (System/getenv "CANARY_CLOJURESCRIPT_VERSION") "1.9.854"))
+(def clojurescript-version (or (System/getenv "CANARY_CLOJURESCRIPT_VERSION") "1.9.946"))
 (defproject binaryage/oops "0.5.6"
   :description "ClojureScript macros for convenient Javascript object access."
   :url "https://github.com/binaryage/cljs-oops"
@@ -9,15 +9,15 @@
   :scm {:name "git"
         :url  "https://github.com/binaryage/cljs-oops"}
 
-  :dependencies [[org.clojure/clojure "1.9.0-alpha17" :scope "provided"]
+  :dependencies [[org.clojure/clojure "1.9.0-RC2" :scope "provided"]
                  [org.clojure/clojurescript ~clojurescript-version :scope "provided"]
-                 [funcool/cuerdas "2.0.3"]
+                 [funcool/cuerdas "2.0.4"]
                  [binaryage/env-config "0.2.2"]
 
                  [environ "1.1.0" :scope "test"]
-                 [binaryage/devtools "0.9.4" :scope "test"]
+                 [binaryage/devtools "0.9.7" :scope "test"]
                  [binaryage/dirac "RELEASE" :scope "test" :upgrade false]
-                 [figwheel "0.5.12" :scope "test"]
+                 [figwheel "0.5.14" :scope "test"]
                  [org.clojure/tools.logging "0.4.0" :scope "test"]
                  [clj-logging-config "1.9.12" :scope "test"]
                  [clansi "1.0.0" :scope "test"]]
@@ -27,7 +27,7 @@
 
   :plugins [[lein-cljsbuild "1.1.5"]
             [lein-shell "0.5.0"]
-            [lein-figwheel "0.5.12"]]
+            [lein-figwheel "0.5.14"]]
 
   ; this is just for IntelliJ + Cursive to play well
   :source-paths ["src/lib"]
@@ -53,7 +53,7 @@
 
              :clojure18
              {:dependencies [[org.clojure/clojure "1.8.0" :scope "provided" :upgrade false]
-                             [clojure-future-spec "1.9.0-alpha17" :scope "provided"]]}
+                             [clojure-future-spec "1.9.0-beta4" :scope "provided"]]}
 
              :cooper
              {:plugins [[lein-cooper "1.2.2"]]}
