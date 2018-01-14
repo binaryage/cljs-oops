@@ -1,9 +1,9 @@
 (def clojurescript-version (or (System/getenv "CANARY_CLOJURESCRIPT_VERSION") "1.9.946"))
 (def required-deps
-  [['funcool/cuerdas "2.0.4"]
+  [['funcool/cuerdas "2.0.5"]
    ['binaryage/env-config "0.2.2"]])
 (def provided-deps
-  [['org.clojure/clojure "1.9.0-RC2" :scope "provided"]
+  [['org.clojure/clojure "1.9.0" :scope "provided"]
    ['org.clojure/clojurescript clojurescript-version :scope "provided"]])
 (def test-deps
   [['environ "1.1.0" :scope "test"]
