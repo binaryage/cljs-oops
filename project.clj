@@ -1,4 +1,4 @@
-(def clojurescript-version (or (System/getenv "CANARY_CLOJURESCRIPT_VERSION") "1.9.946"))
+(def clojurescript-version (or (System/getenv "CANARY_CLOJURESCRIPT_VERSION") "1.10.238"))
 (def required-deps
   [['funcool/cuerdas "2.0.5"]
    ['binaryage/env-config "0.2.2"]])
@@ -7,9 +7,9 @@
    ['org.clojure/clojurescript clojurescript-version :scope "provided"]])
 (def test-deps
   [['environ "1.1.0" :scope "test"]
-   ['binaryage/devtools "0.9.8" :scope "test"]
+   ['binaryage/devtools "0.9.9" :scope "test"]
    ['binaryage/dirac "RELEASE" :scope "test" :upgrade false]
-   ['figwheel "0.5.14" :scope "test"]
+   ['figwheel "0.5.15" :scope "test"]
    ['org.clojure/tools.logging "0.4.0" :scope "test"]
    ['clj-logging-config "1.9.12" :scope "test"]
    ['clansi "1.0.0" :scope "test"]])
@@ -30,9 +30,9 @@
   :clean-targets ^{:protect false} ["target"
                                     "test/resources/.compiled"]
 
-  :plugins [[lein-cljsbuild "1.1.6"]
+  :plugins [[lein-cljsbuild "1.1.7"]
             [lein-shell "0.5.0"]
-            [lein-figwheel "0.5.14"]]
+            [lein-figwheel "0.5.15"]]
 
   ; this is just for IntelliJ + Cursive to play well
   :source-paths ["src/lib"]
