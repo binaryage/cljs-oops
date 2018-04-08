@@ -24,7 +24,7 @@ oops.state._STAR_runtime_state_STAR_ = oops.state.prepare_state.call(null, targe
 });
 try {
   var call_info_1 = [target_obj_1, function() {
-    var next_obj_1 = oops.core.validate_object_access_dynamically.call(null, target_obj_1, 0, "method", true) ? target_obj_1["method"] : null;
+    var next_obj_1 = oops.core.validate_object_access_dynamically.call(null, target_obj_1, 0, "method", true, true, false) ? target_obj_1["method"] : null;
     return next_obj_1
   }()];
   var fn_1 = call_info_1[1];
@@ -69,7 +69,7 @@ oops.state._STAR_runtime_state_STAR_ = oops.state.prepare_state.call(null, targe
 });
 try {
   var call_info_3 = [target_obj_3, function() {
-    var next_obj_2 = oops.core.validate_object_access_dynamically.call(null, target_obj_3, 0, "method", true) ? target_obj_3["method"] : null;
+    var next_obj_2 = oops.core.validate_object_access_dynamically.call(null, target_obj_3, 0, "method", true, true, false) ? target_obj_3["method"] : null;
     return next_obj_2
   }()];
   var fn_3 = call_info_3[1];
@@ -121,7 +121,7 @@ var result_2 = function() {
     var captured_runtime_state_1 = oops.state._STAR_runtime_state_STAR_;
     var result_3 = function() {
       var call_info_6 = [target_obj_6, function() {
-        var next_obj_4 = oops.core.validate_object_access_dynamically.call(null, target_obj_6, 0, "method", true) ? target_obj_6["method"] : null;
+        var next_obj_4 = oops.core.validate_object_access_dynamically.call(null, target_obj_6, 0, "method", true, true, false) ? target_obj_6["method"] : null;
         return next_obj_4
       }()];
       var fn_6 = call_info_6[1];
@@ -171,11 +171,11 @@ oops.state._STAR_runtime_state_STAR_ = oops.state.prepare_state.call(null, targe
 try {
   var call_info_8 = function() {
     var target_obj_9 = function() {
-      var next_obj_5 = oops.core.validate_object_access_dynamically.call(null, target_obj_8, 0, "m1", true) ? target_obj_8["m1"] : null;
+      var next_obj_5 = oops.core.validate_object_access_dynamically.call(null, target_obj_8, 0, "m1", true, true, false) ? target_obj_8["m1"] : null;
       return next_obj_5
     }();
     return [target_obj_9, function() {
-      var next_obj_6 = oops.core.validate_object_access_dynamically.call(null, target_obj_9, 0, "m2", true) ? target_obj_9["m2"] : null;
+      var next_obj_6 = oops.core.validate_object_access_dynamically.call(null, target_obj_9, 0, "m2", true, true, false) ? target_obj_9["m2"] : null;
       return next_obj_6
     }()]
   }();
@@ -237,11 +237,11 @@ var target_obj_11 = function() {
   try {
     var call_info_10 = function() {
       var target_obj_13 = function() {
-        var next_obj_7 = oops.core.validate_object_access_dynamically.call(null, target_obj_12, 0, "e", true) ? target_obj_12["e"] : null;
+        var next_obj_7 = oops.core.validate_object_access_dynamically.call(null, target_obj_12, 0, "e", true, true, false) ? target_obj_12["e"] : null;
         return next_obj_7
       }();
       return [target_obj_13, function() {
-        var next_obj_8 = oops.core.validate_object_access_dynamically.call(null, target_obj_13, 0, "f", true) ? target_obj_13["f"] : null;
+        var next_obj_8 = oops.core.validate_object_access_dynamically.call(null, target_obj_13, 0, "f", true, true, false) ? target_obj_13["f"] : null;
         return next_obj_8
       }()]
     }();
@@ -260,7 +260,7 @@ oops.state._STAR_runtime_state_STAR_ = oops.state.prepare_state.call(null, targe
 });
 try {
   var call_info_11 = [target_obj_11, function() {
-    var next_obj_9 = oops.core.validate_object_access_dynamically.call(null, target_obj_11, 0, "g", true) ? target_obj_11["g"] : null;
+    var next_obj_9 = oops.core.validate_object_access_dynamically.call(null, target_obj_11, 0, "g", true, true, false) ? target_obj_11["g"] : null;
     return next_obj_9
   }()];
   var fn_11 = call_info_11[1];

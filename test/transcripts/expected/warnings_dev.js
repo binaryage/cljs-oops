@@ -34,7 +34,7 @@ oops.state._STAR_runtime_state_STAR_ = oops.state.prepare_state.call(null, targe
   arguments[0].apply(console, Array.prototype.slice.call(arguments, 1))
 });
 try {
-  var next_obj_1 = oops.core.validate_object_access_dynamically.call(null, target_obj_1, 0, "key", true) ? target_obj_1["key"] : null
+  var next_obj_1 = oops.core.validate_object_access_dynamically.call(null, target_obj_1, 0, "key", true, true, false) ? target_obj_1["key"] : null
 } finally {
   oops.state._STAR_runtime_state_STAR_ = _STAR_runtime_state_STAR_1
 }
@@ -66,9 +66,9 @@ oops.state._STAR_runtime_state_STAR_ = oops.state.prepare_state.call(null, targe
   arguments[0].apply(console, Array.prototype.slice.call(arguments, 1))
 });
 try {
-  var next_obj_2 = oops.core.validate_object_access_dynamically.call(null, target_obj_3, 0, "k1", true) ? target_obj_3["k1"] : null;
-  var next_obj_3 = oops.core.validate_object_access_dynamically.call(null, next_obj_2, 0, "k2", true) ? next_obj_2["k2"] : null;
-  var next_obj_4 = oops.core.validate_object_access_dynamically.call(null, next_obj_3, 0, "k3", true) ? next_obj_3["k3"] : null
+  var next_obj_2 = oops.core.validate_object_access_dynamically.call(null, target_obj_3, 0, "k1", true, true, false) ? target_obj_3["k1"] : null;
+  var next_obj_3 = oops.core.validate_object_access_dynamically.call(null, next_obj_2, 0, "k2", true, true, false) ? next_obj_2["k2"] : null;
+  var next_obj_4 = oops.core.validate_object_access_dynamically.call(null, next_obj_3, 0, "k3", true, true, false) ? next_obj_3["k3"] : null
 } finally {
   oops.state._STAR_runtime_state_STAR_ = _STAR_runtime_state_STAR_3
 }

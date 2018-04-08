@@ -22,23 +22,27 @@
   (when (config/diagnostics?)
     `(do
        (debug-assert (oops.config/has-config-key? ~msg-id) (str "runtime config has missing key: " ~msg-id))
-       (if-not ~(gen-suppress-reporting? msg-id)
+       (when-not ~(gen-suppress-reporting? msg-id)
          (case (oops.config/get-config-key ~msg-id)
            :warn (oops.core/report-warning-dynamically (oops.messages/runtime-message ~msg-id ~info-sym) ~info-sym)
            :error (oops.core/report-error-dynamically (oops.messages/runtime-message ~msg-id ~info-sym) ~info-sym)
            (false nil) nil))
        nil)))
 
-(defmacro validate-object-access-dynamically [obj-sym mode-sym key-sym check-key?]
+(defmacro validate-object-access-dynamically [obj-sym mode-sym key-sym push? check-key-read? check-key-write?]
   (debug-assert (symbol? obj-sym))
   (debug-assert (symbol? mode-sym))
   (debug-assert (symbol? key-sym))
   `(when ~(gen-dynamic-object-access-validation obj-sym mode-sym)
-     (oops.state/add-key-to-current-path! ~key-sym)
-     (oops.state/set-last-access-modifier! ~mode-sym)
-     (if ~check-key?
-       ~(gen-check-key-access obj-sym mode-sym key-sym)
-       true)))
+     (when ~push?
+       (oops.state/add-key-to-current-path! ~key-sym)
+       (oops.state/set-last-access-modifier! ~mode-sym))
+     (and (if ~check-key-read?
+            ~(gen-check-key-read-access obj-sym mode-sym key-sym)
+            true)
+          (if ~check-key-write?
+            ~(gen-check-key-write-access obj-sym mode-sym key-sym)
+            true))))
 
 (defmacro validate-fn-call-dynamically [fn-sym mode-sym]
   (debug-assert (symbol? fn-sym))
@@ -85,7 +89,7 @@
   (debug-assert (symbol? obj-sym))
   (debug-assert (symbol? key-sym))
   (debug-assert (symbol? val-sym))
-  (gen-instrumented-key-set obj-sym key-sym val-sym mode))
+  (gen-instrumented-key-set obj-sym key-sym val-sym mode true))
 
 (defmacro get-selector-dynamically [obj-sym selector-sym]
   (debug-assert (symbol? obj-sym))
@@ -118,5 +122,5 @@
                                 ~child-factory-sym)]
        (oops.debug/debug-assert (fn? ~child-factory-sym))
        (let [~child-obj-sym (~child-factory-sym ~obj-sym ~key-sym)]
-         ~(gen-key-set obj-sym key-sym child-obj-sym)
+         ~(gen-instrumented-key-set obj-sym key-sym child-obj-sym punch-access false)
          ~child-obj-sym))))

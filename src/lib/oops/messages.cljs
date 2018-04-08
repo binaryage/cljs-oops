@@ -26,8 +26,25 @@
 (defmethod runtime-message :missing-object-key [_type info]
   (let [{:keys [key path]} info]
     (post-process-message (str "Missing expected object key '" key "'"
-                               (when-not (or (empty? path) (= path key))
-                                 (str " on key path '" path "'"))))))
+                               (when-not (or (empty? path) (= path key)) (str " on key path '" path "'"))))))
+
+(defmethod runtime-message :object-key-not-writable [_type info]
+  (let [{:keys [key path frozen?]} info]
+    (post-process-message (str "Object key '" key "' is not writable"
+                               (when-not (or (empty? path) (= path key)) (str " on key path '" path "'"))
+                               (when frozen? (str " because the object is frozen"))))))
+
+(defmethod runtime-message :object-is-sealed [_type info]
+  (let [{:keys [key path]} info]
+    (post-process-message (str "Cannot create object key '" key "'"
+                               (when-not (or (empty? path) (= path key)) (str " on key path '" path "'"))
+                               " because the object is sealed"))))
+
+(defmethod runtime-message :object-is-frozen [_type info]
+  (let [{:keys [key path]} info]
+    (post-process-message (str "Cannot create object key '" key "'"
+                               (when-not (or (empty? path) (= path key)) (str " on key path '" path "'"))
+                               " because the object is frozen"))))
 
 (defmethod runtime-message :invalid-selector [_type]
   (post-process-message "Invalid selector"))
