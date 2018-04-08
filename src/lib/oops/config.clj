@@ -19,14 +19,14 @@
   @adhoc-config-overrides)
 
 (defn advanced-mode? []
-  (if cljs.env/*compiler*
+  (when (some? cljs.env/*compiler*)
     (= (get-in @cljs.env/*compiler* [:options :optimizations]) :advanced)))
 
 (defn prepare-default-config []
   (merge defaults/config (if (advanced-mode?) defaults/advanced-mode-config-overrides)))
 
 (defn read-project-config []
-  (if cljs.env/*compiler*
+  (when (some? cljs.env/*compiler*)
     (get-in @cljs.env/*compiler* [:options :external-config :oops/config])))                                                  ; https://github.com/bhauman/lein-figwheel/commit/80f7306bf5e6bd1330287a6f3cc259ff645d899b
 
 (defn get-env-vars []
@@ -51,8 +51,8 @@
     (println)))
 
 (defn validate-config-and-report-problems-if-needed! [config]
-  (if-not (:skip-config-validation config)
-    (if-not (s/valid? ::config config)
+  (when-not (:skip-config-validation config)
+    (when-not (s/valid? ::config config)
       (let [explanation-str (s/explain-str ::config config)]
         (when-not (= @last-printed-config-explanation-str explanation-str)
           (vreset! last-printed-config-explanation-str explanation-str)
@@ -77,7 +77,7 @@
 
 (defn get-runtime-config [& [config]]
   (let [* (fn [[key val]]
-            (if-let [m (re-matches #"^runtime-(.*)$" (name key))]
+            (when-some [m (re-matches #"^runtime-(.*)$" (name key))]
               [(keyword (second m)) val]))]
     ; select all :runtime-something keys and drop :runtime- prefix
     (into {} (keep * (or config (get-current-compiler-config))))))

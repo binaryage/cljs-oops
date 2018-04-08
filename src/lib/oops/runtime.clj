@@ -6,8 +6,7 @@
   (:require [oops.config :as config]
             [oops.codegen :refer :all]
             [oops.helpers :refer [gensym]]
-            [oops.constants :refer [dot-access soft-access punch-access
-                                    gen-op-get gen-op-set]]
+            [oops.constants :refer [dot-access soft-access punch-access gen-op-get gen-op-set]]
             [oops.debug :refer [log debug-assert]]))
 
 (defmacro report-error-dynamically [msg data]
@@ -20,7 +19,7 @@
 
 (defmacro report-if-needed-dynamically [msg-id info-sym]
   (debug-assert (symbol? info-sym))
-  (if (config/diagnostics?)
+  (when (config/diagnostics?)
     `(do
        (debug-assert (oops.config/has-config-key? ~msg-id) (str "runtime config has missing key: " ~msg-id))
        (if-not ~(gen-suppress-reporting? msg-id)
@@ -74,7 +73,7 @@
 (defmacro check-path-dynamically [path-sym op]
   (debug-assert (symbol? path-sym))
   (let [issue-sym (gensym "issue")]
-    `(if-let [~issue-sym (oops.schema/check-dynamic-path! ~path-sym ~op)]
+    `(when-some [~issue-sym (oops.schema/check-dynamic-path! ~path-sym ~op)]
        (apply oops.core/report-if-needed-dynamically ~issue-sym))))
 
 (defmacro get-key-dynamically [obj-sym key-sym mode]

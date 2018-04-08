@@ -9,13 +9,13 @@
 ; -- helpers ----------------------------------------------------------------------------------------------------------------
 
 (defn advanced-mode? []
-  (if cljs.env/*compiler*
+  (when (some? cljs.env/*compiler*)
     (= (get-in @cljs.env/*compiler* [:options :optimizations]) :advanced)))
 
 (defn gen-when-compiler-config [pred config-template body]
   (let [config (config/get-current-compiler-config)
         template-keys (keys config-template)]
-    (if (pred config-template (select-keys config template-keys))
+    (when (pred config-template (select-keys config template-keys))
       `(do ~@body))))
 
 (defn gen-marker [s]
@@ -34,7 +34,7 @@
   (gen-marker (get-arena-end-separator)))
 
 (defn gen-devtools-if-needed []
-  (if-not (= (env :oops-elide-devtools) "1")
+  (when-not (= (env :oops-elide-devtools) "1")
     `(under-chrome
        (devtools.core/install!))))
 
@@ -97,11 +97,11 @@
 ; -- helper macros ----------------------------------------------------------------------------------------------------------
 
 (defmacro when-advanced-mode [& body]
-  (if (advanced-mode?)
+  (when (advanced-mode?)
     `(do ~@body)))
 
 (defmacro when-not-advanced-mode [& body]
-  (if-not (advanced-mode?)
+  (when-not (advanced-mode?)
     `(do ~@body)))
 
 (defmacro if-advanced-mode [advanced-body else-body]
@@ -180,7 +180,7 @@
     recording))
 
 (defmacro with-stderr-recording [recorder & body]
-  ; note: we rely on macroexpander behaviour here
+  ; note: we rely on macro expander behaviour here
   `(do
      (oops.tools/start-err-recorder!)
      (let [res# (do ~@body)
@@ -193,4 +193,3 @@
 (defmacro presume-compiler-config [config]
   (let [compiler-config (select-keys (config/get-compiler-config) (keys config))]
     `(cljs.test/is (= ~compiler-config ~config))))
-

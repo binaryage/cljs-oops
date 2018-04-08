@@ -14,19 +14,19 @@
 (defmethod runtime-message :unexpected-object-value [_type info]
   (let [{:keys [flavor path]} info]
     (post-process-message (str "Unexpected object value (" flavor ")"
-                               (if-not (empty? path) (str " on key path '" path "'"))))))
+                               (when-not (empty? path) (str " on key path '" path "'"))))))
 
 (defmethod runtime-message :expected-function-value [_type info]
   (let [{:keys [soft? path fn]} info]
     (post-process-message (str "Expected a function"
-                               (if soft? (str " or nil"))
-                               (if-not (empty? path) (str " on key path '" path "'"))
+                               (when soft? (str " or nil"))
+                               (when-not (empty? path) (str " on key path '" path "'"))
                                ", got <" (goog/typeOf fn) "> instead"))))
 
 (defmethod runtime-message :missing-object-key [_type info]
   (let [{:keys [key path]} info]
     (post-process-message (str "Missing expected object key '" key "'"
-                               (if-not (or (empty? path) (= path key))
+                               (when-not (or (empty? path) (= path key))
                                  (str " on key path '" path "'"))))))
 
 (defmethod runtime-message :invalid-selector [_type]

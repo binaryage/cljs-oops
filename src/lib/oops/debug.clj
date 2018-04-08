@@ -21,5 +21,5 @@
     (.print System/out (str msg "\n"))))
 
 (defmacro debug-assert [& args]
-  (if (config/debug?)
+  (when (config/debug?)
     `(assert ~@args)))
