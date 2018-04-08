@@ -242,14 +242,7 @@
   msg)
 
 (defn gen-reported-data [data]
-  `(let [data# ~data]
-     (or (when (oops.config/use-envelope?)
-           (when-some [devtools# (oops.helpers/unchecked-aget goog/global "devtools")]
-             (when-some [toolbox# (oops.helpers/unchecked-aget devtools# "toolbox")]
-               (when-some [envelope# (oops.helpers/unchecked-aget toolbox# "envelope")]
-                 (when (cljs.core/fn? envelope#)
-                   (envelope# data# "details"))))))
-         data#)))
+  `(oops.helpers/wrap-data-in-enveloper-if-possible (oops.config/use-envelope?) ~data))
 
 (defn gen-console-method [kind]
   (case kind
