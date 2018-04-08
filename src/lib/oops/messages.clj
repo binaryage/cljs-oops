@@ -43,7 +43,7 @@
   (debug-assert (some #{type} message-ids))
   (let [command (first (:form info))]
     (post-process-message (str "Unexpected dynamic selector usage"
-                               (if (static-macro? command)
+                               (when (static-macro? command)
                                  (str " (consider using " command "+)"))))))
 
 (defmethod ana/error-message :static-nil-target-object [type _info]

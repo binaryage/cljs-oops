@@ -67,7 +67,7 @@
 
 (defn merge-standalone-modifiers [items]
   (let [* (fn [state item]
-            (if-let [pending-modifier (:pending-modifier state)]
+            (if-some [pending-modifier (:pending-modifier state)]
               (let [merged-item (merge-standalone-modifier pending-modifier item)
                     state (assoc state :pending-modifier nil)]
                 (detect-standalone-modifier state merged-item))
@@ -79,7 +79,7 @@
 
 (defn build-selector-path [destructured-selector]
   {:post [(or (nil? %) (s/valid? ::sdefs/obj-path %))]}
-  (let [path (if-not (= destructured-selector ::s/invalid)
+  (let [path (when-not (= destructured-selector ::s/invalid)
                (->> destructured-selector
                     (coerce-selector-keys)
                     (coerce-nested-selectors)
@@ -105,17 +105,17 @@
   (let [* (fn [selector]
             (let [path (selector->path selector)
                   modes (get-access-modes path)]
-              (if (some offender-matcher modes)
+              (when (some offender-matcher modes)
                 selector)))]
     (some * selector-list)))
 
 (defn check-and-report-invalid-mode! [modes mode selector-list message-type]
-  (if (some #{mode} modes)
+  (when (some #{mode} modes)
     (let [offending-selector (find-offending-selector selector-list #{mode})]
       (report-offending-selector-if-needed! offending-selector message-type))))
 
 (defn check-static-path! [path op selector-list]
-  (if (config/diagnostics?)
+  (when (config/diagnostics?)
     (if (empty? path)
       (report-if-needed! :static-unexpected-empty-selector)
       (let [modes (get-access-modes path)]

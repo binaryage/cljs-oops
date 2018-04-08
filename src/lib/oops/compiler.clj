@@ -39,7 +39,7 @@
 
 (defmacro with-hooked-compiler! [& body]
   `(do
-     (if-not (messages-registered? cljs.analyzer/*cljs-warnings*)
+     (when-not (messages-registered? cljs.analyzer/*cljs-warnings*)
        (set! cljs.analyzer/*cljs-warnings* (register-messages cljs.analyzer/*cljs-warnings*)))                                ; add our messages on first invocation
      ~@body))
 
@@ -68,7 +68,7 @@
 
 (defn build-wrapper [& args]
   (debug-assert @original-build-fn)
-  (if cljs.env/*compiler*
+  (when (some? cljs.env/*compiler*)
     (swap! cljs.env/*compiler* dissoc ::issued-warnings))
   (apply @original-build-fn args))
 

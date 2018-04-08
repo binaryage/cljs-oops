@@ -75,7 +75,7 @@
 (defn gen-dynamic-object-access-validation-wrapper [obj-sym mode key check-key? body]
   (debug-assert (symbol? obj-sym))
   (if (config/diagnostics?)
-    `(if (oops.core/validate-object-access-dynamically ~obj-sym ~mode ~key ~check-key?)
+    `(when (oops.core/validate-object-access-dynamically ~obj-sym ~mode ~key ~check-key?)
        ~body)
     body))
 
@@ -104,7 +104,7 @@
         0 `(let [~next-obj-sym ~(gen-instrumented-key-get obj-sym key mode)]
              ~(gen-static-path-get next-obj-sym (rest path)))
         1 `(let [~next-obj-sym ~(gen-instrumented-key-get obj-sym key mode)]
-             (if-not (nil? ~next-obj-sym)
+             (when (some? ~next-obj-sym)
                ~(gen-static-path-get next-obj-sym (rest path))))
         2 (let [ensured-obj-sym (gensym "ensured-obj")]
             `(let [~next-obj-sym ~(gen-instrumented-key-get obj-sym key mode)
@@ -144,7 +144,7 @@
                  ~next-obj-sym (oops.core/get-key-dynamically ~obj-sym ~key-sym ~mode-sym)]
              (case ~mode-sym
                ~dot-access (recur ~next-i ~next-obj-sym)
-               ~soft-access (if-not (nil? ~next-obj-sym)
+               ~soft-access (when (some? ~next-obj-sym)
                               (recur ~next-i ~next-obj-sym))
                ~punch-access (if-not (nil? ~next-obj-sym)
                                (recur ~next-i ~next-obj-sym)
@@ -194,7 +194,7 @@
 (defn gen-dynamic-selector-validation-wrapper [selector-sym body]
   (debug-assert (symbol? selector-sym))
   (if (config/diagnostics?)
-    `(if ~(gen-dynamic-selector-validation selector-sym)
+    `(when ~(gen-dynamic-selector-validation selector-sym)
        ~body)
     body))
 
@@ -202,13 +202,13 @@
   (debug-assert (symbol? selector-sym))
   (let [path-sym (gensym "path")]
     `(let [~path-sym (oops.core/build-path-dynamically ~selector-sym)]
-       ~(if (config/diagnostics?)
+       ~(when (config/diagnostics?)
           `(oops.core/check-path-dynamically ~path-sym ~op))
        ~path-sym)))
 
 (defn gen-static-path-set [obj-sym path val]
   (debug-assert (symbol? obj-sym))
-  (if-not (empty? path)
+  (when-not (empty? path)
     (let [parent-obj-path (butlast path)
           [mode key] (last path)
           parent-obj-sym (gensym "parent-obj")]
@@ -243,11 +243,11 @@
 
 (defn gen-reported-data [data]
   `(let [data# ~data]
-     (or (if (oops.config/use-envelope?)
-           (if-let [devtools# (oops.helpers/unchecked-aget goog/global "devtools")]
-             (if-let [toolbox# (oops.helpers/unchecked-aget devtools# "toolbox")]
-               (if-let [envelope# (oops.helpers/unchecked-aget toolbox# "envelope")]
-                 (if (cljs.core/fn? envelope#)
+     (or (when (oops.config/use-envelope?)
+           (when-some [devtools# (oops.helpers/unchecked-aget goog/global "devtools")]
+             (when-some [toolbox# (oops.helpers/unchecked-aget devtools# "toolbox")]
+               (when-some [envelope# (oops.helpers/unchecked-aget toolbox# "envelope")]
+                 (when (cljs.core/fn? envelope#)
                    (envelope# data# "details"))))))
          data#)))
 
@@ -269,7 +269,7 @@
 (defn validate-object-statically [obj]
   ; here we can try to detect some pathological cases and warn user at compile-time
   ; TODO: to be strict we should allow just symbols, lists (other than data lists) and JSValue objects
-  (if (config/diagnostics?)
+  (when (config/diagnostics?)
     (cond
       (nil? obj) (report-if-needed! :static-nil-target-object))))
 
@@ -313,7 +313,7 @@
 (defn gen-dynamic-fn-call-validation-wrapper [fn-sym body]
   (debug-assert (symbol? fn-sym))
   (if (config/diagnostics?)
-    `(if (oops.core/validate-fn-call-dynamically ~fn-sym (oops.state/get-last-access-modifier))                               ; we rely on previous oget to record last access modifier of the selector
+    `(when (oops.core/validate-fn-call-dynamically ~fn-sym (oops.state/get-last-access-modifier))                             ; we rely on previous oget to record last access modifier of the selector
        ~body)
     body))
 
@@ -326,13 +326,13 @@
 
 (defn gen-oget-impl [obj-sym selector-list]
   (debug-assert (symbol? obj-sym))
-  (if-let [path (schema/selector->path selector-list)]
+  (if-some [path (schema/selector->path selector-list)]
     (gen-static-path-get obj-sym (schema/check-static-path! path :get selector-list))
     (gen-dynamic-selector-get obj-sym selector-list)))
 
 (defn gen-get-call-info-impl [obj-sym selector-list]
   (debug-assert (symbol? obj-sym))
-  (if-let [path (schema/selector->path selector-list)]
+  (if-some [path (schema/selector->path selector-list)]
     (gen-static-path-call-info obj-sym (schema/check-static-path! path :get selector-list))
     (gen-dynamic-selector-call-info obj-sym selector-list)))
 
@@ -340,7 +340,7 @@
   (debug-assert (symbol? obj-sym))
   (let [path (schema/selector->path selector-list)]
     `(do
-       ~(if path
+       ~(if (some? path)
           (gen-static-path-set obj-sym (schema/check-static-path! path :set selector-list) val)
           (gen-dynamic-selector-set obj-sym selector-list val))
        ~obj-sym)))
@@ -354,14 +354,14 @@
 (defn gen-ocall-impl [obj-sym selector-list args]
   (let [fn-sym (gensym "fn")
         call-info-sym (gensym "call-info")
-        action `(if-not (nil? ~fn-sym)
+        action `(when (some? ~fn-sym)
                   (.call ~fn-sym (oops.helpers/unchecked-aget ~call-info-sym 0) ~@args))]
     (gen-callable obj-sym selector-list fn-sym call-info-sym action)))
 
 (defn gen-oapply-impl [obj-sym selector-list args]
   (let [fn-sym (gensym "fn")
         call-info-sym (gensym "call-info")
-        action `(if-not (nil? ~fn-sym)
+        action `(when (some? ~fn-sym)
                   (.apply ~fn-sym (oops.helpers/unchecked-aget ~call-info-sym 0) (oops.helpers/to-native-array ~args)))]
     (gen-callable obj-sym selector-list fn-sym call-info-sym action)))
 

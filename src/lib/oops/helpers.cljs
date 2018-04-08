@@ -28,7 +28,7 @@
     coll
     (let [arr (array)]
       (loop [items (seq coll)]                                                                                                ; note: items is either a seq or nil
-        (if-not (nil? items)
+        (if (some? items)
           (let [item (-first items)]
             (.push arr item)
             (recur (next items)))
