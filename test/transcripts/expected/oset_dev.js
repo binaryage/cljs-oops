@@ -24,11 +24,11 @@ oops.state._STAR_runtime_state_STAR_ = oops.state.prepare_state.call(null, targe
 });
 try {
   var parent_obj_1 = function() {
-    var next_obj_1 = oops.core.validate_object_access_dynamically.call(null, target_obj_1, 2, "k1", true) ? target_obj_1["k1"] : null;
+    var next_obj_1 = oops.core.validate_object_access_dynamically.call(null, target_obj_1, 2, "k1", true, true, false) ? target_obj_1["k1"] : null;
     var ensured_obj_1 = next_obj_1 == null ? oops.core.punch_key_dynamically_BANG_.call(null, target_obj_1, "k1") : next_obj_1;
     return ensured_obj_1
   }();
-  if (oops.core.validate_object_access_dynamically.call(null, parent_obj_1, 2, "k2", true)) parent_obj_1["k2"] = "val";
+  if (oops.core.validate_object_access_dynamically.call(null, parent_obj_1, 2, "k2", true, true, true)) parent_obj_1["k2"] = "val";
   else;
 } finally {
   oops.state._STAR_runtime_state_STAR_ = _STAR_runtime_state_STAR_1
@@ -62,11 +62,11 @@ oops.state._STAR_runtime_state_STAR_ = oops.state.prepare_state.call(null, targe
 });
 try {
   var parent_obj_2 = function() {
-    var next_obj_2 = oops.core.validate_object_access_dynamically.call(null, target_obj_3, 2, "k1", true) ? target_obj_3["k1"] : null;
+    var next_obj_2 = oops.core.validate_object_access_dynamically.call(null, target_obj_3, 2, "k1", true, true, false) ? target_obj_3["k1"] : null;
     var ensured_obj_2 = next_obj_2 == null ? oops.core.punch_key_dynamically_BANG_.call(null, target_obj_3, "k1") : next_obj_2;
     return ensured_obj_2
   }();
-  if (oops.core.validate_object_access_dynamically.call(null, parent_obj_2, 2, "k2", true)) parent_obj_2["k2"] = "val";
+  if (oops.core.validate_object_access_dynamically.call(null, parent_obj_2, 2, "k2", true, true, true)) parent_obj_2["k2"] = "val";
   else;
 } finally {
   oops.state._STAR_runtime_state_STAR_ = _STAR_runtime_state_STAR_3
@@ -109,11 +109,11 @@ var result_2 = function() {
     var captured_runtime_state_1 = oops.state._STAR_runtime_state_STAR_;
     var result_3 = function() {
       var parent_obj_4 = function() {
-        var next_obj_4 = oops.core.validate_object_access_dynamically.call(null, target_obj_6, 2, "k1", true) ? target_obj_6["k1"] : null;
+        var next_obj_4 = oops.core.validate_object_access_dynamically.call(null, target_obj_6, 2, "k1", true, true, false) ? target_obj_6["k1"] : null;
         var ensured_obj_4 = next_obj_4 == null ? oops.core.punch_key_dynamically_BANG_.call(null, target_obj_6, "k1") : next_obj_4;
         return ensured_obj_4
       }();
-      if (oops.core.validate_object_access_dynamically.call(null, parent_obj_4, 2, "k2", true)) parent_obj_4["k2"] = "val";
+      if (oops.core.validate_object_access_dynamically.call(null, parent_obj_4, 2, "k2", true, true, true)) parent_obj_4["k2"] = "val";
       else;
       return target_obj_6
     }();

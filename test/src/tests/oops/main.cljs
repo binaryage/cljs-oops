@@ -292,9 +292,41 @@
           "aaa" "aaa"
           ["!z1" "!z2" "z3"] "z1.z2.z3")
         (is (= (js/JSON.stringify sample-obj) "{\"nested\":{\"xxx\":\"val\"},\"aaa\":\"val\",\"z1\":{\"z2\":{\"z3\":\"val\"}}}")))))
-  (testing "oset corner cases"
-    ; TODO
-    ))
+  (when-not-advanced-mode
+    (testing "accessing non-writable key or punching sealed/frozen objects"
+      (presume-runtime-config {:warning-reporting :console})
+      (with-runtime-config {:object-key-not-writable :warn
+                            :object-is-frozen        :warn
+                            :object-is-sealed        :warn}
+        (let [recorder (atom [])]
+          (with-console-recording recorder
+            (let [frozen-o (js-obj "k2" (js-obj))
+                  _ (.freeze js/Object frozen-o)
+                  o-frozen-child (js-obj "frozen" frozen-o)
+                  sealed-o (js-obj "k2" (js-obj))
+                  _ (.seal js/Object sealed-o)
+                  o-sealed-child (js-obj "sealed" sealed-o)
+                  o-non-writable-k2 (js-obj)
+                  _ (.defineProperty js/Object o-non-writable-k2 "nowrite" #js {:value 42 :writable false})
+                  o-non-writable-child (js-obj "k" o-non-writable-k2)
+                  o-path (js-obj "c" o-frozen-child)]
+              (oset! o-frozen-child "frozen.!k2" "val")
+              (oset! o-frozen-child "frozen.k2" "val")
+              (oset! o-frozen-child "frozen.!k3" "val")
+              (oset! o-sealed-child "sealed.k2" "val")                                                                        ; this should work, because k2 exists
+              (oset! o-sealed-child "sealed.!k2" "val")                                                                       ; this should work, because k2 exists
+              (oset! o-sealed-child "sealed.!k3" "val")                                                                       ; this should not work because k3 does not exist
+              (oset! o-non-writable-child "k.nowrite" "val")                                                                  ; this should not work because nowrite is read-only
+              (oset! o-non-writable-child "k.!nowrite" "val")                                                                 ; this should not work because nowrite is read-only
+              (oset! o-path "c.frozen.!k5.!k6.!k7" "val")                                                                     ; test punching failure mid-path
+              ))
+          (is (= @recorder ["WARN: (\"Oops, Object key 'k2' is not writable on key path 'frozen.k2' because the object is frozen\" {:path \"frozen.k2\", :key \"k2\", :frozen? true, :obj #js {:frozen #js {:k2 #js {}}}})"
+                            "WARN: (\"Oops, Object key 'k2' is not writable on key path 'frozen.k2' because the object is frozen\" {:path \"frozen.k2\", :key \"k2\", :frozen? true, :obj #js {:frozen #js {:k2 #js {}}}})"
+                            "WARN: (\"Oops, Cannot create object key 'k3' on key path 'frozen.k3' because the object is frozen\" {:path \"frozen.k3\", :key \"k3\", :obj #js {:frozen #js {:k2 #js {}}}})"
+                            "WARN: (\"Oops, Cannot create object key 'k3' on key path 'sealed.k3' because the object is sealed\" {:path \"sealed.k3\", :key \"k3\", :obj #js {:sealed #js {:k2 \"val\"}}})"
+                            "WARN: (\"Oops, Object key 'nowrite' is not writable on key path 'k.nowrite'\" {:path \"k.nowrite\", :key \"nowrite\", :frozen? false, :obj #js {:k #js {}}})"
+                            "WARN: (\"Oops, Object key 'nowrite' is not writable on key path 'k.nowrite'\" {:path \"k.nowrite\", :key \"nowrite\", :frozen? false, :obj #js {:k #js {}}})"
+                            "WARN: (\"Oops, Cannot create object key 'k5' on key path 'c.frozen.k5' because the object is frozen\" {:path \"c.frozen.k5\", :key \"k5\", :obj #js {:c #js {:frozen #js {:k2 #js {}}}}})"])))))))
 
 (deftest test-ocall
   (testing "simple invocation via call"

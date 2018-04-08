@@ -27,6 +27,9 @@
    :runtime-expected-function-value            :error                                                                         ; #{:error :warn falsy}
    :runtime-invalid-selector                   :error                                                                         ; #{:error :warn falsy}
    :runtime-missing-object-key                 :error                                                                         ; #{:error :warn falsy}
+   :runtime-object-key-not-writable            :error                                                                         ; #{:error :warn falsy}
+   :runtime-object-is-sealed                   :error                                                                         ; #{:error :warn falsy}
+   :runtime-object-is-frozen                   :error                                                                         ; #{:error :warn falsy}
    :runtime-unexpected-empty-selector          :warn                                                                          ; #{:error :warn falsy}
    :runtime-unexpected-punching-selector       :warn                                                                          ; #{:error :warn falsy}
    :runtime-unexpected-soft-selector           :warn                                                                          ; #{:error :warn falsy}
@@ -81,6 +84,9 @@
 (s/def ::config/runtime-expected-function-value ::config/message)
 (s/def ::config/runtime-invalid-selector ::config/message)
 (s/def ::config/runtime-missing-object-key ::config/message)
+(s/def ::config/runtime-object-key-not-writable ::config/message)
+(s/def ::config/runtime-object-is-sealed ::config/message)
+(s/def ::config/runtime-object-is-frozen ::config/message)
 (s/def ::config/runtime-unexpected-empty-selector ::config/message)
 (s/def ::config/runtime-unexpected-punching-selector ::config/message)
 (s/def ::config/runtime-unexpected-soft-selector ::config/message)
@@ -111,6 +117,9 @@
                    ::config/runtime-unexpected-object-value
                    ::config/runtime-invalid-selector
                    ::config/runtime-missing-object-key
+                   ::config/runtime-object-key-not-writable
+                   ::config/runtime-object-is-sealed
+                   ::config/runtime-object-is-frozen
                    ::config/runtime-unexpected-empty-selector
                    ::config/runtime-unexpected-punching-selector
                    ::config/runtime-unexpected-soft-selector

@@ -45,3 +45,19 @@
       (when (some? info)
         (-write writer " ")
         (pr-writer info writer opts)))))
+
+(defn get-property-descriptor [obj property]
+  (loop [o obj]
+    (when (some? o)
+      (if-some [descriptor (.getOwnPropertyDescriptor js/Object o property)]
+        descriptor
+        (recur (.getPrototypeOf js/Object o))))))
+
+(defn is-property-writable? [property-descriptor]
+  (.-writable property-descriptor))
+
+(defn is-object-sealed? [obj]
+  (.isSealed js/Object obj))
+
+(defn is-object-frozen? [obj]
+  (.isFrozen js/Object obj))

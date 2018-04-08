@@ -72,21 +72,21 @@
     :core `(~'js* "(~{}[~{}] = ~{})" ~obj ~key ~val)                                                                          ; using aset could raise a warning, see CLJS-2148
     :goog `(goog.object/set ~obj ~key ~val)))
 
-(defn gen-dynamic-object-access-validation-wrapper [obj-sym mode key check-key? body]
+(defn gen-dynamic-object-access-validation-wrapper [obj-sym mode key push? check-key-read? check-key-write? body]
   (debug-assert (symbol? obj-sym))
   (if (config/diagnostics?)
-    `(when (oops.core/validate-object-access-dynamically ~obj-sym ~mode ~key ~check-key?)
+    `(when (oops.core/validate-object-access-dynamically ~obj-sym ~mode ~key ~push? ~check-key-read? ~check-key-write?)
        ~body)
     body))
 
 (defn gen-instrumented-key-get [obj-sym key mode]
   (debug-assert (symbol? obj-sym))
-  (gen-dynamic-object-access-validation-wrapper obj-sym mode key true
+  (gen-dynamic-object-access-validation-wrapper obj-sym mode key true true false
                                                 (gen-key-get obj-sym key)))
 
-(defn gen-instrumented-key-set [obj-sym key val mode]
+(defn gen-instrumented-key-set [obj-sym key val mode push?]
   (debug-assert (symbol? obj-sym))
-  (gen-dynamic-object-access-validation-wrapper obj-sym mode key (config/strict-punching?)
+  (gen-dynamic-object-access-validation-wrapper obj-sym mode key push? (config/strict-punching?) true
                                                 (gen-key-set obj-sym key val)))
 
 (defn gen-static-path-get [obj-sym path]
@@ -213,7 +213,7 @@
           [mode key] (last path)
           parent-obj-sym (gensym "parent-obj")]
       `(let [~parent-obj-sym ~(gen-static-path-get obj-sym parent-obj-path)]
-         ~(gen-instrumented-key-set parent-obj-sym key val mode)))))
+         ~(gen-instrumented-key-set parent-obj-sym key val mode true)))))
 
 (defn gen-dynamic-selector-set [obj selector-list val]
   (report-dynamic-selector-usage-if-needed! selector-list)
@@ -300,7 +300,7 @@
         `(binding [oops.state/*runtime-state* (oops.state/prepare-state ~obj-sym ~call-site-error ~console-reporter)]
            ~(gen-debug-runtime-state-consistency-check body-code))))))
 
-(defn gen-check-key-access [obj-sym mode-sym key]
+(defn gen-check-key-read-access [obj-sym mode-sym key]
   (debug-assert (symbol? obj-sym))
   (debug-assert (symbol? mode-sym))
   `(if (and (= ~mode-sym ~dot-access)
@@ -309,6 +309,31 @@
                                                   :key  ~key
                                                   :path (oops.state/get-key-path-str)})
      true))
+
+(defn gen-check-key-write-access [obj-sym mode-sym key]
+  (debug-assert (symbol? obj-sym))
+  (debug-assert (symbol? mode-sym))
+  (let [descriptor-sym (gensym "descriptor")]
+    `(if-some [~descriptor-sym (oops.helpers/get-property-descriptor ~obj-sym ~key)]
+       (if (oops.helpers/is-property-writable? ~descriptor-sym)
+         true
+         ~(gen-report-if-needed :object-key-not-writable `{:obj     (oops.state/get-target-object)
+                                                           :key     ~key
+                                                           :frozen? (oops.helpers/is-object-frozen? ~obj-sym)
+                                                           :path    (oops.state/get-key-path-str)}))
+       (cond
+         ; note that frozen object imply sealed
+         (oops.helpers/is-object-frozen? ~obj-sym)
+         ~(gen-report-if-needed :object-is-frozen `{:obj  (oops.state/get-target-object)
+                                                    :key  ~key
+                                                    :path (oops.state/get-key-path-str)})
+
+         (oops.helpers/is-object-sealed? ~obj-sym)
+         ~(gen-report-if-needed :object-is-sealed `{:obj  (oops.state/get-target-object)
+                                                    :key  ~key
+                                                    :path (oops.state/get-key-path-str)})
+
+         :else true))))
 
 (defn gen-dynamic-fn-call-validation-wrapper [fn-sym body]
   (debug-assert (symbol? fn-sym))

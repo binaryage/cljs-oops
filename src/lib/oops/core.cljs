@@ -35,14 +35,14 @@
 
 ; -- runtime support for macros ---------------------------------------------------------------------------------------------
 
-(defn ^:dynamic punch-key-dynamically! [obj key]
-  (runtime/punch-key-dynamically obj key))
-
-(defn ^boolean validate-object-access-dynamically [obj mode key check-key?]
-  (runtime/validate-object-access-dynamically obj mode key check-key?))
+(defn ^boolean validate-object-access-dynamically [obj mode key push? check-key-read? check-key-write?]
+  (runtime/validate-object-access-dynamically obj mode key push? check-key-read? check-key-write?))
 
 (defn ^boolean validate-fn-call-dynamically [fn mode]
   (runtime/validate-fn-call-dynamically fn mode))
+
+(defn ^:dynamic punch-key-dynamically! [obj key]
+  (runtime/punch-key-dynamically obj key))
 
 (defn build-path-dynamically [selector]
   (runtime/build-path-dynamically selector))
