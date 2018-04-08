@@ -61,3 +61,12 @@
 
 (defn is-object-frozen? [obj]
   (.isFrozen js/Object obj))
+
+(defn wrap-data-in-enveloper-if-possible [wrap? data]
+  (or (when wrap?
+        (when-some [devtools (oops.helpers/unchecked-aget goog/global "devtools")]
+          (when-some [toolbox (oops.helpers/unchecked-aget devtools "toolbox")]
+            (when-some [envelope (oops.helpers/unchecked-aget toolbox "envelope")]
+              (when (cljs.core/fn? envelope)
+                (envelope data "details"))))))
+      data))
