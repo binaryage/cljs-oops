@@ -53,8 +53,22 @@
         descriptor
         (recur (.getPrototypeOf js/Object o))))))
 
-(defn is-property-writable? [property-descriptor]
-  (.-writable property-descriptor))
+(defn determine-property-non-writable-reason [property-descriptor]
+  ; this gets a bit more tricky...
+  ;
+  ; there are two kinds of property descriptors
+  ; 1) data property descriptors
+  ; 2) accessor property descriptors
+  ; only data descriptors have writable flag present
+  ; see https://abdulapopoola.com/2016/11/21/deep-dive-into-javascript-property-descriptors
+  ;
+  ; we first check for "writable" property presence and test it only if it exists
+  ; otherwise we assume accessor property is writable if it has some setter method
+  (if (.hasOwnProperty property-descriptor "writable")
+    (if (false? (.-writable property-descriptor))
+      "data property descriptor has writable=false")
+    (if (nil? (.-set property-descriptor))
+      "accessor property descriptor has neither writable flag nor a setter function")))
 
 (defn is-object-sealed? [obj]
   (.isSealed js/Object obj))

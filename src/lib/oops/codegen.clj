@@ -306,14 +306,16 @@
 (defn gen-check-key-write-access [obj-sym mode-sym key]
   (debug-assert (symbol? obj-sym))
   (debug-assert (symbol? mode-sym))
-  (let [descriptor-sym (gensym "descriptor")]
+  (let [descriptor-sym (gensym "descriptor")
+        reason-sym (gensym "reason")]
     `(if-some [~descriptor-sym (oops.helpers/get-property-descriptor ~obj-sym ~key)]
-       (if (oops.helpers/is-property-writable? ~descriptor-sym)
-         true
+       (if-some [~reason-sym (oops.helpers/determine-property-non-writable-reason ~descriptor-sym)]
          ~(gen-report-if-needed :object-key-not-writable `{:obj     (oops.state/get-target-object)
                                                            :key     ~key
+                                                           :reason  ~reason-sym
                                                            :frozen? (oops.helpers/is-object-frozen? ~obj-sym)
-                                                           :path    (oops.state/get-key-path-str)}))
+                                                           :path    (oops.state/get-key-path-str)})
+         true)
        (cond
          ; note that frozen object imply sealed
          (oops.helpers/is-object-frozen? ~obj-sym)

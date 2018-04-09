@@ -300,16 +300,19 @@
                             :object-is-sealed        :warn}
         (let [recorder (atom [])]
           (with-console-recording recorder
-            (let [frozen-o (js-obj "k2" (js-obj))
-                  _ (.freeze js/Object frozen-o)
-                  o-frozen-child (js-obj "frozen" frozen-o)
-                  sealed-o (js-obj "k2" (js-obj))
-                  _ (.seal js/Object sealed-o)
-                  o-sealed-child (js-obj "sealed" sealed-o)
-                  o-non-writable-k2 (js-obj)
-                  _ (.defineProperty js/Object o-non-writable-k2 "nowrite" #js {:value 42 :writable false})
-                  o-non-writable-child (js-obj "k" o-non-writable-k2)
-                  o-path (js-obj "c" o-frozen-child)]
+            (let [o-frozen (js-obj "k2" (js-obj))
+                  _ (.freeze js/Object o-frozen)
+                  o-frozen-child (js-obj "frozen" o-frozen)
+                  o-sealed (js-obj "k2" (js-obj))
+                  _ (.seal js/Object o-sealed)
+                  o-sealed-child (js-obj "sealed" o-sealed)
+                  o-nowrite (js-obj)
+                  _ (.defineProperty js/Object o-nowrite "nowrite" #js {:value 42 :writable false})
+                  o-non-writable-child (js-obj "k" o-nowrite)
+                  o-path (js-obj "c" o-frozen-child)
+                  o-accessor-prop (js-obj)
+                  _ (.defineProperty js/Object o-accessor-prop "accessor1" #js {:get (fn [] 42) :set (fn [v] (js/console.log "SET", v))})
+                  _ (.defineProperty js/Object o-accessor-prop "accessor2" #js {:get (fn [] 4242)})]
               (oset! o-frozen-child "frozen.!k2" "val")
               (oset! o-frozen-child "frozen.k2" "val")
               (oset! o-frozen-child "frozen.!k3" "val")
@@ -319,14 +322,17 @@
               (oset! o-non-writable-child "k.nowrite" "val")                                                                  ; this should not work because nowrite is read-only
               (oset! o-non-writable-child "k.!nowrite" "val")                                                                 ; this should not work because nowrite is read-only
               (oset! o-path "c.frozen.!k5.!k6.!k7" "val")                                                                     ; test punching failure mid-path
+              (oset! o-accessor-prop "accessor1" "val")                                                                       ; this should work because set fn exists
+              (oset! o-accessor-prop "accessor2" "val")                                                                       ; this should not work because set fn does not exist
               ))
-          (is (= @recorder ["WARN: (\"Oops, Object key 'k2' is not writable on key path 'frozen.k2' because the object is frozen\" {:path \"frozen.k2\", :key \"k2\", :frozen? true, :obj #js {:frozen #js {:k2 #js {}}}})"
-                            "WARN: (\"Oops, Object key 'k2' is not writable on key path 'frozen.k2' because the object is frozen\" {:path \"frozen.k2\", :key \"k2\", :frozen? true, :obj #js {:frozen #js {:k2 #js {}}}})"
+          (is (= @recorder ["WARN: (\"Oops, Object key 'k2' is not writable on key path 'frozen.k2' because the object is frozen\" {:path \"frozen.k2\", :key \"k2\", :frozen? true, :reason \"data property descriptor has writable=false\", :obj #js {:frozen #js {:k2 #js {}}}})"
+                            "WARN: (\"Oops, Object key 'k2' is not writable on key path 'frozen.k2' because the object is frozen\" {:path \"frozen.k2\", :key \"k2\", :frozen? true, :reason \"data property descriptor has writable=false\", :obj #js {:frozen #js {:k2 #js {}}}})"
                             "WARN: (\"Oops, Cannot create object key 'k3' on key path 'frozen.k3' because the object is frozen\" {:path \"frozen.k3\", :key \"k3\", :obj #js {:frozen #js {:k2 #js {}}}})"
                             "WARN: (\"Oops, Cannot create object key 'k3' on key path 'sealed.k3' because the object is sealed\" {:path \"sealed.k3\", :key \"k3\", :obj #js {:sealed #js {:k2 \"val\"}}})"
-                            "WARN: (\"Oops, Object key 'nowrite' is not writable on key path 'k.nowrite'\" {:path \"k.nowrite\", :key \"nowrite\", :frozen? false, :obj #js {:k #js {}}})"
-                            "WARN: (\"Oops, Object key 'nowrite' is not writable on key path 'k.nowrite'\" {:path \"k.nowrite\", :key \"nowrite\", :frozen? false, :obj #js {:k #js {}}})"
-                            "WARN: (\"Oops, Cannot create object key 'k5' on key path 'c.frozen.k5' because the object is frozen\" {:path \"c.frozen.k5\", :key \"k5\", :obj #js {:c #js {:frozen #js {:k2 #js {}}}}})"])))))))
+                            "WARN: (\"Oops, Object key 'nowrite' is not writable on key path 'k.nowrite'\" {:path \"k.nowrite\", :key \"nowrite\", :frozen? false, :reason \"data property descriptor has writable=false\", :obj #js {:k #js {}}})"
+                            "WARN: (\"Oops, Object key 'nowrite' is not writable on key path 'k.nowrite'\" {:path \"k.nowrite\", :key \"nowrite\", :frozen? false, :reason \"data property descriptor has writable=false\", :obj #js {:k #js {}}})"
+                            "WARN: (\"Oops, Cannot create object key 'k5' on key path 'c.frozen.k5' because the object is frozen\" {:path \"c.frozen.k5\", :key \"k5\", :obj #js {:c #js {:frozen #js {:k2 #js {}}}}})" "LOG: (\"SET\" \"val\")"
+                            "WARN: (\"Oops, Object key 'accessor2' is not writable\" {:path \"accessor2\", :key \"accessor2\", :frozen? false, :reason \"accessor property descriptor has neither writable flag nor a setter function\", :obj #js {}})"])))))))
 
 (deftest test-ocall
   (testing "simple invocation via call"
