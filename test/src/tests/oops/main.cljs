@@ -444,6 +444,10 @@
       (is (= (oapply obj (identity "f") []) "ROOT!"))
       (is (= (oapply obj (identity "a.f") []) "A!"))
       (is (= (oapply obj (identity "b.a.f") []) "BA!"))))
+  (testing "test oapply with symbolic args (issue 18)"
+    (let [obj #js {"f" str}
+          args [1 2 3]]
+      (is (= (oapply obj "f" args) "123"))))
   (testing "test errors when oapplying to non-functions"
     (when-not-advanced-mode
       (presume-compiler-config {:runtime-expected-function-value :error})

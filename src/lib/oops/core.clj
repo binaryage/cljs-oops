@@ -142,7 +142,7 @@
 (def ocall-api (o-api ocall-args))
 (def gcall-api (g-api ocall-args))
 
-(def oapply-args [:selector (s/+ anything?) :args sequential?])
+(def oapply-args [:selector (s/+ anything?) :args anything?])
 (def oapply-api (o-api oapply-args))
 (def gapply-api (g-api oapply-args))
 
