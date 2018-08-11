@@ -25,6 +25,6 @@ before_script:
   # install nodejs for npm, which is needed for js-beautify
   - curl -sL https://deb.nodesource.com/setup_4.x | sudo -E bash -
   - sudo apt-get install -y nodejs colordiff
-  - sudo npm install -g js-beautify@1.7.4
+  - sudo npm install -g js-beautify@1.7.5
 
 script: lein test-all
