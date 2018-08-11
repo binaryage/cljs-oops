@@ -1,16 +1,16 @@
-(def clojurescript-version (or (System/getenv "CANARY_CLOJURESCRIPT_VERSION") "1.10.238"))
+(def clojurescript-version (or (System/getenv "CANARY_CLOJURESCRIPT_VERSION") "1.10.339"))
 (def required-deps
-  [['funcool/cuerdas "2.0.5"]
+  [['funcool/cuerdas "2.0.6"]
    ['binaryage/env-config "0.2.2"]])
 (def provided-deps
   [['org.clojure/clojure "1.9.0" :scope "provided"]
    ['org.clojure/clojurescript clojurescript-version :scope "provided"]])
 (def test-deps
   [['environ "1.1.0" :scope "test"]
-   ['binaryage/devtools "0.9.9" :scope "test"]
+   ['binaryage/devtools "0.9.10" :scope "test"]
    ['binaryage/dirac "RELEASE" :scope "test" :upgrade false]
-   ['figwheel "0.5.15" :scope "test"]
-   ['org.clojure/tools.logging "0.4.0" :scope "test"]
+   ['figwheel "0.5.16" :scope "test"]
+   ['org.clojure/tools.logging "0.4.1" :scope "test"]
    ['clj-logging-config "1.9.12" :scope "test"]
    ['clansi "1.0.0" :scope "test"]])
 (def lib-deps (concat provided-deps required-deps))
