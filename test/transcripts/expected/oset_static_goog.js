@@ -19,7 +19,7 @@
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 var target_obj_1 = window,
-  next_obj_1 = goog.object.get(target_obj_1);
+  next_obj_1 = goog.object.get(target_obj_1, "k1");
 (null == next_obj_1 ? oops.core.punch_key_dynamically_BANG_.cljs.core.IFn$_invoke$arity$4$ ? oops.core.punch_key_dynamically_BANG_.cljs.core.IFn$_invoke$arity$4$(target_obj_1, "k1") : oops.core.punch_key_dynamically_BANG_.call(null, target_obj_1, "k1") : next_obj_1).k2 = "val";
 
 // SNIPPET #2:
@@ -28,7 +28,7 @@ var target_obj_1 = window,
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 var target_obj_2 = window,
-  next_obj_2 = goog.object.get(target_obj_2);
+  next_obj_2 = goog.object.get(target_obj_2, "k1");
 (null == next_obj_2 ? oops.core.punch_key_dynamically_BANG_.cljs.core.IFn$_invoke$arity$4$ ? oops.core.punch_key_dynamically_BANG_.cljs.core.IFn$_invoke$arity$4$(target_obj_2, "k1") : oops.core.punch_key_dynamically_BANG_.call(null, target_obj_2, "k1") : next_obj_2).k2 = "val";
 
 // SNIPPET #3:
@@ -36,4 +36,4 @@ var target_obj_2 = window,
 //     (oset! js/window "k1.k2" "val"))
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-goog.object.get(window).k2 = "val";
+goog.object.get(window, "k1").k2 = "val";
