@@ -71,7 +71,7 @@ Otherwise pretty standard stuff. If in doubts, look at the [sample project][13].
 > -- <cite>Darwin (with sunglasses on)</cite>
 
 ClojureScript developers should quickly learn how to inter-operate with native Javascript objects via [the dot operator][1].
-This was modelled to closely follow [Cojure's Java interop][4] story.
+This was modelled to closely follow [Clojure's Java interop][4] story.
 
 For example, the ClojureScript form `(.-nativeProp obj)` will compile to `obj.nativeProp` in Javascript.
 
