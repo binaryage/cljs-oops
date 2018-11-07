@@ -9,7 +9,7 @@
   [['environ "1.1.0" :scope "test"]
    ['binaryage/devtools "0.9.10" :scope "test"]
    ['binaryage/dirac "RELEASE" :scope "test" :upgrade false]
-   ['figwheel "0.5.16" :scope "test"]
+   ['figwheel "0.5.17" :scope "test"]
    ['org.clojure/tools.logging "0.4.1" :scope "test"]
    ['clj-logging-config "1.9.12" :scope "test"]
    ['clansi "1.0.0" :scope "test"]])
@@ -32,7 +32,7 @@
 
   :plugins [[lein-cljsbuild "1.1.7"]
             [lein-shell "0.5.0"]
-            [lein-figwheel "0.5.15"]]
+            [lein-figwheel "0.5.17"]]
 
   ; this is just for IntelliJ + Cursive to play well
   :source-paths ["src/lib"]
