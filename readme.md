@@ -1,6 +1,6 @@
 # cljs-oops
 
-[![GitHub license](https://img.shields.io/github/license/binaryage/cljs-oops.svg)](license.txt) 
+[![GitHub license](https://img.shields.io/badge/license-MIT-lightgrey.svg)](license.txt) 
 [![Clojars Project](https://img.shields.io/clojars/v/binaryage/oops.svg)](https://clojars.org/binaryage/oops) 
 [![Travis](https://img.shields.io/travis/binaryage/cljs-oops.svg)](https://travis-ci.org/binaryage/cljs-oops) 
 [![Sample Project](https://img.shields.io/badge/project-example-ff69b4.svg)](https://github.com/binaryage/cljs-oops-sample)
