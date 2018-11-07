@@ -9,6 +9,10 @@ pushd "$ROOT"
 
 lein clean
 ./scripts/run-functional-tests-clojure18.sh
+
+lein clean
+./scripts/run-functional-tests-clojure110.sh
+
 lein clean
 ./scripts/run-functional-tests.sh
 ./scripts/run-circus-tests.sh
