@@ -1,4 +1,4 @@
-(def clojurescript-version (or (System/getenv "CANARY_CLOJURESCRIPT_VERSION") "1.10.339"))
+(def clojurescript-version (or (System/getenv "CANARY_CLOJURESCRIPT_VERSION") "1.10.439"))
 (def required-deps
   [['funcool/cuerdas "2.0.6"]
    ['binaryage/env-config "0.2.2"]])
