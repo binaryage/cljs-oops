@@ -132,7 +132,7 @@
                               "ERROR: (\"Oops, Unexpected object value (boolean)\" {:path \"\", :flavor \"boolean\", :obj true})"
                               "ERROR: (\"Oops, Unexpected object value (boolean)\" {:path \"\", :flavor \"boolean\", :obj false})"
                               "ERROR: (\"Oops, Unexpected object value (cljs type)\" {:path \"\", :flavor \"cljs type\", :obj cljs.core/Atom})"
-                              "ERROR: (\"Oops, Unexpected object value (cljs instance)\" {:path \"\", :flavor \"cljs instance\", :obj #object [cljs.core.Atom {:val 0}]})"])))
+                              "ERROR: (\"Oops, Unexpected object value (cljs instance)\" {:path \"\", :flavor \"cljs instance\", :obj #object[cljs.core.Atom {:val 0}]})"])))
           (let [recorder (atom [])]
             (with-console-recording recorder
               (are [o] (= (oget (js-obj "k1" o) "k1" "k2") nil)
