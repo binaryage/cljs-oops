@@ -339,6 +339,12 @@
 
 ; -- raw implementations ----------------------------------------------------------------------------------------------------
 
+; we want to tag our symbol as a generic js/Function to prevent infer warnings
+; see https://github.com/binaryage/cljs-oops/issues/21
+(defn gen-fn-sym
+  ([] (gen-fn-sym "fn"))
+  ([name] (with-meta (gensym name) {:tag 'js/Function})))
+
 (defn macroexpand-selector-list [selector-list]
   (if-not (config/macroexpand-selectors?)
     selector-list
@@ -372,14 +378,14 @@
      ~(gen-dynamic-fn-call-validation-wrapper fn-sym action)))
 
 (defn gen-ocall-impl [obj-sym selector-list args]
-  (let [fn-sym (gensym "fn")
+  (let [fn-sym (gen-fn-sym)
         call-info-sym (gensym "call-info")
         action `(when (some? ~fn-sym)
                   (.call ~fn-sym (oops.helpers/unchecked-aget ~call-info-sym 0) ~@args))]
     (gen-callable obj-sym selector-list fn-sym call-info-sym action)))
 
 (defn gen-oapply-impl [obj-sym selector-list args]
-  (let [fn-sym (gensym "fn")
+  (let [fn-sym (gen-fn-sym)
         call-info-sym (gensym "call-info")
         action `(when (some? ~fn-sym)
                   (.apply ~fn-sym (oops.helpers/unchecked-aget ~call-info-sym 0) (oops.helpers/to-native-array ~args)))]
