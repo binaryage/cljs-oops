@@ -6,6 +6,9 @@
   [(make-build file "core" (get-key-mode-options :core))
    (make-build file "goog" (get-key-mode-options :goog))])
 
+(defn make-simple-build [file]
+  [(make-build file "core" {})])
+
 (def all-builds
   (concat
     (make-build-variants "oget_static.cljs")
@@ -25,7 +28,9 @@
      (make-build "gcall_dev.cljs" "" {} {:optimizations :whitespace})
      (make-build "warnings.cljs" "dev" {} {:optimizations :whitespace})
      (make-build "error_static_nil_object.cljs" "dev" {:static-nil-target-object :error} {:optimizations :whitespace})
-     (make-build "error_dynamic_selector_usage.cljs" "dev" {:dynamic-selector-usage :error} {:optimizations :whitespace})]))
+     (make-build "error_dynamic_selector_usage.cljs" "dev" {:dynamic-selector-usage :error} {:optimizations :whitespace})]
+    ; issues
+    (make-simple-build "issue_21.cljs")))
 
 ; -- tests ------------------------------------------------------------------------------------------------------------------
 
