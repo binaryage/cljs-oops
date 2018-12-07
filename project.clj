@@ -36,7 +36,11 @@
 
   ; this is just for IntelliJ + Cursive to play well
   :source-paths ["src/lib"]
-  :test-paths ["test/src"]
+  :test-paths ["test/src/arena"
+               "test/src/circus"
+               "test/src/runner"
+               "test/src/tests"
+               "test/src/tools"]
   :resource-paths ^:replace ["test/resources"
                              "scripts"]
 
