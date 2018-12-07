@@ -15,6 +15,6 @@ lein clean
 
 lein clean
 ./scripts/run-functional-tests.sh
-./scripts/run-circus-tests.sh
+./scripts/run-circus-tests.sh "$@"
 
 popd

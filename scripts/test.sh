@@ -8,6 +8,6 @@ source "./config.sh"
 pushd "$ROOT"
 
 ./scripts/run-functional-tests.sh
-./scripts/run-circus-tests.sh
+./scripts/run-circus-tests.sh "$@"
 
 popd
