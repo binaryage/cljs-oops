@@ -16,6 +16,7 @@
 // ----------------------------------------------------------------------------------------------------------
 // COMPILER STDERR:
 //   THROWN: clojure.lang.ExceptionInfo: failed compiling file:<absolute-path>/test/src/arena/oops/arena/error_static_nil_object.cljs
+//   Caused by: clojure.lang.ExceptionInfo: null
 //   Caused by: clojure.lang.ExceptionInfo: Oops, Unexpected nil target object at line 8 <absolute-path>/test/src/arena/oops/arena/error_static_nil_object.cljs
 // ----------------------------------------------------------------------------------------------------------
 // NO GENERATED CODE
