@@ -4,6 +4,8 @@ set -e
 
 cd `dirname "${BASH_SOURCE[0]}"` && source "./config.sh" && cd "$ROOT"
 
+lein clean
+./scripts/check-versions.sh
 ./scripts/prepare-jar.sh
-./scripts/list-jar.sh
-lein with-profile lib install
+./scripts/check-release.sh
+./scripts/deploy-clojars.sh

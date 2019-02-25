@@ -2,12 +2,8 @@
 
 set -e
 
-pushd `dirname "${BASH_SOURCE[0]}"` > /dev/null
-source "./config.sh"
+cd `dirname "${BASH_SOURCE[0]}"` && source "./config.sh" && cd "$ROOT"
 
-pushd "$ROOT"
-
+lein clean
 ./scripts/run-functional-tests.sh
 ./scripts/run-circus-tests.sh "$@"
-
-popd

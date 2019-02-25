@@ -2,26 +2,23 @@
 
 set -e
 
-pushd `dirname "${BASH_SOURCE[0]}"` > /dev/null
-source "./config.sh"
+cd `dirname "${BASH_SOURCE[0]}"` && source "./config.sh" && cd "$ROOT"
 
-pushd "$ROOT"
-
-if [ ! -d "$OOPS_BROWSER_TESTS_USER_PROFILE" ] ; then
+if [[ ! -d "$OOPS_BROWSER_TESTS_USER_PROFILE" ]] ; then
   mkdir -p "$OOPS_BROWSER_TESTS_USER_PROFILE"
 fi
 
 EXE="/Applications/Google Chrome Canary.app/Contents/MacOS/Google Chrome Canary"
-if [ -f /usr/bin/google-chrome-unstable ] ; then
+if [[ -f /usr/bin/google-chrome-unstable ]] ; then
   EXE="/usr/bin/google-chrome-unstable" # this is for ubuntu
 fi
-if [ -n "$OOPS_USE_CHROME" ] ; then
+if [[ -n "$OOPS_USE_CHROME" ]] ; then
   EXE="/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
 fi
-if [ -n "$OOPS_USE_CHROMIUM" ] ; then
+if [[ -n "$OOPS_USE_CHROMIUM" ]] ; then
   EXE="/Applications/Chromium.app/Contents/MacOS/Chromium"
 fi
-if [ -n "$OOPS_USE_CUSTOM_CHROME" ] ; then
+if [[ -n "$OOPS_USE_CUSTOM_CHROME" ]] ; then
   EXE="$OOPS_USE_CUSTOM_CHROME"
 fi
 
@@ -43,7 +40,3 @@ set -x
       --disable-gpu \
       "http://localhost:$DEV_FIXTURES_SERVER_PORT/main.html?script=basic_onone" 2> /dev/null
 set +x
-
-popd
-
-popd

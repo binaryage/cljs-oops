@@ -2,10 +2,9 @@
 
 set -e
 
-pushd `dirname "${BASH_SOURCE[0]}"` > /dev/null
-source "./config.sh"
+cd `dirname "${BASH_SOURCE[0]}"` && source "./config.sh" && cd "$ROOT"
 
-pushd "$ROOT/test/resources"
+cd "$ROOT/test/resources"
 
 export OOPS_ELIDE_DEVTOOLS=1
 
@@ -13,7 +12,5 @@ PHANTOM_VERSION=`phantomjs --version`
 echo
 echo "Running functional tests under PhantomJS v$PHANTOM_VERSION, using Clojure 1.8"
 echo "===================================================================================================="
-lein with-profile +clojure18 build-tests
+${ROOT}/scripts/build-tests.sh +clojure18
 phantomjs phantom.js "$@"
-
-popd

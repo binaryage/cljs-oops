@@ -31,7 +31,6 @@
                                     "test/resources/.compiled"]
 
   :plugins [[lein-cljsbuild "1.1.7"]
-            [lein-shell "0.5.0"]
             [lein-figwheel "0.5.17"]]
 
   ; this is just for IntelliJ + Cursive to play well
@@ -46,13 +45,10 @@
 
   :cljsbuild {:builds {}}                                                                                                     ; prevent https://github.com/emezeske/lein-cljsbuild/issues/413
 
-  :profiles {:nuke-aliases
-             {:aliases ^:replace {}}
-
+  :profiles {
              :lib
              ^{:pom-scope :provided}                                                                                          ; ! to overcome default jar/pom behaviour, our :dependencies replacement would be ignored for some reason
-             [:nuke-aliases
-              {:dependencies   ~(with-meta lib-deps {:replace true})
+             [{:dependencies   ~(with-meta lib-deps {:replace true})
                :source-paths   ^:replace ["src/lib"]
                :resource-paths ^:replace []
                :test-paths     ^:replace []}]
@@ -154,43 +150,6 @@
 
              :dev-basic-onone
              {:cooper {"server"     ["scripts/launch-fixtures-server.sh"]
-                       "figwheel"   ["lein" "fig-basic-onone"]
+                       "figwheel"   ["scripts/fig-basic-onone.sh"]
                        "repl-agent" ["scripts/launch-repl-with-agent.sh"]
-                       "browser"    ["scripts/launch-test-browser.sh"]}}}
-
-  :aliases {"test"                 ["do"
-                                    ["clean"]
-                                    ["shell" "scripts/test.sh"]]
-            "test-all"             ["shell" "scripts/test-all.sh"]
-            "dev-functional-tests" ["shell" "scripts/dev-functional-tests.sh"]
-            "run-functional-tests" ["do"
-                                    ["clean"]
-                                    ["shell" "scripts/run-functional-tests.sh"]]
-            "run-circus-tests"     ["do"
-                                    ["clean"]
-                                    ["shell" "scripts/run-circus-tests.sh"]]
-            "build-tests"          ["do"
-                                    ["with-profile" "+testing-basic-onone" "cljsbuild" "once" "basic-onone"]
-                                    ["with-profile" "+testing-basic-oadvanced-core" "cljsbuild" "once" "basic-oadvanced-core"]
-                                    ["with-profile" "+testing-basic-oadvanced-goog" "cljsbuild" "once" "basic-oadvanced-goog"]]
-            "auto-build-tests"     ["do"
-                                    ["with-profile" "+testing-basic-onone,+auto-testing" "cljsbuild" "once" "basic-onone"]
-                                    ["with-profile" "+testing-basic-oadvanced-core,+auto-testing" "cljsbuild" "once" "basic-oadvanced-core"]
-                                    ["with-profile" "+testing-basic-oadvanced-goog,+auto-testing" "cljsbuild" "once" "basic-oadvanced-goog"]]
-            "fig-basic-onone"      ["with-profile" "+testing-basic-onone,+dirac,+figwheel" "figwheel"]
-            "auto-basic-onone"     ["with-profile" "+testing-basic-onone,+auto-testing" "cljsbuild" "auto" "basic-onone"]
-            "auto-test"            ["do"
-                                    ["clean"]
-                                    ["auto-build-tests"]]
-            "toc"                  ["shell" "scripts/generate-toc.sh"]
-            "install"              ["do"
-                                    ["shell" "scripts/prepare-jar.sh"]
-                                    ["shell" "scripts/local-install.sh"]]
-            "jar"                  ["shell" "scripts/prepare-jar.sh"]
-            "deploy"               ["shell" "scripts/deploy-clojars.sh"]
-            "release"              ["do"
-                                    ["clean"]
-                                    ["shell" "scripts/check-versions.sh"]
-                                    ["shell" "scripts/prepare-jar.sh"]
-                                    ["shell" "scripts/check-release.sh"]
-                                    ["shell" "scripts/deploy-clojars.sh"]]})
+                       "browser"    ["scripts/launch-test-browser.sh"]}}})

@@ -2,10 +2,7 @@
 
 set -e
 
-pushd `dirname "${BASH_SOURCE[0]}"` > /dev/null
-source "./config.sh"
-
-pushd "$ROOT"
+cd `dirname "${BASH_SOURCE[0]}"` && source "./config.sh" && cd "$ROOT"
 
 lein clean
 ./scripts/run-functional-tests-clojure18.sh
@@ -16,5 +13,3 @@ lein clean
 lein clean
 ./scripts/run-functional-tests.sh
 ./scripts/run-circus-tests.sh "$@"
-
-popd

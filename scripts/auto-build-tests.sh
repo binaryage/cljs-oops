@@ -4,6 +4,5 @@ set -e
 
 cd `dirname "${BASH_SOURCE[0]}"` && source "./config.sh" && cd "$ROOT"
 
-cd "$ROOT/test/resources"
-
-phantomjs phantom.js "$@"
+lein clean
+./scripts/build-tests.sh +auto-testing

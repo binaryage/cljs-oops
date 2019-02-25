@@ -2,15 +2,8 @@
 
 set -e
 
-pushd `dirname "${BASH_SOURCE[0]}"` > /dev/null
-source "./config.sh"
-
-pushd "$ROOT"
+cd `dirname "${BASH_SOURCE[0]}"` && source "./config.sh" && cd "$ROOT"
 
 echo "launching dirac agent with repl"
 
 lein with-profile +repl-with-agent repl :headless
-
-popd
-
-popd

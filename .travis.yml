@@ -21,4 +21,4 @@ before_script:
   - sudo apt-get install -y nodejs colordiff
   - sudo npm install -g js-beautify@1.8.9
 
-script: lein test-all
+script: ./scripts/test-all.sh

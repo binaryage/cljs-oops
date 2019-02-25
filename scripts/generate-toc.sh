@@ -4,16 +4,9 @@
 
 set -e
 
-pushd `dirname "${BASH_SOURCE[0]}"` > /dev/null
-source "./config.sh"
-
-pushd "$ROOT"
+cd `dirname "${BASH_SOURCE[0]}"` && source "./config.sh" && cd "$ROOT"
 
 # using https://github.com/ekalinin/github-markdown-toc.go
 # brew install github-markdown-toc
 
 gh-md-toc readme.md --depth 3
-
-popd
-
-popd
