@@ -266,8 +266,11 @@
 
 (def get-build-filter (memoize make-build-filter))
 
+(defn print-throwable-without-ex-data [tr]
+  (printf "%s: %s" (.getName (class tr)) (.getMessage tr)))
+
 (defn print-cause-chain [tr]
-  (clojure.stacktrace/print-throwable tr)
+  (print-throwable-without-ex-data tr)
   (println)
   (when-let [cause (.getCause tr)]
     (print "Caused by: ")
