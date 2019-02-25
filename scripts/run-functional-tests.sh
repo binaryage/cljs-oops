@@ -11,7 +11,7 @@ export OOPS_ELIDE_DEVTOOLS=1
 
 PHANTOM_VERSION=`phantomjs --version`
 echo
-echo "Running functional tests under PhantomJS v$PHANTOM_VERSION, using Clojure 1.9"
+echo "Running functional tests under PhantomJS v$PHANTOM_VERSION, using Clojure 1.10"
 echo "===================================================================================================="
 lein build-tests
 phantomjs phantom.js "$@"

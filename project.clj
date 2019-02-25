@@ -2,7 +2,7 @@
 (def required-deps
   [['binaryage/env-config "0.2.2"]])
 (def provided-deps
-  [['org.clojure/clojure "1.9.0" :scope "provided"]
+  [['org.clojure/clojure "1.10.0" :scope "provided"]
    ['org.clojure/clojurescript clojurescript-version :scope "provided"]])
 (def test-deps
   [['environ "1.1.0" :scope "test"]
@@ -61,8 +61,8 @@
              {:dependencies [[org.clojure/clojure "1.8.0" :scope "provided" :upgrade false]
                              [clojure-future-spec "1.9.0-beta4" :scope "provided"]]}
 
-             :clojure110
-             {:dependencies [[org.clojure/clojure "1.10.0-beta5" :scope "provided" :upgrade false]]}
+             :clojure19
+             {:dependencies [[org.clojure/clojure "1.9.0" :scope "provided" :upgrade false]]}
 
              :cooper
              {:plugins [[lein-cooper "1.2.2"]]}
