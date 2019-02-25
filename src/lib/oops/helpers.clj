@@ -1,7 +1,7 @@
 (ns oops.helpers
   "Various helpers for our Clojure code."
   (:refer-clojure :exclude [gensym])
-  (:require [cuerdas.core :as cuerdas]
+  (:require [oops.cuerdas :as cuerdas]
             [clojure.pprint :refer [pprint]]))
 
 (defn indent-text [s count]
