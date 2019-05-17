@@ -1,4 +1,4 @@
-// js-beautify v1.8.9
+// js-beautify v1.10.0
 // ----------------------------------------------------------------------------------------------------------
 // COMPILER CONFIG:
 //   arena/error_dynamic_selector_usage.cljs [dev]

@@ -19,6 +19,6 @@ before_script:
   # install nodejs for npm, which is needed for js-beautify
   - curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -
   - sudo apt-get install -y nodejs colordiff
-  - sudo npm install -g js-beautify@1.8.9
+  - sudo npm install -g js-beautify@1.10.0
 
 script: ./scripts/test-all.sh
