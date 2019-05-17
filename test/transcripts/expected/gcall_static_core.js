@@ -18,7 +18,8 @@
 //     (gcall "f" "p1" "p2"))
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-var call_info_1 = [this, this.f],
+var target_obj_1 = goog$global,
+  call_info_1 = [target_obj_1, target_obj_1.f],
   fn_1 = call_info_1[1];
 null != fn_1 && fn_1.call(call_info_1[0], "p1", "p2");
 
@@ -27,7 +28,7 @@ null != fn_1 && fn_1.call(call_info_1[0], "p1", "p2");
 //     (gcall "a.f" "p1" "p2"))
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-var call_info_2, target_obj_1 = this.a;
-call_info_2 = [target_obj_1, target_obj_1.f];
+var call_info_2, target_obj_2 = goog$global.a;
+call_info_2 = [target_obj_2, target_obj_2.f];
 var fn_2 = call_info_2[1];
 null != fn_2 && fn_2.call(call_info_2[0], "p1", "p2");
