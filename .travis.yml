@@ -1,5 +1,5 @@
 sudo: true
-dist: trusty
+dist: bionic
 language: clojure
 
 notifications:
@@ -16,9 +16,7 @@ before_install:
 before_script:
   # update lein to latest, https://github.com/technomancy/leiningen/issues/2014#issuecomment-153829977
   - yes y | sudo lein upgrade
-  # install nodejs for npm, which is needed for js-beautify
-  - curl -sL https://deb.nodesource.com/setup_13.x | sudo -E bash -
-  - sudo apt-get install -y nodejs colordiff
+  - sudo apt-get install colordiff
   - sudo npm install -g js-beautify@1.10.0
 
 script: ./scripts/test-all.sh
