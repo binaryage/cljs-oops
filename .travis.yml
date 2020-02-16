@@ -17,6 +17,6 @@ before_script:
   # update lein to latest, https://github.com/technomancy/leiningen/issues/2014#issuecomment-153829977
   - yes y | sudo lein upgrade
   - sudo apt-get install nodejs npm colordiff
-  - sudo npm install -g js-beautify@1.10.0
+  - sudo npm install -g js-beautify@1.10.3
 
 script: ./scripts/test-all.sh
