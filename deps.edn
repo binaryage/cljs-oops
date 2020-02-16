@@ -1,0 +1,4 @@
+{:paths ["src/lib"]
+ :deps  {org.clojure/clojure       {:mvn/version "1.10.1"}
+         org.clojure/clojurescript {:mvn/version "1.10.597"}
+         binaryage/env-config      {:mvn/version "0.2.2"}}}
