@@ -10,7 +10,7 @@
    ['binaryage/devtools "RELEASE" :scope "test"]
    ['binaryage/dirac "RELEASE" :scope "test" :upgrade false]
    ['figwheel "RELEASE" :scope "test"]
-   ['org.clojure/tools.logging "0.6.0" :scope "test"]
+   ['org.clojure/tools.logging "1.0.0" :scope "test"]
    ['clj-logging-config "1.9.12" :scope "test"]
    ['clansi "1.0.0" :scope "test"]])
 (def lib-deps (concat provided-deps required-deps))
