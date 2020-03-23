@@ -35,8 +35,7 @@
 
 (defn gen-devtools-if-needed []
   (when-not (= (env :oops-elide-devtools) "1")
-    `(under-chrome
-       (devtools.core/install!))))
+    `(devtools.core/install!)))
 
 ; http://stackoverflow.com/a/15627016/84283
 (defn hexify "Convert byte sequence to hex string" [coll]
@@ -114,19 +113,6 @@
 
 (defmacro when-not-compiler-config [config-template & body]
   (gen-when-compiler-config not= config-template body))
-
-(defmacro under-phantom [& body]
-  `(when (re-find #"PhantomJS" js/window.navigator.userAgent)
-     ~@body))
-
-(defmacro under-chrome [& body]
-  `(when-not (re-find #"PhantomJS" js/window.navigator.userAgent)
-     ~@body))
-
-(defmacro if-phantom [phantom-code & [chrome-code]]
-  `(if (re-find #"PhantomJS" js/window.navigator.userAgent)
-     ~phantom-code
-     ~chrome-code))
 
 (defmacro init-test! []
   `(do

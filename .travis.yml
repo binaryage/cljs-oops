@@ -18,5 +18,6 @@ before_script:
   - yes y | sudo lein upgrade
   - sudo apt-get install nodejs npm colordiff
   - sudo npm install -g js-beautify@1.10.3
+  - (cd test && npm install)
 
 script: ./scripts/test-all.sh

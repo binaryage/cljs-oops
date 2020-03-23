@@ -1,6 +1,7 @@
 (ns oops.runner
-  (:require-macros [oops.runner :refer [ansi-enabled?]])
+  (:require-macros [oops.runner :refer [ansi-enabled? emit-clojure-version]])
   (:require [cljs.test :as test :refer-macros [run-tests] :refer [report]]
+            [goog.object :as gobj]
             [oops.main]))
 
 ; taken from https://github.com/pjlegato/clansi/blob/7c9a525f5a72d928031573586cbce9a5f5699e15/src/clansi/core.clj
@@ -59,7 +60,7 @@
            (+ (:pass m) (:fail m) (:error m)) "assertions.")
   (println (:fail m) "failures," (:error m) "errors.")
   (let [failures-count (+ (:fail m) (:error m))]
-    (.log js/console (str "TESTS DONE (" failures-count ")"))))
+    (gobj/set js/window "test-failures" failures-count)))
 
 (defmethod report [::test/default :fail] [m]
   (test/inc-report-counter! :fail)
@@ -78,6 +79,7 @@
 ; -- entry point ------------------------------------------------------------------------------------------------------------
 
 (enable-console-print!)
+(println "Clojure version:" (emit-clojure-version))
 (println "ClojureScript version:" *clojurescript-version*)
 (case (.-selectedTestSuite js/window)
   (run-normal-tests))

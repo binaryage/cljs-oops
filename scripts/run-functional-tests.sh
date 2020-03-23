@@ -4,14 +4,9 @@ set -e
 
 cd `dirname "${BASH_SOURCE[0]}"` && source "./config.sh" && cd "$ROOT"
 
-cd "$ROOT/test/resources"
+cd "$ROOT"
 
-export OOPS_ELIDE_DEVTOOLS=1
-
-PHANTOM_VERSION=`phantomjs --version`
-echo
-echo "Running functional tests under PhantomJS v$PHANTOM_VERSION, using Clojure 1.10"
-echo "===================================================================================================="
-lein clean
-${ROOT}/scripts/build-tests.sh
-phantomjs phantom.js "$@"
+set -x
+node "test/resources/puppeteer.js" "test/resources" "main.html?script=basic_onone"
+node "test/resources/puppeteer.js" "test/resources" "main.html?script=basic_oadvanced_core"
+node "test/resources/puppeteer.js" "test/resources" "main.html?script=basic_oadvanced_goog"

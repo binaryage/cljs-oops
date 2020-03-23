@@ -13,9 +13,6 @@
                             presume-compiler-config
                             runonce
                             when-advanced-mode when-not-advanced-mode if-advanced-mode
-                            under-phantom
-                            under-chrome
-                            if-phantom
                             with-console-recording
                             with-stderr-recording
                             when-compiler-config when-not-compiler-config
@@ -93,12 +90,11 @@
           (atom "X") #"Unexpected object value \(cljs instance\)")
         (are [o msg] (thrown-with-msg? js/Error msg (oget (js-obj "k1" (js-obj "k2" o)) "k1" "k2" "k3"))
           nil #"Unexpected object value \(nil\) on key path 'k1.k2'")
-        (under-chrome
-          (are [o msg] (thrown-with-msg? js/Error msg (oget o "key"))
-            ; js/Symbol is not available under phantom and we cannot really test it even under Chrome due to CLJS-1631
-            ; TODO: uncomment this later
-            ; (js/Symbol "mysymbol") #"Unexpected object value \(non-object\)"
-            nil #"Unexpected object value \(nil\)"))))
+        (are [o msg] (thrown-with-msg? js/Error msg (oget o "key"))
+          ; js/Symbol is not available under phantom and we cannot really test it even under Chrome due to CLJS-1631
+          ; TODO: uncomment this later
+          ; (js/Symbol "mysymbol") #"Unexpected object value \(non-object\)"
+          nil #"Unexpected object value \(nil\)")))
     (when-not-advanced-mode
       (testing "with {:error-reporting-mode false} object access validation should be elided"
         (with-runtime-config {:error-reporting false}
@@ -146,14 +142,9 @@
     (when-advanced-mode                                                                                                       ; advanced optimizations
       (testing "object access validation should crash or silently fail in advanced mode (no diagnostics)"
         (when-not-compiler-config {:key-get :goog}
-          (under-phantom
-            (are [o msg] (thrown-with-msg? js/TypeError msg (.log js/console (oget o "key")))                                 ; we have to log it otherwise closure could remove it as dead code
-              nil #"null is not an object"
-              js/undefined #"undefined is not an object"))
-          (under-chrome
-            (are [o msg] (thrown-with-msg? js/TypeError msg (.log js/console (oget o "key")))                                 ; we have to log it otherwise closure could remove it as dead code
-              nil #"Cannot read property 'key' of null"
-              js/undefined #"Cannot read property 'key' of undefined"))
+          (are [o msg] (thrown-with-msg? js/TypeError msg (.log js/console (oget o "key")))                                 ; we have to log it otherwise closure could remove it as dead code
+            nil #"Cannot read property 'key' of null"
+            js/undefined #"Cannot read property 'key' of undefined")
           (are [o] (= (oget o "key") nil)
             "s"
             42
@@ -549,7 +540,7 @@
     (raise-error!)))
 
 (deftest test-runtime-errors
-  (under-chrome
+  (when-not-advanced-mode
     (testing "runtime errors should be thrown from call-site locations"
       (presume-runtime-config {:error-reporting                    :throw
                                :throw-errors-from-macro-call-sites true})

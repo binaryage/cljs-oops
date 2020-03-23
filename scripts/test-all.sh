@@ -4,12 +4,8 @@ set -e
 
 cd `dirname "${BASH_SOURCE[0]}"` && source "./config.sh" && cd "$ROOT"
 
-lein clean
-./scripts/run-functional-tests-clojure18.sh
-
-lein clean
-./scripts/run-functional-tests-clojure19.sh
-
-lein clean
-./scripts/run-functional-tests.sh
-./scripts/run-circus-tests.sh "$@"
+set -x
+./scripts/test-functional-clojure110.sh
+./scripts/test-functional-clojure19.sh
+./scripts/test-functional-clojure18.sh
+./scripts/test-circus.sh "$@"

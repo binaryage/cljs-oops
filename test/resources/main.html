@@ -2,25 +2,25 @@
 <body>
 This is just a generic HTML file with which to load the tests.
 <script>
-    // http://stackoverflow.com/a/8486188/84283
-    function urlParams() {
-        var query = location.search.substr(1);
-        var result = {};
-        query.split("&").forEach(function(part) {
-            var item = part.split("=");
-            result[item[0]] = decodeURIComponent(item[1]);
-        });
-        return result;
-    }
+  // http://stackoverflow.com/a/8486188/84283
+  function urlParams() {
+    const query = location.search.substr(1);
+    const result = {};
+    query.split("&").forEach(function (part) {
+      const item = part.split("=");
+      result[item[0]] = decodeURIComponent(item[1]);
+    });
+    return result;
+  }
 
-    const params = urlParams();
-    const script = params["script"];
-    if (script) {
-        // this is for debugging purposes to emulate page.open logic from phantom.js
-        const scriptPath = ".compiled/" + script + "/main.js";
-        console.log("executing test script: " + scriptPath);
-        document.write("<script src=\"" + scriptPath + "\"></" + "script>");
-    }
+  const params = urlParams();
+  const script = params["script"];
+  if (script) {
+    // this is for debugging purposes to emulate page.open logic from phantom.js
+    const scriptPath = ".compiled/" + script + "/main.js";
+    console.log("executing test script: " + scriptPath);
+    document.write("<script src=\"" + scriptPath + "\"></" + "script>");
+  }
 </script>
 </body>
 </html>
