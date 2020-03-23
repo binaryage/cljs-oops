@@ -1,9 +1,12 @@
 #!/usr/bin/env bash
 
-set -e
+set -e -o pipefail
 
-cd `dirname "${BASH_SOURCE[0]}"` && source "./config.sh" && cd "$ROOT"
+# shellcheck source=_config.sh
+source "$(dirname "${BASH_SOURCE[0]}")/_config.sh"
 
-lein clean
-./scripts/run-functional-tests.sh
-./scripts/run-circus-tests.sh "$@"
+cd "$ROOT"
+
+set -x
+./scripts/test-functional-clojure110.sh
+./scripts/test-circus.sh "$@"

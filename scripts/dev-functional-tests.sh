@@ -1,8 +1,11 @@
 #!/usr/bin/env bash
 
-set -e
+set -e -o pipefail
 
-cd `dirname "${BASH_SOURCE[0]}"` && source "./config.sh" && cd "$ROOT"
+# shellcheck source=_config.sh
+source "$(dirname "${BASH_SOURCE[0]}")/_config.sh"
+
+cd "$ROOT"
 
 export OOPS_DISABLE_TEST_RUNNER_ANSI=1
 lein with-profile +cooper,+dev-basic-onone cooper

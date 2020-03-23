@@ -1,18 +1,20 @@
 #!/usr/bin/env bash
 
-pushd () {
-    command pushd "$@" > /dev/null
+set -e -o pipefail
+
+pushd() {
+  command pushd "$@" >/dev/null
 }
 
-popd () {
-    command popd "$@" > /dev/null
+popd() {
+  command popd >/dev/null
 }
 
-pushd `dirname "${BASH_SOURCE[0]}"`
+pushd .
 
-cd ..
+cd "$(dirname "${BASH_SOURCE[0]}")/.."
 
-ROOT=`pwd`
+ROOT=$(pwd)
 PROJECT_VERSION_FILE="src/lib/oops/version.clj"
 PROJECT_FILE="project.clj"
 DEV_FIXTURES_SERVER_ROOT="$ROOT/test/resources"

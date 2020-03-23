@@ -1,12 +1,15 @@
 #!/usr/bin/env bash
 
-set -e
+set -e -o pipefail
 
-cd `dirname "${BASH_SOURCE[0]}"` && source "./config.sh" && cd "$ROOT"
+# shellcheck source=_config.sh
+source "$(dirname "${BASH_SOURCE[0]}")/_config.sh"
+
+cd "$ROOT"
 
 ./scripts/list-jar.sh
 
-LEIN_VERSION=`cat "$PROJECT_FILE" | grep "defproject" | cut -d' ' -f3 | cut -d\" -f2`
+LEIN_VERSION=$(grep "defproject" <"$PROJECT_FILE" | cut -d' ' -f3 | cut -d\" -f2)
 
 if [[ "$LEIN_VERSION" =~ "SNAPSHOT" ]]; then
   echo "Publishing SNAPSHOT versions is not allowed. Bump current version $LEIN_VERSION to a non-snapshot version."

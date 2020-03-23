@@ -2,13 +2,16 @@
 
 # updates all version strings
 
-set -e
+set -e -o pipefail
 
-cd `dirname "${BASH_SOURCE[0]}"` && source "./config.sh" && cd "$ROOT"
+# shellcheck source=_config.sh
+source "$(dirname "${BASH_SOURCE[0]}")/_config.sh"
+
+cd "$ROOT"
 
 VERSION=$1
 
-if [[ -z "$VERSION" ]] ; then
+if [[ -z "$VERSION" ]]; then
   echo "please specify version as the first argument"
   exit 1
 fi
