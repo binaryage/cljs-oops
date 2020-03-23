@@ -8,7 +8,6 @@
   [['environ "1.1.0" :scope "test"]
    ['funcool/cuerdas "2.2.1"]
    ['binaryage/devtools "RELEASE" :scope "test"]
-   ['binaryage/dirac "RELEASE" :scope "test" :upgrade false]
    ['figwheel "RELEASE" :scope "test"]
    ['org.clojure/tools.logging "1.0.0" :scope "test"]
    ['clj-logging-config "1.9.12" :scope "test"]
@@ -68,18 +67,6 @@
                          :server-logfile       ".figwheel/log.txt"
                          :validate-interactive false
                          :repl                 false}}
-
-             :repl-with-agent
-             {:source-paths ["src/lib"
-                             "test/src/circus"
-                             "test/src/arena"
-                             "test/src/tools"
-                             "test/src/tests"]
-              :repl-options {:port             8230
-                             :nrepl-middleware [dirac.nrepl/middleware]
-                             :init             (do
-                                                 (require 'dirac.agent)
-                                                 (dirac.agent/boot!))}}
 
              :circus
              {:source-paths ["src/lib"
@@ -144,12 +131,6 @@
                                    :basic-oadvanced      {:notify-command ["scripts/rerun-tests.sh" "basic_oadvanced_core"]}
                                    :basic-oadvanced-goog {:notify-command ["scripts/rerun-tests.sh" "basic_oadvanced_goog"]}}}}
 
-             :dirac
-             {:cljsbuild {:builds {:basic-onone {:compiler {:preloads [dirac.runtime.preload]}}}}}
-
-
              :dev-basic-onone
-             {:cooper {"server"     ["scripts/launch-fixtures-server.sh"]
-                       "figwheel"   ["scripts/fig-basic-onone.sh"]
-                       "repl-agent" ["scripts/launch-repl-with-agent.sh"]
-                       "browser"    ["scripts/launch-test-browser.sh"]}}})
+             {:cooper {"server"   ["scripts/launch-fixtures-server.sh"]
+                       "figwheel" ["scripts/fig-basic-onone.sh"]}}})
