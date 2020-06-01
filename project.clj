@@ -1,15 +1,15 @@
-(def clojurescript-version (or (System/getenv "CANARY_CLOJURESCRIPT_VERSION") "1.10.597"))
+(def clojurescript-version (or (System/getenv "CANARY_CLOJURESCRIPT_VERSION") "1.10.773"))
 (def required-deps
   [['binaryage/env-config "0.2.2"]])
 (def provided-deps
   [['org.clojure/clojure "1.10.1" :scope "provided"]
    ['org.clojure/clojurescript clojurescript-version :scope "provided"]])
 (def test-deps
-  [['environ "1.1.0" :scope "test"]
-   ['funcool/cuerdas "2.2.1"]
+  [['environ "1.2.0" :scope "test"]
+   ['funcool/cuerdas "2020.03.26-3"]
    ['binaryage/devtools "RELEASE" :scope "test"]
    ['figwheel "RELEASE" :scope "test"]
-   ['org.clojure/tools.logging "1.0.0" :scope "test"]
+   ['org.clojure/tools.logging "1.1.0" :scope "test"]
    ['clj-logging-config "1.9.12" :scope "test"]
    ['clansi "1.0.0" :scope "test"]])
 (def lib-deps (concat provided-deps required-deps))
@@ -29,7 +29,7 @@
   :clean-targets ^{:protect false} ["target"
                                     "test/resources/.compiled"]
 
-  :plugins [[lein-cljsbuild "1.1.7"]
+  :plugins [[lein-cljsbuild "1.1.8"]
             [lein-figwheel "RELEASE"]]
 
   ; this is just for IntelliJ + Cursive to play well
