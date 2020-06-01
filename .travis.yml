@@ -16,7 +16,8 @@ before_install:
 before_script:
   # update lein to latest, https://github.com/technomancy/leiningen/issues/2014#issuecomment-153829977
   - yes y | sudo lein upgrade
-  - sudo apt-get install nodejs npm colordiff
+  # https://medium.com/code-kings/npm-npm-depends-node-gyp-0-10-9-but-it-is-not-going-to-be-installed-error-try-this-dc65325136ce
+  - sudo apt-get install nodejs-dev node-gyp libssl1.0-dev npm colordiff
   - sudo npm install -g js-beautify@1.10.3
   - (cd test && npm install)
 
