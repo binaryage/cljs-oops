@@ -50,9 +50,9 @@
     `(cond
        (and ~dot-access? (cljs.core/undefined? ~obj-sym)) ~(gen-object-access-validation-error obj-sym "undefined" false)
        (and ~dot-access? (cljs.core/nil? ~obj-sym)) ~(gen-object-access-validation-error obj-sym "nil" false)
-       (goog/isBoolean ~obj-sym) ~(gen-object-access-validation-error obj-sym "boolean" false)
-       (goog/isNumber ~obj-sym) ~(gen-object-access-validation-error obj-sym "number" false)
-       (goog/isString ~obj-sym) ~(gen-object-access-validation-error obj-sym "string" false)
+       (cljs.core/boolean? ~obj-sym) ~(gen-object-access-validation-error obj-sym "boolean" false)
+       (cljs.core/number? ~obj-sym) ~(gen-object-access-validation-error obj-sym "number" false)
+       (cljs.core/string? ~obj-sym) ~(gen-object-access-validation-error obj-sym "string" false)
        (not (goog/isObject ~obj-sym)) ~(gen-object-access-validation-error obj-sym "non-object" false)
        (goog/isDateLike ~obj-sym) ~(gen-object-access-validation-error obj-sym "date-like" true)
        (oops.helpers/cljs-type? ~obj-sym) ~(gen-object-access-validation-error obj-sym "cljs type" true)

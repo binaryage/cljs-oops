@@ -49,7 +49,7 @@
   (debug-assert (symbol? mode-sym))
   `(cond
      (and (= ~mode-sym ~soft-access) (nil? ~fn-sym)) true
-     (goog/isFunction ~fn-sym) true
+     (cljs.core/js-fn? ~fn-sym) true
      :else ~(gen-report-if-needed :expected-function-value `{:obj   (oops.state/get-target-object)
                                                              :path  (oops.state/get-key-path-str)
                                                              :fn    ~fn-sym
