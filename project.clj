@@ -14,7 +14,7 @@
    ['clansi "1.0.0" :scope "test"]])
 (def lib-deps (concat provided-deps required-deps))
 (def all-deps (concat lib-deps test-deps))
-(defproject binaryage/oops "0.7.0"
+(defproject binaryage/oops "0.7.1"
   :description "ClojureScript macros for convenient Javascript object access."
   :url "https://github.com/binaryage/cljs-oops"
   :license {:name         "MIT License"
