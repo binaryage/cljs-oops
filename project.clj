@@ -1,8 +1,8 @@
-(def clojurescript-version (or (System/getenv "CANARY_CLOJURESCRIPT_VERSION") "1.10.773"))
+(def clojurescript-version (or (System/getenv "CANARY_CLOJURESCRIPT_VERSION") "1.10.844"))
 (def required-deps
   [['binaryage/env-config "0.2.2"]])
 (def provided-deps
-  [['org.clojure/clojure "1.10.1" :scope "provided"]
+  [['org.clojure/clojure "1.10.3" :scope "provided"]
    ['org.clojure/clojurescript clojurescript-version :scope "provided"]])
 (def test-deps
   [['environ "1.2.0" :scope "test"]
