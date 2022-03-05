@@ -143,8 +143,8 @@
       (testing "object access validation should crash or silently fail in advanced mode (no diagnostics)"
         (when-not-compiler-config {:key-get :goog}
           (are [o msg] (thrown-with-msg? js/TypeError msg (.log js/console (oget o "key")))                                 ; we have to log it otherwise closure could remove it as dead code
-            nil #"Cannot read property 'key' of null"
-            js/undefined #"Cannot read property 'key' of undefined")
+            nil #"Cannot read properties of null \(reading 'key'\)"
+            js/undefined #"Cannot read properties of undefined \(reading 'key'\)")
           (are [o] (= (oget o "key") nil)
             "s"
             42
