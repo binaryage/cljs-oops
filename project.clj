@@ -6,10 +6,10 @@
    ['org.clojure/clojurescript clojurescript-version :scope "provided"]])
 (def test-deps
   [['environ "1.2.0" :scope "test"]
-   ['funcool/cuerdas "2020.03.26-3"]
+   ['funcool/cuerdas "2022.01.14-391"]
    ['binaryage/devtools "RELEASE" :scope "test"]
    ['figwheel "RELEASE" :scope "test"]
-   ['org.clojure/tools.logging "1.1.0" :scope "test"]
+   ['org.clojure/tools.logging "1.2.4" :scope "test"]
    ['clj-logging-config "1.9.12" :scope "test"]
    ['clansi "1.0.0" :scope "test"]])
 (def lib-deps (concat provided-deps required-deps))
