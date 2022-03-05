@@ -1,4 +1,4 @@
-// js-beautify v1.13.5
+// js-beautify v1.14.0
 // ----------------------------------------------------------------------------------------------------------
 // COMPILER CONFIG:
 //   arena/error_static_nil_object.cljs [dev]
