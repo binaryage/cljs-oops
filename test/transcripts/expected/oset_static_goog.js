@@ -19,8 +19,8 @@
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 var target_obj_1 = window,
-  next_obj_1 = module$contents$goog.object_get.call(null, target_obj_1, "k1");
-(null == next_obj_1 ? oops.core.punch_key_dynamically_BANG_.cljs.core$IFn$_invoke$arity$4$ ? oops.core.punch_key_dynamically_BANG_.cljs.core.IFn$_invoke$arity$4$(target_obj_1, "k1") : oops.core.punch_key_dynamically_BANG_.call(null, target_obj_1, "k1") : next_obj_1).k2 = "val";
+  next_obj_1 = module$contents$goog$object_get.call(null, target_obj_1, "k1");
+(null == next_obj_1 ? oops.core.punch_key_dynamically_BANG_(target_obj_1) : next_obj_1).k2 = "val";
 
 // SNIPPET #2:
 //   (testing "oset! expansion with macro-generated params should be static"
@@ -28,8 +28,8 @@ var target_obj_1 = window,
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 var target_obj_2 = window,
-  next_obj_2 = module$contents$goog.object_get.call(null, target_obj_2, "k1");
-(null == next_obj_2 ? oops.core.punch_key_dynamically_BANG_.cljs.core$IFn$_invoke$arity$4$ ? oops.core.punch_key_dynamically_BANG_.cljs.core.IFn$_invoke$arity$4$(target_obj_2, "k1") : oops.core.punch_key_dynamically_BANG_.call(null, target_obj_2, "k1") : next_obj_2).k2 = "val";
+  next_obj_2 = module$contents$goog$object_get.call(null, target_obj_2, "k1");
+(null == next_obj_2 ? oops.core.punch_key_dynamically_BANG_(target_obj_2) : next_obj_2).k2 = "val";
 
 // SNIPPET #3:
 //   (testing "static oset! expansion without punching"

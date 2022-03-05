@@ -24,13 +24,13 @@
 
 ; -- diagnostics reporting --------------------------------------------------------------------------------------------------
 
-(defn ^:dynamic report-error-dynamically [msg data]
+(defn report-error-dynamically [msg data]
   (runtime/report-error-dynamically msg data))
 
-(defn ^:dynamic report-warning-dynamically [msg data]
+(defn report-warning-dynamically [msg data]
   (runtime/report-warning-dynamically msg data))
 
-(defn ^:dynamic report-if-needed-dynamically [msg-id & [info]]
+(defn report-if-needed-dynamically [msg-id & [info]]
   (runtime/report-if-needed-dynamically msg-id info))
 
 ; -- runtime support for macros ---------------------------------------------------------------------------------------------
@@ -51,7 +51,7 @@
 (defn ^boolean validate-fn-call-dynamically [fn mode]
   (runtime/validate-fn-call-dynamically fn mode))
 
-(defn ^:dynamic punch-key-dynamically! [obj key]
+(defn punch-key-dynamically! [obj key]
   (runtime/punch-key-dynamically obj key))
 
 (defn build-path-dynamically [selector]
