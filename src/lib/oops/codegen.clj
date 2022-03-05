@@ -65,12 +65,12 @@
 (defn gen-key-get [obj key]
   (case (config/key-get-mode)
     :core `(~'js* "(~{}[~{}])" ~obj ~key)                                                                                     ; using aget could raise a warning, see CLJS-2148
-    :goog `(goog.object/get ~obj ~key)))
+    :goog `(oops.core/gobj-get ~obj ~key)))
 
 (defn gen-key-set [obj key val]
   (case (config/key-set-mode)
     :core `(~'js* "(~{}[~{}] = ~{})" ~obj ~key ~val)                                                                          ; using aset could raise a warning, see CLJS-2148
-    :goog `(goog.object/set ~obj ~key ~val)))
+    :goog `(oops.core/gobj-set ~obj ~key ~val)))
 
 (defn gen-dynamic-object-access-validation-wrapper [obj-sym mode key push? check-key-read? check-key-write? body]
   (debug-assert (symbol? obj-sym))
@@ -297,7 +297,7 @@
   (debug-assert (symbol? obj-sym))
   (debug-assert (symbol? mode-sym))
   `(if (and (= ~mode-sym ~dot-access)
-            (not (goog.object/containsKey ~obj-sym ~key)))
+            (not (oops.core/gobj-containsKey ~obj-sym ~key)))
      ~(gen-report-if-needed :missing-object-key `{:obj  (oops.state/get-target-object)
                                                   :key  ~key
                                                   :path (oops.state/get-key-path-str)})

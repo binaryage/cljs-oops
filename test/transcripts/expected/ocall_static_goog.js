@@ -23,7 +23,7 @@ var target_obj_1 = {
       return 42
     }
   },
-  call_info_1 = [target_obj_1, goog.object.get(target_obj_1, "f")],
+  call_info_1 = [target_obj_1, oops.core.gobj_get(target_obj_1, "f")],
   fn_1 = call_info_1[1];
 null != fn_1 && fn_1.call(call_info_1[0], "p1", "p2");
 
@@ -32,14 +32,14 @@ null != fn_1 && fn_1.call(call_info_1[0], "p1", "p2");
 //     (ocall #js {"a" #js {"f" (fn [] 42)}} "a.f" "p1" "p2"))
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-var call_info_2, target_obj_2 = goog.object.get({
+var call_info_2, target_obj_2 = oops.core.gobj_get({
   a: {
     f: function() {
       return 42
     }
   }
 }, "a");
-call_info_2 = [target_obj_2, goog.object.get(target_obj_2, "f")];
+call_info_2 = [target_obj_2, oops.core.gobj_get(target_obj_2, "f")];
 var fn_2 = call_info_2[1];
 null != fn_2 && fn_2.call(call_info_2[0], "p1", "p2");
 
@@ -51,7 +51,7 @@ null != fn_2 && fn_2.call(call_info_2[0], "p1", "p2");
 //           (ocall "g" 2 3))))
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-var target_obj_3, call_info_3, target_obj_4 = goog.object.get({
+var target_obj_3, call_info_3, target_obj_4 = oops.core.gobj_get({
   e: {
     f: function(x13) {
       return {
@@ -62,9 +62,9 @@ var target_obj_3, call_info_3, target_obj_4 = goog.object.get({
     }
   }
 }, "e");
-call_info_3 = [target_obj_4, goog.object.get(target_obj_4, "f")];
+call_info_3 = [target_obj_4, oops.core.gobj_get(target_obj_4, "f")];
 var fn_3 = call_info_3[1];
 target_obj_3 = null != fn_3 ? fn_3.call(call_info_3[0], 1) : null;
-var call_info_4 = [target_obj_3, goog.object.get(target_obj_3, "g")],
+var call_info_4 = [target_obj_3, oops.core.gobj_get(target_obj_3, "g")],
   fn_4 = call_info_4[1];
 null != fn_4 && fn_4.call(call_info_4[0], 2, 3);

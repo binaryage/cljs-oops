@@ -62,7 +62,7 @@
 //     (.log js/console (oget #js {"key" "val"} "key")))
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-console.log(goog.object.get({
+console.log(module$contents$goog$object_get.call(null, {
   key: "val"
 }, "key"));
 
@@ -71,6 +71,6 @@ console.log(goog.object.get({
 //     (.log js/console (oget #js {"key" "val"} "xxx")))
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-console.log(goog.object.get({
+console.log(module$contents$goog$object_get.call(null, {
   key: "val"
 }, "xxx"));

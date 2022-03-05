@@ -35,6 +35,16 @@
 
 ; -- runtime support for macros ---------------------------------------------------------------------------------------------
 
+; work around https://clojurescript.org/news/2021-11-04-release#_google_closure_library_goog_module_global_access
+(defn gobj-get [obj key]
+  (goog.object/get obj key))
+
+(defn gobj-set [obj key val]
+  (goog.object/set obj key val))
+
+(defn gobj-containsKey [obj key]
+  (goog.object/containsKey obj key))
+
 (defn ^boolean validate-object-access-dynamically [obj mode key push? check-key-read? check-key-write?]
   (runtime/validate-object-access-dynamically obj mode key push? check-key-read? check-key-write?))
 
